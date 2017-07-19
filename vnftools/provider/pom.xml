@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.openecomp.sdnc.northbound</groupId>
+		<artifactId>vnftools</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<artifactId>vnftools-provider</artifactId>
+	<packaging>bundle</packaging>
+	<name>VNF Tools Plugin - Provider</name>
+	<url>http://maven.apache.org</url>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.openecomp.sdnc.core</groupId>
+			<artifactId>sli-common</artifactId>
+			<version>${sdnctl.sli.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.openecomp.sdnc.core</groupId>
+			<artifactId>sli-provider</artifactId>
+			<version>${sdnctl.sli.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>equinoxSDK381</groupId>
+			<artifactId>org.eclipse.osgi</artifactId>
+			<version>${equinox.osgi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openecomp.sdnc.core</groupId>
+			<artifactId>sliPluginUtils-provider</artifactId>
+			<version>${sdnctl.slipluginutils.version}</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+
+
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>${bundle.plugin.version}</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Bundle-SymbolicName>org.openecomp.sdnc.vnftools</Bundle-SymbolicName>
+						<Bundle-Activator>org.openecomp.sdnc.vnftools.VnfToolsActivator</Bundle-Activator>
+						<Export-Package>org.openecomp.sdnc.vnftools</Export-Package>
+						<Import-Package>org.openecomp.sdnc.*,org.osgi.framework.*,org.slf4j.*,java.net.*,org.apache.commons.*</Import-Package>
+						<Embed-Dependency>*;scope=compile|runtime;artifactId=!sli-common|org.eclipse.osgi|mysql-connector-java|slf4j-api|jcl-over-slf4j|xml-apis|InetAddress|commons-lang3</Embed-Dependency>
+						<Embed-Transitive>true</Embed-Transitive>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+
+	</build>
+</project>
