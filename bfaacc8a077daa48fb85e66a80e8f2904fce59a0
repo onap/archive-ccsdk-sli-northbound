@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a437d4f_720576c1",
+        "filename": "asdcApi/provider/src/main/java/org/opendaylight/yang/gen/v1/org/onap/ccsdk/sli/northbound/asdcapi/provider/impl/rev140523/AsdcApiProviderModule.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2017-08-14T20:47:28Z",
+      "side": 1,
+      "message": "I think this should have a line above to separate from package name.",
+      "revId": "bfaacc8a077daa48fb85e66a80e8f2904fce59a0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_320feee3",
+        "filename": "asdcApi/provider/src/main/java/org/opendaylight/yang/gen/v1/org/onap/ccsdk/sli/northbound/asdcapi/provider/impl/rev140523/AsdcApiProviderModule.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 667
+      },
+      "writtenOn": "2017-08-14T20:47:28Z",
+      "side": 1,
+      "message": "Are we going to add a Jira task for implementing this anew?",
+      "revId": "bfaacc8a077daa48fb85e66a80e8f2904fce59a0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
