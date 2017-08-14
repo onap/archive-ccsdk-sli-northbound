@@ -1,8 +1,8 @@
 module asdc-license-model {
 
-    namespace "http://xmlns.openecomp.org/asdc/license-model/1.0";
+    namespace "http://xmlns.onap.org/asdc/license-model/1.0";
     prefix le;
-    organization "openecomp";
+    organization "onap";
     contact "asdc";
     description "schema for both vendor license and VF license models";
     revision 2016-04-27 {

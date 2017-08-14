@@ -3,12 +3,12 @@ module asdc-api-common {
     yang-version "1";
 
     // Use same namespace defined for file upload in 15.12
-    namespace "org:openecomp:sdnc:asdcapi:common";
+    namespace "org:onap:ccsdk:sli:northbound:asdcapi:common";
 
     prefix asdcapi;
 
     organization
-        "OpenECOMP";
+        "ONAP";
 
     contact
         "Dan Timoney";

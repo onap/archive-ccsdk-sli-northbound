@@ -2,7 +2,7 @@
 module ASDC-API {
     yang-version "1";
 
-    namespace "org:openecomp:sdnc";
+    namespace "org:onap:ccsdk";
 
     prefix asdc-api;
 
@@ -17,7 +17,7 @@ module ASDC-API {
         }
 
     organization
-        "OpenECOMP";
+        "ONAP";
 
     contact
         "Dan Timoney";

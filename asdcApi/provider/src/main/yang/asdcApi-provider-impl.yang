@@ -1,7 +1,7 @@
 module asdcApi-provider-impl {
 
     yang-version 1;
-    namespace "org:openecomp:sdnc:asdcapi:provider:impl";
+    namespace "org:onap:ccsdk:sli:northbound:asdcapi:provider:impl";
     prefix "asdcApi-provider-impl";
 
     import config { prefix config; revision-date 2013-04-05; }

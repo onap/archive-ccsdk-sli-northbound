@@ -19,14 +19,14 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdnc.asdcapi;
+package org.onap.ccsdk.sli.northbound.asdcapi;
 
 import org.onap.ccsdk.sli.core.sli.provider.MdsalHelper;
-import org.opendaylight.yang.gen.v1.org.openecomp.sdnc.rev170201.ArtifactsBuilder;
-import org.opendaylight.yang.gen.v1.org.openecomp.sdnc.rev170201.VfLicenseModelUpdateInput;
-import org.opendaylight.yang.gen.v1.org.openecomp.sdnc.rev170201.VfLicenseModelUpdateInputBuilder;
-import org.opendaylight.yang.gen.v1.org.openecomp.sdnc.rev170201.VfLicenseModelVersionsBuilder;
-import org.opendaylight.yang.gen.v1.org.openecomp.sdnc.rev170201.vf.license.model.versions.VfLicenseModelVersionBuilder;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.rev170201.ArtifactsBuilder;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.rev170201.VfLicenseModelUpdateInput;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.rev170201.VfLicenseModelUpdateInputBuilder;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.rev170201.VfLicenseModelVersionsBuilder;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.rev170201.vf.license.model.versions.VfLicenseModelVersionBuilder;
 
 public class AsdcApiUtil extends MdsalHelper {
 

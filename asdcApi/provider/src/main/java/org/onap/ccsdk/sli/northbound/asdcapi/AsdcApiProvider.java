@@ -19,7 +19,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdnc.asdcapi;
+package org.onap.ccsdk.sli.northbound.asdcapi;
 
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
@@ -35,21 +35,21 @@ import org.opendaylight.controller.md.sal.common.api.data.TransactionCommitFaile
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.binding.api.NotificationProviderService;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
-import org.opendaylight.yang.gen.v1.http.xmlns.openecomp.org.asdc.license.model._1._0.rev160427.vf.license.model.grouping.VfLicenseModel;
-import org.opendaylight.yang.gen.v1.org.openecomp.sdnc.rev170201.ASDCAPIService;
-import org.opendaylight.yang.gen.v1.org.openecomp.sdnc.rev170201.Artifacts;
-import org.opendaylight.yang.gen.v1.org.openecomp.sdnc.rev170201.ArtifactsBuilder;
-import org.opendaylight.yang.gen.v1.org.openecomp.sdnc.rev170201.VfLicenseModelUpdateInput;
-import org.opendaylight.yang.gen.v1.org.openecomp.sdnc.rev170201.VfLicenseModelUpdateInputBuilder;
-import org.opendaylight.yang.gen.v1.org.openecomp.sdnc.rev170201.VfLicenseModelUpdateOutput;
-import org.opendaylight.yang.gen.v1.org.openecomp.sdnc.rev170201.VfLicenseModelUpdateOutputBuilder;
-import org.opendaylight.yang.gen.v1.org.openecomp.sdnc.rev170201.VfLicenseModelVersions;
-import org.opendaylight.yang.gen.v1.org.openecomp.sdnc.rev170201.VfLicenseModelVersionsBuilder;
-import org.opendaylight.yang.gen.v1.org.openecomp.sdnc.rev170201.artifacts.Artifact;
-import org.opendaylight.yang.gen.v1.org.openecomp.sdnc.rev170201.artifacts.ArtifactBuilder;
-import org.opendaylight.yang.gen.v1.org.openecomp.sdnc.rev170201.artifacts.ArtifactKey;
-import org.opendaylight.yang.gen.v1.org.openecomp.sdnc.rev170201.vf.license.model.versions.VfLicenseModelVersion;
-import org.opendaylight.yang.gen.v1.org.openecomp.sdnc.rev170201.vf.license.model.versions.VfLicenseModelVersionBuilder;
+import org.opendaylight.yang.gen.v1.http.xmlns.onap.org.asdc.license.model._1._0.rev160427.vf.license.model.grouping.VfLicenseModel;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.rev170201.ASDCAPIService;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.rev170201.Artifacts;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.rev170201.ArtifactsBuilder;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.rev170201.VfLicenseModelUpdateInput;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.rev170201.VfLicenseModelUpdateInputBuilder;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.rev170201.VfLicenseModelUpdateOutput;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.rev170201.VfLicenseModelUpdateOutputBuilder;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.rev170201.VfLicenseModelVersions;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.rev170201.VfLicenseModelVersionsBuilder;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.rev170201.artifacts.Artifact;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.rev170201.artifacts.ArtifactBuilder;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.rev170201.artifacts.ArtifactKey;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.rev170201.vf.license.model.versions.VfLicenseModelVersion;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.rev170201.vf.license.model.versions.VfLicenseModelVersionBuilder;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;

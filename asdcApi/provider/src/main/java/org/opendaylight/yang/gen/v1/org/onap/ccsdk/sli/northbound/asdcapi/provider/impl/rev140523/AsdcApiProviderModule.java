@@ -19,16 +19,13 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.opendaylight.yang.gen.v1.org.openecomp.sdnc.asdcapi.provider.impl.rev140523;
-
-import org.openecomp.sdnc.asdcapi.AsdcApiProvider;
-
-public class AsdcApiProviderModule extends org.opendaylight.yang.gen.v1.org.openecomp.sdnc.asdcapi.provider.impl.rev140523.AbstractAsdcApiProviderModule {
+package org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.asdcapi.provider.impl.rev140523;
+public class AsdcApiProviderModule extends org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.asdcapi.provider.impl.rev140523.AbstractAsdcApiProviderModule {
     public AsdcApiProviderModule(org.opendaylight.controller.config.api.ModuleIdentifier identifier, org.opendaylight.controller.config.api.DependencyResolver dependencyResolver) {
         super(identifier, dependencyResolver);
     }
 
-    public AsdcApiProviderModule(org.opendaylight.controller.config.api.ModuleIdentifier identifier, org.opendaylight.controller.config.api.DependencyResolver dependencyResolver, org.opendaylight.yang.gen.v1.org.openecomp.sdnc.asdcapi.provider.impl.rev140523.AsdcApiProviderModule oldModule, java.lang.AutoCloseable oldInstance) {
+    public AsdcApiProviderModule(org.opendaylight.controller.config.api.ModuleIdentifier identifier, org.opendaylight.controller.config.api.DependencyResolver dependencyResolver, org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.asdcapi.provider.impl.rev140523.AsdcApiProviderModule oldModule, java.lang.AutoCloseable oldInstance) {
         super(identifier, dependencyResolver, oldModule, oldInstance);
     }
 
@@ -39,19 +36,8 @@ public class AsdcApiProviderModule extends org.opendaylight.yang.gen.v1.org.open
 
     @Override
     public java.lang.AutoCloseable createInstance() {
-
-        final AsdcApiProvider provider = new AsdcApiProvider(getDataBrokerDependency()
-                , getNotificationServiceDependency()
-                , getRpcRegistryDependency());
-
-        return new AutoCloseable() {
-
-           @Override
-           public void close() throws Exception {
-
-               provider.close();
-           }
-       };
+        // TODO:implement
+        throw new java.lang.UnsupportedOperationException();
     }
 
 }

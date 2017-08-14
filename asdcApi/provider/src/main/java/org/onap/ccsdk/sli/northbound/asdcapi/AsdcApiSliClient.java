@@ -19,7 +19,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdnc.asdcapi;
+package org.onap.ccsdk.sli.northbound.asdcapi;
 
 import java.util.Properties;
 
