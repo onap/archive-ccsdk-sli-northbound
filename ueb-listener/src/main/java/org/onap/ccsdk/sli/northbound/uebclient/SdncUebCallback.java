@@ -19,7 +19,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdnc.uebclient;
+package org.onap.ccsdk.sli.northbound.uebclient;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -60,6 +60,7 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.tuple.Pair;
 import org.onap.ccsdk.sli.core.dblib.DBResourceManager;
+import org.onap.ccsdk.sli.northbound.uebclient.SdncArtifactMap.SdncArtifactType;
 import org.openecomp.sdc.api.IDistributionClient;
 import org.openecomp.sdc.api.consumer.IDistributionStatusMessage;
 import org.openecomp.sdc.api.consumer.INotificationCallback;
@@ -78,7 +79,6 @@ import org.openecomp.sdc.toscaparser.api.NodeTemplate;
 import org.openecomp.sdc.utils.ArtifactTypeEnum;
 import org.openecomp.sdc.utils.DistributionActionResultEnum;
 import org.openecomp.sdc.utils.DistributionStatusEnum;
-import org.openecomp.sdnc.uebclient.SdncArtifactMap.SdncArtifactType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;

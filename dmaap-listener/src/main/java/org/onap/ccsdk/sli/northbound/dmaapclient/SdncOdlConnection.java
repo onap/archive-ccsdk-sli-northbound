@@ -19,7 +19,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdnc.uebclient;
+package org.onap.ccsdk.sli.northbound.dmaapclient;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -28,6 +28,7 @@ import java.io.InputStreamReader;
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
 import java.net.PasswordAuthentication;
+import java.net.ProtocolException;
 import java.net.URL;
 
 import javax.net.ssl.HostnameVerifier;

@@ -19,7 +19,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdnc.uebclient;
+package org.onap.ccsdk.sli.northbound.uebclient;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -111,41 +111,41 @@ public class SdncUebConfiguration implements IConfiguration{
 		Properties props = new Properties();
 		props.load(new FileInputStream(propFile));
 
-		asdcAddress = props.getProperty("org.openecomp.sdnc.uebclient.asdc-address");
-		consumerGroup = props.getProperty("org.openecomp.sdnc.uebclient.consumer-group");
-		consumerID = props.getProperty("org.openecomp.sdnc.uebclient.consumer-id");
-		environmentName = props.getProperty("org.openecomp.sdnc.uebclient.environment-name");
-		password = props.getProperty("org.openecomp.sdnc.uebclient.password");
-		user = props.getProperty("org.openecomp.sdnc.uebclient.user");
+		asdcAddress = props.getProperty("org.onap.ccsdk.sli.northbound.uebclient.asdc-address");
+		consumerGroup = props.getProperty("org.onap.ccsdk.sli.northbound.uebclient.consumer-group");
+		consumerID = props.getProperty("org.onap.ccsdk.sli.northbound.uebclient.consumer-id");
+		environmentName = props.getProperty("org.onap.ccsdk.sli.northbound.uebclient.environment-name");
+		password = props.getProperty("org.onap.ccsdk.sli.northbound.uebclient.password");
+		user = props.getProperty("org.onap.ccsdk.sli.northbound.uebclient.user");
 
-		sdncUser = props.getProperty("org.openecomp.sdnc.uebclient.sdnc-user");
-		sdncPasswd = props.getProperty("org.openecomp.sdnc.uebclient.sdnc-passwd");
-		asdcApiBaseUrl = props.getProperty("org.openecomp.sdnc.uebclient.asdc-api-base-url");
-		asdcApiNamespace = props.getProperty("org.openecomp.sdnc.uebclient.asdc-api-namespace");
+		sdncUser = props.getProperty("org.onap.ccsdk.sli.northbound.uebclient.sdnc-user");
+		sdncPasswd = props.getProperty("org.onap.ccsdk.sli.northbound.uebclient.sdnc-passwd");
+		asdcApiBaseUrl = props.getProperty("org.onap.ccsdk.sli.northbound.uebclient.asdc-api-base-url");
+		asdcApiNamespace = props.getProperty("org.onap.ccsdk.sli.northbound.uebclient.asdc-api-namespace");
 
-		incomingDir = props.getProperty("org.openecomp.sdnc.uebclient.spool.incoming");
-		archiveDir = props.getProperty("org.openecomp.sdnc.uebclient.spool.archive");
-		overrideFile = props.getProperty("org.openecomp.sdnc.uebclient.override-file");
+		incomingDir = props.getProperty("org.onap.ccsdk.sli.northbound.uebclient.spool.incoming");
+		archiveDir = props.getProperty("org.onap.ccsdk.sli.northbound.uebclient.spool.archive");
+		overrideFile = props.getProperty("org.onap.ccsdk.sli.northbound.uebclient.override-file");
 
-		String curval = props.getProperty("org.openecomp.sdnc.uebclient.polling-interval");
+		String curval = props.getProperty("org.onap.ccsdk.sli.northbound.uebclient.polling-interval");
 		if ((curval != null) && (curval.length() > 0)) {
 			try {
 				pollingInterval = Integer.parseInt(curval);
 			} catch (Exception e) {
-				LOG.warn("Illegal value for org.openecomp.sdnc.uebclient.polling-interval ("+curval+")");
+				LOG.warn("Illegal value for org.onap.ccsdk.sli.northbound.uebclient.polling-interval ("+curval+")");
 			}
 		}
 
-		curval = props.getProperty("org.openecomp.sdnc.uebclient.polling-timeout");
+		curval = props.getProperty("org.onap.ccsdk.sli.northbound.uebclient.polling-timeout");
 		if ((curval != null) && (curval.length() > 0)) {
 			try {
 				pollingTimeout = Integer.parseInt(curval);
 			} catch (Exception e) {
-				LOG.warn("Illegal value for org.openecomp.sdnc.uebclient.polling-timeout ("+curval+")");
+				LOG.warn("Illegal value for org.onap.ccsdk.sli.northbound.uebclient.polling-timeout ("+curval+")");
 			}
 		}
 
-		curval = props.getProperty("org.openecomp.sdnc.uebclient.relevant-artifact-types");
+		curval = props.getProperty("org.onap.ccsdk.sli.northbound.uebclient.relevant-artifact-types");
 		if ((curval != null) && (curval.length() > 0)) {
 			String[] artifactTypes = curval.split(",");
 
@@ -167,14 +167,14 @@ public class SdncUebConfiguration implements IConfiguration{
 
 		}
 
-		curval = props.getProperty("org.openecomp.sdnc.uebclient.activate-server-tls-auth", "false");
+		curval = props.getProperty("org.onap.ccsdk.sli.northbound.uebclient.activate-server-tls-auth", "false");
 		activateServerTLSAuth = "true".equalsIgnoreCase(curval);
-		keyStorePath = props.getProperty("org.openecomp.sdnc.uebclient.keystore-path");
-		keyStorePassword = props.getProperty("org.openecomp.sdnc.uebclient.keystore-password");
-		xsltPathList = props.getProperty("org.openecomp.sdnc.uebclient.xslt-path-list");
+		keyStorePath = props.getProperty("org.onap.ccsdk.sli.northbound.uebclient.keystore-path");
+		keyStorePassword = props.getProperty("org.onap.ccsdk.sli.northbound.uebclient.keystore-password");
+		xsltPathList = props.getProperty("org.onap.ccsdk.sli.northbound.uebclient.xslt-path-list");
 
 
-		String artifactMapFile = props.getProperty("org.openecomp.sdnc.uebclient.artifact-map");
+		String artifactMapFile = props.getProperty("org.onap.ccsdk.sli.northbound.uebclient.artifact-map");
 		if (artifactMapFile != null) {
 			artifactMap.load(artifactMapFile);
 		}

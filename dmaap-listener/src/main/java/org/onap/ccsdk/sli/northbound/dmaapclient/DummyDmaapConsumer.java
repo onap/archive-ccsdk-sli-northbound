@@ -19,7 +19,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdnc.dmaapclient;
+package org.onap.ccsdk.sli.northbound.dmaapclient;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

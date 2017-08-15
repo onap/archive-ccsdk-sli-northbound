@@ -19,7 +19,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdnc.uebclient;
+package org.onap.ccsdk.sli.northbound.uebclient;
 
 import java.io.BufferedReader;
 import java.io.File;

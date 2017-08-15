@@ -19,19 +19,27 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdnc.dmaapclient;
+package org.onap.ccsdk.sli.northbound.uebclient;
 
-public class InvalidMessageException extends Exception {
+import org.openecomp.sdc.tosca.parser.api.ISdcCsarHelper;
+import org.openecomp.sdc.tosca.parser.impl.SdcPropertyNames;
+import org.openecomp.sdc.toscaparser.api.Group;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-	public InvalidMessageException() {
-		super();
-	}
+public class SdncVFModuleModel extends SdncBaseModel {
 	
-	public InvalidMessageException(String msg) {
-		super(msg);
-	}
+	private static final Logger LOG = LoggerFactory
+			.getLogger(SdncVFModuleModel.class);
 	
-	public InvalidMessageException(String msg, Throwable t) {
-		super(msg, t);
+	public SdncVFModuleModel(ISdcCsarHelper sdcCsarHelper, Group group) {
+
+		super(sdcCsarHelper, group);
+		
+		// extract properties
+		addParameter("vf_module_type", extractValue(group, SdcPropertyNames.PROPERTY_NAME_VFMODULETYPE));
+		addIntParameter("availability_zone_count", extractValue(group, SdcPropertyNames.PROPERTY_NAME_AVAILABILITYZONECOUNT));
+		addParameter("ecomp_generated_vm_assignments", extractBooleanValue(group, SdcPropertyNames.PROPERTY_NAME_ECOMPGENERATEDVMASSIGNMENTS));
 	}
+
 }
