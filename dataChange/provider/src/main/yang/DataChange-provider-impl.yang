@@ -1,7 +1,7 @@
 module DataChange-provider-impl {
 
     yang-version 1;
-    namespace "org:openecomp:sdnc:datachange:provider:impl";
+    namespace "org:onap:ccsdk:sli:northbound:datachange:provider:impl";
     prefix "DataChange-provider-impl";
 
     import config { prefix config; revision-date 2013-04-05; }

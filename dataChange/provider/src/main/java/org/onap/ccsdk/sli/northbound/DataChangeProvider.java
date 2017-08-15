@@ -19,7 +19,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdnc.datachange;
+package org.onap.ccsdk.sli.northbound;
 
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
@@ -31,11 +31,11 @@ import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.binding.api.NotificationProviderService;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
-import org.opendaylight.yang.gen.v1.org.openecomp.sdnc.datachange.rev150519.DataChangeNotificationInput;
-import org.opendaylight.yang.gen.v1.org.openecomp.sdnc.datachange.rev150519.DataChangeNotificationInputBuilder;
-import org.opendaylight.yang.gen.v1.org.openecomp.sdnc.datachange.rev150519.DataChangeNotificationOutput;
-import org.opendaylight.yang.gen.v1.org.openecomp.sdnc.datachange.rev150519.DataChangeNotificationOutputBuilder;
-import org.opendaylight.yang.gen.v1.org.openecomp.sdnc.datachange.rev150519.DataChangeService;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.datachange.rev150519.DataChangeNotificationInput;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.datachange.rev150519.DataChangeNotificationInputBuilder;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.datachange.rev150519.DataChangeNotificationOutput;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.datachange.rev150519.DataChangeNotificationOutputBuilder;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.datachange.rev150519.DataChangeService;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
 import org.slf4j.Logger;

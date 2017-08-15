@@ -19,14 +19,14 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdnc.datachange;
+package org.onap.ccsdk.sli.northbound;
 
 import java.util.Properties;
 
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.onap.ccsdk.sli.core.sli.provider.MdsalHelper;
 import org.onap.ccsdk.sli.core.sli.provider.SvcLogicService;
-import org.opendaylight.yang.gen.v1.org.openecomp.sdnc.datachange.rev150519.DataChangeNotificationOutputBuilder;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.datachange.rev150519.DataChangeNotificationOutputBuilder;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;

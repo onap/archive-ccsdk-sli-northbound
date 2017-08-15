@@ -19,16 +19,13 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.opendaylight.yang.gen.v1.org.openecomp.sdnc.datachange.provider.impl.rev140523;
-
-import org.openecomp.sdnc.datachange.DataChangeProvider;
-
-public class DataChangeProviderModule extends org.opendaylight.yang.gen.v1.org.openecomp.sdnc.datachange.provider.impl.rev140523.AbstractDataChangeProviderModule {
+package org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.datachange.provider.impl.rev140523;
+public class DataChangeProviderModule extends org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.datachange.provider.impl.rev140523.AbstractDataChangeProviderModule {
     public DataChangeProviderModule(org.opendaylight.controller.config.api.ModuleIdentifier identifier, org.opendaylight.controller.config.api.DependencyResolver dependencyResolver) {
         super(identifier, dependencyResolver);
     }
 
-    public DataChangeProviderModule(org.opendaylight.controller.config.api.ModuleIdentifier identifier, org.opendaylight.controller.config.api.DependencyResolver dependencyResolver, org.opendaylight.yang.gen.v1.org.openecomp.sdnc.datachange.provider.impl.rev140523.DataChangeProviderModule oldModule, java.lang.AutoCloseable oldInstance) {
+    public DataChangeProviderModule(org.opendaylight.controller.config.api.ModuleIdentifier identifier, org.opendaylight.controller.config.api.DependencyResolver dependencyResolver, org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.datachange.provider.impl.rev140523.DataChangeProviderModule oldModule, java.lang.AutoCloseable oldInstance) {
         super(identifier, dependencyResolver, oldModule, oldInstance);
     }
 
@@ -39,17 +36,8 @@ public class DataChangeProviderModule extends org.opendaylight.yang.gen.v1.org.o
 
     @Override
     public java.lang.AutoCloseable createInstance() {
-        final DataChangeProvider provider = new DataChangeProvider(getDataBrokerDependency()
-                , getNotificationServiceDependency()
-                , getRpcRegistryDependency());
-
-        return new AutoCloseable() {
-
-           @Override
-           public void close() throws Exception {
-               provider.close();
-           }
-       };
+        // TODO:implement
+        throw new java.lang.UnsupportedOperationException();
     }
 
 }

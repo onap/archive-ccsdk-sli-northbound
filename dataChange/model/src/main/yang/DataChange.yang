@@ -2,7 +2,7 @@ module DataChange {
 
   yang-version 1;
 
-  namespace "org:openecomp:sdnc:datachange";
+  namespace "org:onap:ccsdk:sli:northbound:datachange";
 
   prefix datachg;
 

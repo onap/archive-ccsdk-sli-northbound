@@ -100,7 +100,7 @@
 							<useRepositoryLayout>true</useRepositoryLayout>
 							<addParentPoms>false</addParentPoms>
 							<copyPom>false</copyPom>
-							<includeGroupIds>org.openecomp.sdnc</includeGroupIds>
+							<includeGroupIds>org.onap.ccsdk.sli.northbound</includeGroupIds>
 							<excludeArtifactIds>sli-common,sli-provider,dblib-provider</excludeArtifactIds>
 							<scope>provided</scope>
 						</configuration>

@@ -9,9 +9,7 @@
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
        http://www.apache.org/licenses/LICENSE-2.0
-  
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,7 +27,7 @@
 
                     <!-- This xmlns:prefix should match the namespace in the *-provider-impl.yang file
                          The prefix: inside type should match the prefix of the yang file. -->
-                    <type xmlns:prefix="org:openecomp:sdnc:datachange:provider:impl">
+                    <type xmlns:prefix="org:onap:ccsdk:sli:northbound:datachange:provider:impl">
                         prefix:DataChange-provider-impl
                     </type>
                     <name>DataChange-provider-impl</name>
@@ -66,7 +64,7 @@
           our service can be resolved. Capabilities for dependencies defined above are implied which is
           why we do not have define a required capability for the data broker, for example. -->
     <required-capabilities>
-        <capability>org:openecomp:sdnc:datachange:provider:impl?module=DataChange-provider-impl&amp;revision=2014-05-23</capability>
+        <capability>org:onap:ccsdk:sli:northbound:datachange:provider:impl?module=DataChange-provider-impl&amp;revision=2014-05-23</capability>
     </required-capabilities>
 
 </snapshot>
