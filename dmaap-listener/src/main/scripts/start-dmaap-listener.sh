@@ -60,7 +60,7 @@ do
   LISTENERCLASSPATH=$LISTENERCLASSPATH:$file
 done
 
-${JAVA} ${JAVA_OPTS} -Dlog4j.configuration=file:${UEBLISTENERROOT}/lib/log4j.properties -cp ${LISTENERCLASSPATH} com.att.sdnctl.dmaapclient.DmaapListener &
+${JAVA} ${JAVA_OPTS} -Dlog4j.configuration=file:${UEBLISTENERROOT}/lib/log4j.properties -cp ${LISTENERCLASSPATH} org.onap.ccsdk.sli.northbound.dmaapclient.DmaapListener &
 
 
 echo $! > $PIDFILE
