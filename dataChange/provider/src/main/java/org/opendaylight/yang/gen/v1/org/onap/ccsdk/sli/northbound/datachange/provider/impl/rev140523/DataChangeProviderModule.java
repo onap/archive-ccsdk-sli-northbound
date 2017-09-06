@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,6 +20,9 @@
  */
 
 package org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.datachange.provider.impl.rev140523;
+
+import org.onap.ccsdk.sli.northbound.DataChangeProvider;
+
 public class DataChangeProviderModule extends org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.datachange.provider.impl.rev140523.AbstractDataChangeProviderModule {
     public DataChangeProviderModule(org.opendaylight.controller.config.api.ModuleIdentifier identifier, org.opendaylight.controller.config.api.DependencyResolver dependencyResolver) {
         super(identifier, dependencyResolver);
@@ -36,8 +39,17 @@ public class DataChangeProviderModule extends org.opendaylight.yang.gen.v1.org.o
 
     @Override
     public java.lang.AutoCloseable createInstance() {
-        // TODO:implement
-        throw new java.lang.UnsupportedOperationException();
+        final DataChangeProvider provider = new DataChangeProvider(getDataBrokerDependency()
+                , getNotificationServiceDependency()
+                , getRpcRegistryDependency());
+
+        return new AutoCloseable() {
+
+           @Override
+           public void close() throws Exception {
+               provider.close();
+           }
+       };
     }
 
 }
