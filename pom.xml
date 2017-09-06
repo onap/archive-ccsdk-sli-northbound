@@ -95,9 +95,9 @@
 				<version>1.6.7</version>
 				<extensions>true</extensions>
 				<configuration>
-					<nexusUrl>https://${openecomp.nexus.host}</nexusUrl>
-					<stagingProfileId>${openecomp.nexus.staging.profile-id}</stagingProfileId>
-					<serverId>${openecomp.nexus.staging.server-id}</serverId>
+					<nexusUrl>https://${onap.nexus.host}</nexusUrl>
+					<stagingProfileId>${onap.nexus.staging.profile-id}</stagingProfileId>
+					<serverId>${onap.nexus.staging.server-id}</serverId>
 				</configuration>
 			</plugin>
 		</plugins>
