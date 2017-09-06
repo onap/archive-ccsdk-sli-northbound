@@ -1,0 +1,7 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+2: Marcus Williams <marcus.williams@intel.com>
+Submitted-by: Marcus Williams <marcus.williams@intel.com>
+Submitted-at: Wed, 06 Sep 2017 19:13:46 +0000
+Reviewed-on: http://gerrit.onap.org/r/10619
+Project: ccsdk/sli/northbound
+Branch: refs/heads/master
