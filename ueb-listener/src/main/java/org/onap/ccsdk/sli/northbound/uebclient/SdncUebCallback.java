@@ -209,7 +209,7 @@ public class SdncUebCallback implements INotificationCallback {
 		props.load(new FileInputStream(propFile));
 
 		try {
-			jdbcDataSource = DBResourceManager.create(props);
+			jdbcDataSource = new DBResourceManager(props);
 		} catch(Throwable exc) {
 			LOG.error("", exc);
 		}

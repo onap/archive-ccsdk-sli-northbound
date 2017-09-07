@@ -20,13 +20,6 @@
 			<groupId>org.onap.ccsdk.sli.northbound</groupId>
 			<artifactId>asdcApi-provider</artifactId>
 			<version>${project.version}</version>
-			<classifier>config</classifier>
-			<type>xml</type>
-		</dependency>
-		<dependency>
-			<groupId>org.onap.ccsdk.sli.northbound</groupId>
-			<artifactId>asdcApi-provider</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
