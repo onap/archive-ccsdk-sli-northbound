@@ -44,12 +44,4 @@
 		</fileSet>
 	</fileSets>
 
-	<files>
-		<file>
-			<source>../provider/src/main/resources/initial/${feature-name}-provider.xml</source>
-			<destName>./etc/opendaylight/karaf/200-${feature-name}-provider.xml</destName>
-		</file>
-
-	</files>
-
 </assembly>

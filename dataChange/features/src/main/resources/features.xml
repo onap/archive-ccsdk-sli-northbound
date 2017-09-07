@@ -31,7 +31,6 @@
         <feature version="${sdnctl.sli.version}">sdnc-sli</feature>
         <bundle>mvn:org.onap.ccsdk.sli.northbound/dataChange-model/${project.version}</bundle>
         <bundle>mvn:org.onap.ccsdk.sli.northbound/dataChange-provider/${project.version}</bundle>
-        <configfile finalname="etc/opendaylight/karaf/200-dataChange-provider.xml">mvn:org.onap.ccsdk.sli.northbound/dataChange-provider/${project.version}/xml/config</configfile>
     </feature>
 
 </features>

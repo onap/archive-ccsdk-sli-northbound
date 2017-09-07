@@ -49,33 +49,39 @@ import com.google.common.util.concurrent.Futures;
  * base class provides some basic logging and initialization / clean up methods.
  *
  */
-public class DataChangeProvider implements AutoCloseable, DataChangeService{
+public class DataChangeProvider implements AutoCloseable, DataChangeService {
 
-    private final Logger log = LoggerFactory.getLogger( DataChangeProvider.class );
-    private final String appName = "DataChange";
+    private static final Logger LOG = LoggerFactory.getLogger(DataChangeProvider.class);
+
+    private static final String APPLICATION_NAME = "DataChange";
+
     private final ExecutorService executor;
 
     protected DataBroker dataBroker;
     protected NotificationProviderService notificationService;
     protected RpcProviderRegistry rpcRegistry;
     protected BindingAwareBroker.RpcRegistration<DataChangeService> rpcRegistration;
+    private final DataChangeClient dataChangeClient;
 
 
-    public DataChangeProvider(DataBroker dataBroker2,
-			NotificationProviderService notificationProviderService,
-			RpcProviderRegistry rpcProviderRegistry) {
-        this.log.info( "Creating provider for " + appName );
+    public DataChangeProvider(final DataBroker dataBroker,
+							  final NotificationProviderService notificationProviderService,
+							  final RpcProviderRegistry rpcProviderRegistry,
+							  final DataChangeClient dataChangeClient) {
+
+        this.LOG.info( "Creating provider for {}", APPLICATION_NAME);
         executor = Executors.newFixedThreadPool(1);
-		dataBroker = dataBroker2;
-		notificationService = notificationProviderService;
-		rpcRegistry = rpcProviderRegistry;
+		this.dataBroker = dataBroker;
+		this.notificationService = notificationProviderService;
+		this.rpcRegistry = rpcProviderRegistry;
+		this.dataChangeClient = dataChangeClient;
 		initialize();
     }
 
     public void initialize(){
-        log.info( "Initializing provider for " + appName );
+        LOG.info( "Initializing provider for {}", APPLICATION_NAME);
         rpcRegistration = rpcRegistry.addRpcImplementation(DataChangeService.class, this);
-        log.info( "Initialization complete for " + appName );
+        LOG.info( "Initialization complete for {}", APPLICATION_NAME);
     }
 
     protected void initializeChild() {
@@ -84,32 +90,10 @@ public class DataChangeProvider implements AutoCloseable, DataChangeService{
 
     @Override
     public void close() throws Exception {
-        log.info( "Closing provider for " + appName );
+        LOG.info( "Closing provider for {}", APPLICATION_NAME);
 	    executor.shutdown();
 	    rpcRegistration.close();
-        log.info( "Successfully closed provider for " + appName );
-    }
-
-    public void setDataBroker(DataBroker dataBroker) {
-        this.dataBroker = dataBroker;
-        if( log.isDebugEnabled() ){
-            log.debug( "DataBroker set to " + (dataBroker==null?"null":"non-null") + "." );
-        }
-    }
-
-    public void setNotificationService(
-            NotificationProviderService notificationService) {
-        this.notificationService = notificationService;
-        if( log.isDebugEnabled() ){
-            log.debug( "Notification Service set to " + (notificationService==null?"null":"non-null") + "." );
-        }
-    }
-
-    public void setRpcRegistry(RpcProviderRegistry rpcRegistry) {
-        this.rpcRegistry = rpcRegistry;
-        if( log.isDebugEnabled() ){
-            log.debug( "RpcRegistry set to " + (rpcRegistry==null?"null":"non-null") + "." );
-        }
+        LOG.info( "Successfully closed provider for {}", APPLICATION_NAME);
     }
 
 	@Override
@@ -120,10 +104,10 @@ public class DataChangeProvider implements AutoCloseable, DataChangeService{
 		Properties parms = new Properties();
 		DataChangeNotificationOutputBuilder serviceDataBuilder = new DataChangeNotificationOutputBuilder();
 
-		log.info( SVC_OPERATION +" called." );
+		LOG.info( SVC_OPERATION +" called." );
 
 		if(input == null || input.getAaiEventId() == null) {
-			log.debug("exiting " +SVC_OPERATION+ " because of invalid input");
+			LOG.debug("exiting " +SVC_OPERATION+ " because of invalid input");
 			serviceDataBuilder.setDataChangeResponseCode("403");
 			RpcResult<DataChangeNotificationOutput> rpcResult =
 				RpcResultBuilder.<DataChangeNotificationOutput> status(true).withResult(serviceDataBuilder.build()).build();
@@ -131,46 +115,43 @@ public class DataChangeProvider implements AutoCloseable, DataChangeService{
 		}
 
 		// add input to parms
-		log.info("Adding INPUT data for "+SVC_OPERATION+" input: " + input);
+		LOG.info("Adding INPUT data for "+SVC_OPERATION+" input: " + input);
 		DataChangeNotificationInputBuilder inputBuilder = new DataChangeNotificationInputBuilder(input);
 		MdsalHelper.toProperties(parms, inputBuilder.build());
 
 		// Call SLI sync method
-		// Get SvcLogicService reference
-
-		DataChangeClient svcLogicClient = new DataChangeClient();
 		Properties respProps = null;
 
 		try
 		{
-			if (svcLogicClient.hasGraph("DataChange", SVC_OPERATION , null, "sync"))
+			if (dataChangeClient.hasGraph("DataChange", SVC_OPERATION , null, "sync"))
 			{
 				try
 				{
-					respProps = svcLogicClient.execute("DataChange", SVC_OPERATION, null, "sync", serviceDataBuilder, parms);
+					respProps = dataChangeClient.execute("DataChange", SVC_OPERATION, null, "sync", serviceDataBuilder, parms);
 				}
 				catch (Exception e)
 				{
-					log.error("Caught exception executing service logic for "+ SVC_OPERATION, e);
+					LOG.error("Caught exception executing service logic for "+ SVC_OPERATION, e);
 					serviceDataBuilder.setDataChangeResponseCode("500");
 				}
 			} else {
-				log.error("No service logic active for DataChange: '" + SVC_OPERATION + "'");
+				LOG.error("No service logic active for DataChange: '" + SVC_OPERATION + "'");
 				serviceDataBuilder.setDataChangeResponseCode("503");
 			}
 		}
 		catch (Exception e)
 		{
-			log.error("Caught exception looking for service logic", e);
+			LOG.error("Caught exception looking for service logic", e);
 			serviceDataBuilder.setDataChangeResponseCode("500");
 		}
 
 		String errorCode = serviceDataBuilder.getDataChangeResponseCode();
 
 		if ( errorCode != null && errorCode.length() != 0 && !( errorCode.equals("0")|| errorCode.equals("200"))) {
-			log.error("Returned FAILED for "+SVC_OPERATION+" error code: '" + errorCode + "'");
+			LOG.error("Returned FAILED for "+SVC_OPERATION+" error code: '" + errorCode + "'");
 		} else {
-			log.info("Returned SUCCESS for "+SVC_OPERATION+" ");
+			LOG.info("Returned SUCCESS for "+SVC_OPERATION+" ");
 		}
 
 		RpcResult<DataChangeNotificationOutput> rpcResult =
