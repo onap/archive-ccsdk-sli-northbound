@@ -25,39 +25,22 @@ import java.util.Properties;
 
 import org.onap.ccsdk.sli.core.sli.SvcLogicException;
 import org.onap.ccsdk.sli.core.sli.provider.SvcLogicService;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AsdcApiSliClient {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(AsdcApiSliClient.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AsdcApiSliClient.class);
 
-	private SvcLogicService svcLogic = null;
+	private final SvcLogicService svcLogicService;
 
-	public AsdcApiSliClient()
-	{
-		BundleContext bctx = FrameworkUtil.getBundle(SvcLogicService.class).getBundleContext();
-
-    	// Get SvcLogicService reference
-		ServiceReference sref = bctx.getServiceReference(SvcLogicService.NAME);
-		if (sref  != null)
-		{
-			svcLogic =  (SvcLogicService) bctx.getService(sref);
-		}
-		else
-		{
-			LOG.warn("Cannot find service reference for "+SvcLogicService.NAME);
-
-		}
+	public AsdcApiSliClient(final SvcLogicService svcLogicService) {
+		this.svcLogicService = svcLogicService;
 	}
 
 	public boolean hasGraph(String module, String rpc, String version, String mode) throws SvcLogicException
 	{
-		return(svcLogic.hasGraph(module, rpc, version, mode));
+		return(svcLogicService.hasGraph(module, rpc, version, mode));
 	}
 
 
@@ -78,7 +61,7 @@ public class AsdcApiSliClient {
 			}
 		}
 
-		Properties respProps = svcLogic.execute(module, rpc, version, mode, parms);
+		Properties respProps = svcLogicService.execute(module, rpc, version, mode, parms);
 
 		if (LOG.isDebugEnabled())
 		{

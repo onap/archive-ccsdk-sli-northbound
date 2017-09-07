@@ -95,32 +95,36 @@ import com.google.common.util.concurrent.Futures;
  */
 public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(AsdcApiProvider.class);
+
     private static final String ACTIVE_VERSION = "active";
 
-    private final Logger log = LoggerFactory.getLogger( AsdcApiProvider.class );
-    private final String appName = "asdcApi";
+    private static final String APPLICATION_NAME = "asdcApi";
 
     private final ExecutorService executor;
     protected DataBroker dataBroker;
     protected NotificationProviderService notificationService;
     protected RpcProviderRegistry rpcRegistry;
+    private final AsdcApiSliClient asdcApiSliClient;
 
     protected BindingAwareBroker.RpcRegistration<ASDCAPIService> rpcRegistration;
 
-    public AsdcApiProvider(DataBroker dataBroker2,
-            NotificationProviderService notificationProviderService,
-            RpcProviderRegistry rpcProviderRegistry) {
-        this.log.info( "Creating provider for " + appName );
+    public AsdcApiProvider(final DataBroker dataBroker,
+                           final NotificationProviderService notificationProviderService,
+                           final RpcProviderRegistry rpcProviderRegistry,
+                           final AsdcApiSliClient asdcApiSliClient) {
+
+        LOG.info("Creating provider for {}", APPLICATION_NAME);
         executor = Executors.newFixedThreadPool(1);
-        dataBroker = dataBroker2;
+        this.dataBroker = dataBroker;
         notificationService = notificationProviderService;
         rpcRegistry = rpcProviderRegistry;
+        this.asdcApiSliClient= asdcApiSliClient;
         initialize();
     }
 
     public void initialize(){
-        log.info( "Initializing provider for " + appName );
-
+        LOG.info("Initializing {} for {}", this.getClass().getName(), APPLICATION_NAME);
 
         createContainers();
 
@@ -128,10 +132,9 @@ public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
             if (rpcRegistry != null) {
                 rpcRegistration = rpcRegistry.addRpcImplementation(
                         ASDCAPIService.class, this);
-                log.info("Initialization complete for " + appName);
+                LOG.info("Initialization complete for {}", APPLICATION_NAME);
             } else {
-                log.warn("Error initializing " + appName
-                        + " : rpcRegistry unset");
+                LOG.warn("Error initializing {} : rpcRegistry unset", APPLICATION_NAME);
             }
         }
     }
@@ -151,14 +154,14 @@ public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
         try {
             CheckedFuture<Void, TransactionCommitFailedException> checkedFuture = t.submit();
             checkedFuture.get();
-            log.info("Create Containers succeeded!: ");
+            LOG.info("Create Containers succeeded!: ");
 
         } catch (InterruptedException | ExecutionException e) {
-            log.error("Create Containers Failed: " + e);
+            LOG.error("Create Containers Failed: " + e);
             e.printStackTrace();
         }
         } else {
-            log.warn("createContainers : cannot find dataBroker to create containers");
+            LOG.warn("createContainers : cannot find dataBroker to create containers");
         }
     }
     protected void initializeChild() {
@@ -167,37 +170,11 @@ public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
 
     @Override
     public void close() throws Exception {
-        log.info( "Closing provider for " + appName );
+        LOG.info( "Closing provider for " + APPLICATION_NAME);
         executor.shutdown();
         rpcRegistration.close();
-        log.info( "Successfully closed provider for " + appName );
+        LOG.info( "Successfully closed provider for " + APPLICATION_NAME);
     }
-
-    public void setDataBroker(DataBroker dataBroker) {
-        this.dataBroker = dataBroker;
-        if( log.isDebugEnabled() ){
-            log.debug( "DataBroker set to " + (dataBroker==null?"null":"non-null") + "." );
-        }
-    }
-
-    public void setNotificationService(
-            NotificationProviderService notificationService) {
-        this.notificationService = notificationService;
-        if( log.isDebugEnabled() ){
-            log.debug( "Notification Service set to " + (notificationService==null?"null":"non-null") + "." );
-        }
-    }
-
-    public void setRpcRegistry(RpcProviderRegistry rpcRegistry) {
-        this.rpcRegistry = rpcRegistry;
-
-        rpcRegistration = rpcRegistry.addRpcImplementation(ASDCAPIService.class, this);
-
-        if( log.isDebugEnabled() ){
-            log.debug( "RpcRegistry set to " + (rpcRegistry==null?"null":"non-null") + "." );
-        }
-    }
-
 
     protected boolean artifactVersionExists(String aName, String aVersion) {
         InstanceIdentifier artifactInstanceId =
@@ -208,7 +185,7 @@ public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
         try {
             data = (Optional<Artifact>) readTx.read(LogicalDatastoreType.CONFIGURATION, artifactInstanceId).get();
         } catch (InterruptedException | ExecutionException e) {
-            log.error("Caught Exception reading MD-SAL for ["+aName+","+ aVersion+"] " ,e);
+            LOG.error("Caught Exception reading MD-SAL for ["+aName+","+ aVersion+"] " ,e);
             return false;
 
         }
@@ -244,7 +221,7 @@ public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
                     artifact);
             tx.submit().checkedGet();
         } catch (Exception e) {
-            log.error("Caught exception trying to add artifact entry", e);
+            LOG.error("Caught exception trying to add artifact entry", e);
         }
 
     }
@@ -279,7 +256,7 @@ public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
                 version);
         tx.submit().checkedGet();
     } catch (Exception e) {
-        log.error(
+        LOG.error(
                 "Caught exception trying to save entry to MD-SAL",
                 e);
     }
@@ -307,7 +284,7 @@ public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
                 version);
         tx.submit().checkedGet();
     } catch (Exception e) {
-        log.error(
+        LOG.error(
                 "Caught exception trying to save entry to MD-SAL",
                 e);
     }
@@ -320,10 +297,10 @@ public Future<RpcResult<VfLicenseModelUpdateOutput>> vfLicenseModelUpdate(VfLice
 
     Properties parms = new Properties();
 
-    log.info( SVC_OPERATION +" called." );
+    LOG.info( SVC_OPERATION +" called." );
 
     if(input == null ) {
-        log.debug("exiting " +SVC_OPERATION+ " because of invalid input");
+        LOG.debug("exiting " +SVC_OPERATION+ " because of invalid input");
         return null;
     }
 
@@ -339,28 +316,24 @@ public Future<RpcResult<VfLicenseModelUpdateOutput>> vfLicenseModelUpdate(VfLice
         errorMessage = "Artifact version already exists";
     } else {
         // Translate input object into SLI-consumable properties
-        log.info("Adding INPUT data for "+SVC_OPERATION+" input: " + input);
+        LOG.info("Adding INPUT data for "+SVC_OPERATION+" input: " + input);
         AsdcApiUtil.toProperties(parms, input);
 
 
         // Call directed graph
-
         Properties respProps = null;
-
-
-        AsdcApiSliClient sliClient = new AsdcApiSliClient();
         try
         {
-            if (sliClient.hasGraph("ASDC-API", SVC_OPERATION , null, "sync"))
+            if (asdcApiSliClient.hasGraph("ASDC-API", SVC_OPERATION , null, "sync"))
             {
 
                 try
                 {
-                    respProps = sliClient.execute("ASDC-API", SVC_OPERATION, null, "sync", parms);
+                    respProps = asdcApiSliClient.execute("ASDC-API", SVC_OPERATION, null, "sync", parms);
                 }
                 catch (Exception e)
                 {
-                    log.error("Caught exception executing service logic for "+ SVC_OPERATION, e);
+                    LOG.error("Caught exception executing service logic for "+ SVC_OPERATION, e);
                 }
             } else {
                 errorMessage = "No service logic active for ASDC-API: '" + SVC_OPERATION + "'";
@@ -371,7 +344,7 @@ public Future<RpcResult<VfLicenseModelUpdateOutput>> vfLicenseModelUpdate(VfLice
         {
             errorCode = "500";
             errorMessage = e.getMessage();
-            log.error("Caught exception looking for service logic", e);
+            LOG.error("Caught exception looking for service logic", e);
         }
 
 
@@ -384,14 +357,14 @@ public Future<RpcResult<VfLicenseModelUpdateOutput>> vfLicenseModelUpdate(VfLice
 
 
     if ("200".equals(errorCode)) {
-        log.info("ASDC update succeeded");
+        LOG.info("ASDC update succeeded");
 
         // Update config tree
         applyVfLicenseModelUpdate(input);
         addArtifactVersion(input.getArtifactName(), input.getArtifactVersion());
 
     } else {
-        log.info("ASDC update failed ("+errorCode+" : "+errorMessage);
+        LOG.info("ASDC update failed ("+errorCode+" : "+errorMessage);
     }
 
     // Send response
