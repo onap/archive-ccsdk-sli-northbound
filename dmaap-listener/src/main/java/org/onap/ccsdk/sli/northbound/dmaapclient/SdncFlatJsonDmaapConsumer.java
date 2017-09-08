@@ -164,10 +164,9 @@ public class SdncFlatJsonDmaapConsumer extends SdncDmaapConsumer {
 			return(null);
 		}
 
-		try {
-			BufferedReader mapReader = new BufferedReader(new FileReader(mapFile));
+		try (BufferedReader mapReader = new BufferedReader(new FileReader(mapFile))) {
 
-			String curLine = null;
+			String curLine;
 
 			while ((curLine = mapReader.readLine()) != null) {
 				curLine = curLine.trim();

@@ -87,10 +87,7 @@ public class SdncArtifactMap {
 
 		if (mapFile.exists() && mapFile.canRead()) {
 
-			BufferedReader rdr = null;
-			try {
-
-				rdr = new BufferedReader(new FileReader(mapFile));
+			try (BufferedReader rdr = new BufferedReader(new FileReader(mapFile))) {
 
 				for (String ln ; (ln = rdr.readLine()) != null ; ) {
 					String[] lnFields = ln.split(",");
@@ -107,14 +104,6 @@ public class SdncArtifactMap {
 			} catch (Exception e) {
 				LOG.error("Caught exception reading artifact map", e);
 				return;
-			} finally {
-				if (rdr != null) {
-					try {
-						rdr.close();
-					} catch (IOException e) {
-
-					}
-				}
 			}
 		}
 	}
