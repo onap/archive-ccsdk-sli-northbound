@@ -208,12 +208,8 @@ public class SdncUebCallback implements INotificationCallback {
 		Properties props = new Properties();
 		props.load(new FileInputStream(propFile));
 
-		try {
-			jdbcDataSource = new DBResourceManager(props);
-		} catch(Throwable exc) {
-			LOG.error("", exc);
-		}
-
+		jdbcDataSource = new DBResourceManager(props);
+		
 		if(((DBResourceManager)jdbcDataSource).isActive()){
 			LOG.warn( "DBLIB: JDBC DataSource has been initialized.");
 		} else {
@@ -405,8 +401,7 @@ public class SdncUebCallback implements INotificationCallback {
 
         boolean writeSucceeded = false;
 
-        try {
-            FileWriter spoolFileWriter = new FileWriter(spoolFile);
+        try (FileWriter spoolFileWriter = new FileWriter(spoolFile)) {
             spoolFileWriter.write(payload);
             spoolFileWriter.close();
             writeSucceeded = true;
@@ -916,11 +911,8 @@ public class SdncUebCallback implements INotificationCallback {
         msgBuffer.append("<artifact-version>"+artifact.getArtifactVersion()+"</artifact-version>\n");
 
 
-        try {
-            BufferedReader rdr = new BufferedReader(new FileReader(artifact.getFile()));
-
+        try (BufferedReader rdr = new BufferedReader(new FileReader(artifact.getFile()))){
             String curLine = rdr.readLine();
-
             while (curLine != null) {
 
                 if (!curLine.startsWith("<?")) {
@@ -928,8 +920,6 @@ public class SdncUebCallback implements INotificationCallback {
                 }
                 curLine = rdr.readLine();
             }
-            rdr.close();
-
         } catch (Exception e) {
             LOG.error("Could not process spool file "+artifact.getFile().getName(), e);
 			return(DistributionStatusEnum.DEPLOY_ERROR);
