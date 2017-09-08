@@ -120,14 +120,11 @@ public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
 
     public void initialize(){
         log.info( "Initializing provider for " + appName );
-
-
+        // Create the top level containers
         createContainers();
-
         if (rpcRegistration == null) {
             if (rpcRegistry != null) {
-                rpcRegistration = rpcRegistry.addRpcImplementation(
-                        ASDCAPIService.class, this);
+                rpcRegistration = rpcRegistry.addRpcImplementation(ASDCAPIService.class, this);
                 log.info("Initialization complete for " + appName);
             } else {
                 log.warn("Error initializing " + appName
@@ -190,9 +187,6 @@ public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
 
     public void setRpcRegistry(RpcProviderRegistry rpcRegistry) {
         this.rpcRegistry = rpcRegistry;
-
-        rpcRegistration = rpcRegistry.addRpcImplementation(ASDCAPIService.class, this);
-
         if( log.isDebugEnabled() ){
             log.debug( "RpcRegistry set to " + (rpcRegistry==null?"null":"non-null") + "." );
         }
@@ -202,9 +196,9 @@ public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
     protected boolean artifactVersionExists(String aName, String aVersion) {
         InstanceIdentifier artifactInstanceId =
                 InstanceIdentifier.<Artifacts>builder(Artifacts.class)
-                .child(Artifact.class, new ArtifactKey(aName, aVersion)).toInstance();
+                .child(Artifact.class, new ArtifactKey(aName, aVersion)).build();
         ReadOnlyTransaction readTx = dataBroker.newReadOnlyTransaction();
-        Optional<Artifact> data = null;
+        Optional<Artifact> data;
         try {
             data = (Optional<Artifact>) readTx.read(LogicalDatastoreType.CONFIGURATION, artifactInstanceId).get();
         } catch (InterruptedException | ExecutionException e) {
@@ -235,8 +229,7 @@ public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
                     .<Artifacts> builder(Artifacts.class)
                     .child(Artifact.class, artifact.getKey());
 
-            InstanceIdentifier<Artifact> path = aIdBuilder
-                    .toInstance();
+            InstanceIdentifier<Artifact> path = aIdBuilder.build();
 
             WriteTransaction tx = dataBroker.newWriteOnlyTransaction();
 
@@ -271,8 +264,7 @@ public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
                 .<VfLicenseModelVersions> builder(VfLicenseModelVersions.class)
                 .child(VfLicenseModelVersion.class, version.getKey());
 
-        InstanceIdentifier<VfLicenseModelVersion> path = versionIdBuilder
-                .toInstance();
+        InstanceIdentifier<VfLicenseModelVersion> path = versionIdBuilder.build();
 
         WriteTransaction tx = dataBroker.newWriteOnlyTransaction();
   tx.merge(LogicalDatastoreType.CONFIGURATION, path,
@@ -298,8 +290,7 @@ public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
                 .<VfLicenseModelVersions> builder(VfLicenseModelVersions.class)
                 .child(VfLicenseModelVersion.class, version.getKey());
 
-        InstanceIdentifier<VfLicenseModelVersion> path = versionIdBuilder
-                .toInstance();
+        InstanceIdentifier<VfLicenseModelVersion> path = versionIdBuilder.build();
 
         WriteTransaction tx = dataBroker.newWriteOnlyTransaction();
 
