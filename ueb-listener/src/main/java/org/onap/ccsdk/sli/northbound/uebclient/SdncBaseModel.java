@@ -51,7 +51,7 @@ public class SdncBaseModel {
 	
 	public SdncBaseModel(ISdcCsarHelper sdcCsarHelper, Metadata metadata) {
 
-		params = new HashMap<String, String>();
+		params = new HashMap<>();
 		this.sdcCsarHelper = sdcCsarHelper;
 		
 		// extract service metadata
@@ -66,7 +66,7 @@ public class SdncBaseModel {
 
 	public SdncBaseModel(ISdcCsarHelper sdcCsarHelper, NodeTemplate nodeTemplate) {
 
-		params = new HashMap<String, String>();
+		params = new HashMap<>();
 		this.sdcCsarHelper = sdcCsarHelper;
 
 		// extract nodeTemplate metadata
@@ -79,7 +79,7 @@ public class SdncBaseModel {
 
 	public SdncBaseModel(ISdcCsarHelper sdcCsarHelper, Group group) {
 
-		params = new HashMap<String, String>();
+		params = new HashMap<>();
 		this.sdcCsarHelper = sdcCsarHelper;
 
 		// extract group metadata
@@ -257,9 +257,9 @@ public class SdncBaseModel {
 		sb.append(") values (" + getCustomizationUUID() + ", \"" + model_yaml + "\", ");
 
 		paramCount = 0;
-		for (String paramKey :  params.keySet()) {
+		for (Map.Entry<String,String> entry : params.entrySet()) {
 			paramCount++;
-			String paramValue = params.get(paramKey);
+			String paramValue = entry.getValue();
 		    sb.append(paramValue);
 		    if (paramCount < params.size()) sb.append(", ");
 		}
@@ -283,9 +283,9 @@ public class SdncBaseModel {
 		sb.append(") values (" + keyValue + ", ");
 
 		paramCount = 0;
-		for (String paramKey :  params.keySet()) {
+		for (Map.Entry<String,String> entry : params.entrySet()) {
 			paramCount++;
-			String paramValue = params.get(paramKey);
+			String paramValue = entry.getValue();
 		    sb.append(paramValue);
 		    if (paramCount < params.size()) sb.append(", ");
 		}
