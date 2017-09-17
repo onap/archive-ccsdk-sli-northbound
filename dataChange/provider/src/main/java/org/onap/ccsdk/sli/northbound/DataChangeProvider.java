@@ -148,7 +148,7 @@ public class DataChangeProvider implements AutoCloseable, DataChangeService {
 
 		String errorCode = serviceDataBuilder.getDataChangeResponseCode();
 
-		if ( errorCode != null && errorCode.length() != 0 && !( errorCode.equals("0")|| errorCode.equals("200"))) {
+		if (!("0".equals(errorCode) || "200".equals(errorCode))) {
 			LOG.error("Returned FAILED for "+SVC_OPERATION+" error code: '" + errorCode + "'");
 		} else {
 			LOG.info("Returned SUCCESS for "+SVC_OPERATION+" ");
