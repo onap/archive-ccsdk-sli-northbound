@@ -28,12 +28,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
+import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.controller.md.sal.binding.api.ReadOnlyTransaction;
 import org.opendaylight.controller.md.sal.binding.api.WriteTransaction;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.controller.md.sal.common.api.data.TransactionCommitFailedException;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
-import org.opendaylight.controller.sal.binding.api.NotificationProviderService;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.opendaylight.yang.gen.v1.http.xmlns.onap.org.asdc.license.model._1._0.rev160427.vf.license.model.grouping.VfLicenseModel;
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.rev170201.ASDCAPIService;
@@ -103,21 +103,21 @@ public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
 
     private final ExecutorService executor;
     protected DataBroker dataBroker;
-    protected NotificationProviderService notificationService;
+    protected NotificationPublishService notificationService;
     protected RpcProviderRegistry rpcRegistry;
     private final AsdcApiSliClient asdcApiSliClient;
 
     protected BindingAwareBroker.RpcRegistration<ASDCAPIService> rpcRegistration;
 
     public AsdcApiProvider(final DataBroker dataBroker,
-                           final NotificationProviderService notificationProviderService,
+                           final NotificationPublishService notificationPublishService,
                            final RpcProviderRegistry rpcProviderRegistry,
                            final AsdcApiSliClient asdcApiSliClient) {
 
         LOG.info("Creating provider for {}", APPLICATION_NAME);
         executor = Executors.newFixedThreadPool(1);
         this.dataBroker = dataBroker;
-        notificationService = notificationProviderService;
+        notificationService = notificationPublishService;
         rpcRegistry = rpcProviderRegistry;
         this.asdcApiSliClient= asdcApiSliClient;
         initialize();
@@ -179,7 +179,7 @@ public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
     protected boolean artifactVersionExists(String aName, String aVersion) {
         InstanceIdentifier artifactInstanceId =
                 InstanceIdentifier.<Artifacts>builder(Artifacts.class)
-                .child(Artifact.class, new ArtifactKey(aName, aVersion)).toInstance();
+                .child(Artifact.class, new ArtifactKey(aName, aVersion)).build();
         ReadOnlyTransaction readTx = dataBroker.newReadOnlyTransaction();
         Optional<Artifact> data = null;
         try {
@@ -212,8 +212,7 @@ public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
                     .<Artifacts> builder(Artifacts.class)
                     .child(Artifact.class, artifact.getKey());
 
-            InstanceIdentifier<Artifact> path = aIdBuilder
-                    .toInstance();
+            InstanceIdentifier<Artifact> path = aIdBuilder.build();
 
             WriteTransaction tx = dataBroker.newWriteOnlyTransaction();
 
@@ -248,8 +247,7 @@ public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
                 .<VfLicenseModelVersions> builder(VfLicenseModelVersions.class)
                 .child(VfLicenseModelVersion.class, version.getKey());
 
-        InstanceIdentifier<VfLicenseModelVersion> path = versionIdBuilder
-                .toInstance();
+        InstanceIdentifier<VfLicenseModelVersion> path = versionIdBuilder.build();
 
         WriteTransaction tx = dataBroker.newWriteOnlyTransaction();
   tx.merge(LogicalDatastoreType.CONFIGURATION, path,
@@ -275,8 +273,7 @@ public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
                 .<VfLicenseModelVersions> builder(VfLicenseModelVersions.class)
                 .child(VfLicenseModelVersion.class, version.getKey());
 
-        InstanceIdentifier<VfLicenseModelVersion> path = versionIdBuilder
-                .toInstance();
+        InstanceIdentifier<VfLicenseModelVersion> path = versionIdBuilder.build();
 
         WriteTransaction tx = dataBroker.newWriteOnlyTransaction();
 
