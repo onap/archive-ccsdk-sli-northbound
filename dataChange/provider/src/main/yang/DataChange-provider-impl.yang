@@ -6,6 +6,10 @@ module DataChange-provider-impl {
 
     import config { prefix config; revision-date 2013-04-05; }
     import opendaylight-md-sal-binding { prefix mdsal; revision-date 2013-10-28; }
+    import opendaylight-sal-binding-broker-impl {
+        prefix binding-impl;
+        revision-date 2013-10-28;
+    }
 
      description
         "This module contains the base YANG definitions for
@@ -39,11 +43,11 @@ module DataChange-provider-impl {
                 }
             }
 
-            container notification-service {
+            container notification-publish-adapter {
                 uses config:service-ref {
                     refine type {
                         mandatory true;
-                        config:required-identity mdsal:binding-notification-service;
+                        config:required-identity binding-impl:binding-new-notification-publish-service;
                     }
                 }
             }
