@@ -15,7 +15,7 @@
                odl:type="default" />
 
     <reference id="notificationService"
-               interface="org.opendaylight.controller.sal.binding.api.NotificationProviderService"
+               interface="org.opendaylight.controller.sal.binding.impl.NotificationPublishService"
                odl:type="default" />
 
     <reference id="rpcRegistry"

@@ -28,6 +28,7 @@ import java.util.concurrent.Future;
 
 import org.onap.ccsdk.sli.core.sli.provider.MdsalHelper;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
+import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
 import org.opendaylight.controller.sal.binding.api.NotificationProviderService;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
@@ -58,21 +59,21 @@ public class DataChangeProvider implements AutoCloseable, DataChangeService {
     private final ExecutorService executor;
 
     protected DataBroker dataBroker;
-    protected NotificationProviderService notificationService;
+    protected NotificationPublishService notificationService;
     protected RpcProviderRegistry rpcRegistry;
     protected BindingAwareBroker.RpcRegistration<DataChangeService> rpcRegistration;
     private final DataChangeClient dataChangeClient;
 
 
     public DataChangeProvider(final DataBroker dataBroker,
-							  final NotificationProviderService notificationProviderService,
+							  final NotificationPublishService notificationPublishService,
 							  final RpcProviderRegistry rpcProviderRegistry,
 							  final DataChangeClient dataChangeClient) {
 
         this.LOG.info( "Creating provider for {}", APPLICATION_NAME);
         executor = Executors.newFixedThreadPool(1);
 		this.dataBroker = dataBroker;
-		this.notificationService = notificationProviderService;
+		this.notificationService = notificationPublishService;
 		this.rpcRegistry = rpcProviderRegistry;
 		this.dataChangeClient = dataChangeClient;
 		initialize();
