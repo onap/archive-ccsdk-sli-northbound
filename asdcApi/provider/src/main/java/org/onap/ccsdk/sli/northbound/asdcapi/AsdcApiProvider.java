@@ -28,12 +28,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
+import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.controller.md.sal.binding.api.ReadOnlyTransaction;
 import org.opendaylight.controller.md.sal.binding.api.WriteTransaction;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.controller.md.sal.common.api.data.TransactionCommitFailedException;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
-import org.opendaylight.controller.sal.binding.api.NotificationProviderService;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.opendaylight.yang.gen.v1.http.xmlns.onap.org.asdc.license.model._1._0.rev160427.vf.license.model.grouping.VfLicenseModel;
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.rev170201.ASDCAPIService;
@@ -71,27 +71,27 @@ import com.google.common.util.concurrent.Futures;
  *
  * <pre>
 
-    @Override
-    public java.lang.AutoCloseable createInstance() {
+ @Override
+ public java.lang.AutoCloseable createInstance() {
 
-         final asdcApiProvider provider = new asdcApiProvider();
-         provider.setDataBroker( getDataBrokerDependency() );
-         provider.setNotificationService( getNotificationServiceDependency() );
-         provider.setRpcRegistry( getRpcRegistryDependency() );
-         provider.initialize();
-         return new AutoCloseable() {
+ final asdcApiProvider provider = new asdcApiProvider();
+ provider.setDataBroker( getDataBrokerDependency() );
+ provider.setNotificationService( getNotificationServiceDependency() );
+ provider.setRpcRegistry( getRpcRegistryDependency() );
+ provider.initialize();
+ return new AutoCloseable() {
 
-            @Override
-            public void close() throws Exception {
-                //TODO: CLOSE ANY REGISTRATION OBJECTS CREATED USING ABOVE BROKER/NOTIFICATION
-                //SERVIE/RPC REGISTRY
-                provider.close();
-            }
-        };
-    }
+ @Override
+ public void close() throws Exception {
+ //TODO: CLOSE ANY REGISTRATION OBJECTS CREATED USING ABOVE BROKER/NOTIFICATION
+ //SERVIE/RPC REGISTRY
+ provider.close();
+ }
+ };
+ }
 
 
-    </pre>
+ </pre>
  */
 public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
 
@@ -103,21 +103,21 @@ public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
 
     private final ExecutorService executor;
     protected DataBroker dataBroker;
-    protected NotificationProviderService notificationService;
+    protected NotificationPublishService notificationService;
     protected RpcProviderRegistry rpcRegistry;
     private final AsdcApiSliClient asdcApiSliClient;
 
     protected BindingAwareBroker.RpcRegistration<ASDCAPIService> rpcRegistration;
 
     public AsdcApiProvider(final DataBroker dataBroker,
-                           final NotificationProviderService notificationProviderService,
-                           final RpcProviderRegistry rpcProviderRegistry,
-                           final AsdcApiSliClient asdcApiSliClient) {
+        final NotificationPublishService notificationPublishService,
+        final RpcProviderRegistry rpcProviderRegistry,
+        final AsdcApiSliClient asdcApiSliClient) {
 
         LOG.info("Creating provider for {}", APPLICATION_NAME);
         executor = Executors.newFixedThreadPool(1);
         this.dataBroker = dataBroker;
-        notificationService = notificationProviderService;
+        notificationService = notificationPublishService;
         rpcRegistry = rpcProviderRegistry;
         this.asdcApiSliClient= asdcApiSliClient;
         initialize();
@@ -131,7 +131,7 @@ public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
         if (rpcRegistration == null) {
             if (rpcRegistry != null) {
                 rpcRegistration = rpcRegistry.addRpcImplementation(
-                        ASDCAPIService.class, this);
+                    ASDCAPIService.class, this);
                 LOG.info("Initialization complete for {}", APPLICATION_NAME);
             } else {
                 LOG.warn("Error initializing {} : rpcRegistry unset", APPLICATION_NAME);
@@ -142,24 +142,24 @@ public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
     private void createContainers() {
 
         if (dataBroker != null) {
-        final WriteTransaction t = dataBroker.newReadWriteTransaction();
+            final WriteTransaction t = dataBroker.newReadWriteTransaction();
 
-        // Create the vf-model-license-versions and artifacts containers
-        t.merge(LogicalDatastoreType.CONFIGURATION, InstanceIdentifier.create(VfLicenseModelVersions.class),
-        new VfLicenseModelVersionsBuilder().build());
+            // Create the vf-model-license-versions and artifacts containers
+            t.merge(LogicalDatastoreType.CONFIGURATION, InstanceIdentifier.create(VfLicenseModelVersions.class),
+                new VfLicenseModelVersionsBuilder().build());
 
-        t.merge(LogicalDatastoreType.CONFIGURATION, InstanceIdentifier.create(Artifacts.class), new ArtifactsBuilder().build());
+            t.merge(LogicalDatastoreType.CONFIGURATION, InstanceIdentifier.create(Artifacts.class), new ArtifactsBuilder().build());
 
 
-        try {
-            CheckedFuture<Void, TransactionCommitFailedException> checkedFuture = t.submit();
-            checkedFuture.get();
-            LOG.info("Create Containers succeeded!: ");
+            try {
+                CheckedFuture<Void, TransactionCommitFailedException> checkedFuture = t.submit();
+                checkedFuture.get();
+                LOG.info("Create Containers succeeded!: ");
 
-        } catch (InterruptedException | ExecutionException e) {
-            LOG.error("Create Containers Failed: " + e);
-            e.printStackTrace();
-        }
+            } catch (InterruptedException | ExecutionException e) {
+                LOG.error("Create Containers Failed: " + e);
+                e.printStackTrace();
+            }
         } else {
             LOG.warn("createContainers : cannot find dataBroker to create containers");
         }
@@ -178,8 +178,8 @@ public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
 
     protected boolean artifactVersionExists(String aName, String aVersion) {
         InstanceIdentifier artifactInstanceId =
-                InstanceIdentifier.<Artifacts>builder(Artifacts.class)
-                .child(Artifact.class, new ArtifactKey(aName, aVersion)).toInstance();
+            InstanceIdentifier.<Artifacts>builder(Artifacts.class)
+                .child(Artifact.class, new ArtifactKey(aName, aVersion)).build();
         ReadOnlyTransaction readTx = dataBroker.newReadOnlyTransaction();
         Optional<Artifact> data = null;
         try {
@@ -209,16 +209,15 @@ public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
             Artifact artifact = aBuilder.build();
 
             InstanceIdentifier.InstanceIdentifierBuilder<Artifact> aIdBuilder = InstanceIdentifier
-                    .<Artifacts> builder(Artifacts.class)
-                    .child(Artifact.class, artifact.getKey());
+                .<Artifacts> builder(Artifacts.class)
+                .child(Artifact.class, artifact.getKey());
 
-            InstanceIdentifier<Artifact> path = aIdBuilder
-                    .toInstance();
+            InstanceIdentifier<Artifact> path = aIdBuilder.build();
 
             WriteTransaction tx = dataBroker.newWriteOnlyTransaction();
 
             tx.merge(LogicalDatastoreType.CONFIGURATION, path,
-                    artifact);
+                artifact);
             tx.submit().checkedGet();
         } catch (Exception e) {
             LOG.error("Caught exception trying to add artifact entry", e);
@@ -229,160 +228,158 @@ public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
 
     private void applyVfLicenseModelUpdate(VfLicenseModelUpdateInput input) {
 
-    String aName = input.getArtifactName();
-    String aVersion = input.getArtifactVersion();
-    VfLicenseModel vfLicenseModel = input.getVfLicenseModel();
+        String aName = input.getArtifactName();
+        String aVersion = input.getArtifactVersion();
+        VfLicenseModel vfLicenseModel = input.getVfLicenseModel();
 
 
-    // Add new version (version = artifact-version)
-    try {
+        // Add new version (version = artifact-version)
+        try {
 
-        VfLicenseModelVersionBuilder vBuilder = new VfLicenseModelVersionBuilder();
-        vBuilder.setArtifactName(aName);
-        vBuilder.setArtifactVersion(aVersion);
-        vBuilder.setVfLicenseModel(vfLicenseModel);
+            VfLicenseModelVersionBuilder vBuilder = new VfLicenseModelVersionBuilder();
+            vBuilder.setArtifactName(aName);
+            vBuilder.setArtifactVersion(aVersion);
+            vBuilder.setVfLicenseModel(vfLicenseModel);
 
-        VfLicenseModelVersion version = vBuilder.build();
+            VfLicenseModelVersion version = vBuilder.build();
 
-        InstanceIdentifier.InstanceIdentifierBuilder<VfLicenseModelVersion> versionIdBuilder = InstanceIdentifier
+            InstanceIdentifier.InstanceIdentifierBuilder<VfLicenseModelVersion> versionIdBuilder = InstanceIdentifier
                 .<VfLicenseModelVersions> builder(VfLicenseModelVersions.class)
                 .child(VfLicenseModelVersion.class, version.getKey());
 
-        InstanceIdentifier<VfLicenseModelVersion> path = versionIdBuilder
-                .toInstance();
+            InstanceIdentifier<VfLicenseModelVersion> path = versionIdBuilder.build();
 
-        WriteTransaction tx = dataBroker.newWriteOnlyTransaction();
-  tx.merge(LogicalDatastoreType.CONFIGURATION, path,
+            WriteTransaction tx = dataBroker.newWriteOnlyTransaction();
+            tx.merge(LogicalDatastoreType.CONFIGURATION, path,
                 version);
-        tx.submit().checkedGet();
-    } catch (Exception e) {
-        LOG.error(
+            tx.submit().checkedGet();
+        } catch (Exception e) {
+            LOG.error(
                 "Caught exception trying to save entry to MD-SAL",
                 e);
-    }
+        }
 
 
-    // Add "active" version (version = "active")
-    try {
+        // Add "active" version (version = "active")
+        try {
 
-        VfLicenseModelVersionBuilder vBuilder = new VfLicenseModelVersionBuilder();
-        vBuilder.setArtifactName(aName);
-        vBuilder.setArtifactVersion(ACTIVE_VERSION);
-        vBuilder.setVfLicenseModel(vfLicenseModel);
+            VfLicenseModelVersionBuilder vBuilder = new VfLicenseModelVersionBuilder();
+            vBuilder.setArtifactName(aName);
+            vBuilder.setArtifactVersion(ACTIVE_VERSION);
+            vBuilder.setVfLicenseModel(vfLicenseModel);
 
-        VfLicenseModelVersion version = vBuilder.build();
-        InstanceIdentifier.InstanceIdentifierBuilder<VfLicenseModelVersion> versionIdBuilder = InstanceIdentifier
+            VfLicenseModelVersion version = vBuilder.build();
+            InstanceIdentifier.InstanceIdentifierBuilder<VfLicenseModelVersion> versionIdBuilder = InstanceIdentifier
                 .<VfLicenseModelVersions> builder(VfLicenseModelVersions.class)
                 .child(VfLicenseModelVersion.class, version.getKey());
 
-        InstanceIdentifier<VfLicenseModelVersion> path = versionIdBuilder
-                .toInstance();
+            InstanceIdentifier<VfLicenseModelVersion> path = versionIdBuilder.build();
 
-        WriteTransaction tx = dataBroker.newWriteOnlyTransaction();
+            WriteTransaction tx = dataBroker.newWriteOnlyTransaction();
 
-        tx.merge(LogicalDatastoreType.CONFIGURATION, path,
+            tx.merge(LogicalDatastoreType.CONFIGURATION, path,
                 version);
-        tx.submit().checkedGet();
-    } catch (Exception e) {
-        LOG.error(
+            tx.submit().checkedGet();
+        } catch (Exception e) {
+            LOG.error(
                 "Caught exception trying to save entry to MD-SAL",
                 e);
+        }
+
     }
 
-}
+    @Override
+    public Future<RpcResult<VfLicenseModelUpdateOutput>> vfLicenseModelUpdate(VfLicenseModelUpdateInput input) {
+        final String SVC_OPERATION = "vf-license-model-update";
 
-@Override
-public Future<RpcResult<VfLicenseModelUpdateOutput>> vfLicenseModelUpdate(VfLicenseModelUpdateInput input) {
-    final String SVC_OPERATION = "vf-license-model-update";
+        Properties parms = new Properties();
 
-    Properties parms = new Properties();
+        LOG.info( SVC_OPERATION +" called." );
 
-    LOG.info( SVC_OPERATION +" called." );
+        if(input == null ) {
+            LOG.debug("exiting " +SVC_OPERATION+ " because of invalid input");
+            return null;
+        }
 
-    if(input == null ) {
-        LOG.debug("exiting " +SVC_OPERATION+ " because of invalid input");
-        return null;
-    }
+        VfLicenseModelUpdateInputBuilder inputBuilder = new VfLicenseModelUpdateInputBuilder(input);
+        input = inputBuilder.build();
 
-    VfLicenseModelUpdateInputBuilder inputBuilder = new VfLicenseModelUpdateInputBuilder(input);
-    input = inputBuilder.build();
+        String errorMessage = "Success";
+        String errorCode = "200";
 
-    String errorMessage = "Success";
-    String errorCode = "200";
-
-    // If this artifact already exists, reject this update
-    if (artifactVersionExists(input.getArtifactName(), input.getArtifactVersion())) {
-        errorCode = "409";
-        errorMessage = "Artifact version already exists";
-    } else {
-        // Translate input object into SLI-consumable properties
-        LOG.info("Adding INPUT data for "+SVC_OPERATION+" input: " + input);
-        AsdcApiUtil.toProperties(parms, input);
+        // If this artifact already exists, reject this update
+        if (artifactVersionExists(input.getArtifactName(), input.getArtifactVersion())) {
+            errorCode = "409";
+            errorMessage = "Artifact version already exists";
+        } else {
+            // Translate input object into SLI-consumable properties
+            LOG.info("Adding INPUT data for "+SVC_OPERATION+" input: " + input);
+            AsdcApiUtil.toProperties(parms, input);
 
 
-        // Call directed graph
-        Properties respProps = null;
-        try
-        {
-            if (asdcApiSliClient.hasGraph("ASDC-API", SVC_OPERATION , null, "sync"))
+            // Call directed graph
+            Properties respProps = null;
+            try
             {
+                if (asdcApiSliClient.hasGraph("ASDC-API", SVC_OPERATION , null, "sync"))
+                {
 
-                try
-                {
-                    respProps = asdcApiSliClient.execute("ASDC-API", SVC_OPERATION, null, "sync", parms);
+                    try
+                    {
+                        respProps = asdcApiSliClient.execute("ASDC-API", SVC_OPERATION, null, "sync", parms);
+                    }
+                    catch (Exception e)
+                    {
+                        LOG.error("Caught exception executing service logic for "+ SVC_OPERATION, e);
+                    }
+                } else {
+                    errorMessage = "No service logic active for ASDC-API: '" + SVC_OPERATION + "'";
+                    errorCode = "503";
                 }
-                catch (Exception e)
-                {
-                    LOG.error("Caught exception executing service logic for "+ SVC_OPERATION, e);
-                }
-            } else {
-                errorMessage = "No service logic active for ASDC-API: '" + SVC_OPERATION + "'";
-                errorCode = "503";
+            }
+            catch (Exception e)
+            {
+                errorCode = "500";
+                errorMessage = e.getMessage();
+                LOG.error("Caught exception looking for service logic", e);
+            }
+
+
+            if (respProps != null)
+            {
+                errorCode = respProps.getProperty("error-code");
+                errorMessage = respProps.getProperty("error-message", "");
             }
         }
-        catch (Exception e)
-        {
-            errorCode = "500";
-            errorMessage = e.getMessage();
-            LOG.error("Caught exception looking for service logic", e);
+
+
+        if ("200".equals(errorCode)) {
+            LOG.info("ASDC update succeeded");
+
+            // Update config tree
+            applyVfLicenseModelUpdate(input);
+            addArtifactVersion(input.getArtifactName(), input.getArtifactVersion());
+
+        } else {
+            LOG.info("ASDC update failed ("+errorCode+" : "+errorMessage);
         }
 
-
-        if (respProps != null)
-        {
-            errorCode = respProps.getProperty("error-code");
-            errorMessage = respProps.getProperty("error-message", "");
+        // Send response
+        VfLicenseModelUpdateOutputBuilder respBuilder = new VfLicenseModelUpdateOutputBuilder();
+        respBuilder.setAsdcApiResponseCode(errorCode);
+        if (errorMessage != null && errorMessage.length() > 0) {
+            respBuilder.setAsdcApiResponseText(errorMessage);
         }
+
+        RpcResult<VfLicenseModelUpdateOutput> rpcResult;
+
+
+        rpcResult = RpcResultBuilder.<VfLicenseModelUpdateOutput> status(true).withResult(respBuilder.build()).build();
+
+
+
+        return Futures.immediateFuture(rpcResult);
     }
-
-
-    if ("200".equals(errorCode)) {
-        LOG.info("ASDC update succeeded");
-
-        // Update config tree
-        applyVfLicenseModelUpdate(input);
-        addArtifactVersion(input.getArtifactName(), input.getArtifactVersion());
-
-    } else {
-        LOG.info("ASDC update failed ("+errorCode+" : "+errorMessage);
-    }
-
-    // Send response
-    VfLicenseModelUpdateOutputBuilder respBuilder = new VfLicenseModelUpdateOutputBuilder();
-    respBuilder.setAsdcApiResponseCode(errorCode);
-    if (errorMessage != null && errorMessage.length() > 0) {
-        respBuilder.setAsdcApiResponseText(errorMessage);
-    }
-
-    RpcResult<VfLicenseModelUpdateOutput> rpcResult;
-
-
-    rpcResult = RpcResultBuilder.<VfLicenseModelUpdateOutput> status(true).withResult(respBuilder.build()).build();
-
-
-
-    return Futures.immediateFuture(rpcResult);
-}
 
 
 }
