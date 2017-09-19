@@ -157,8 +157,7 @@ public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
             LOG.info("Create Containers succeeded!: ");
 
         } catch (InterruptedException | ExecutionException e) {
-            LOG.error("Create Containers Failed: " + e);
-            e.printStackTrace();
+            LOG.error("Create Containers Failed: ", e);
         }
         } else {
             LOG.warn("createContainers : cannot find dataBroker to create containers");

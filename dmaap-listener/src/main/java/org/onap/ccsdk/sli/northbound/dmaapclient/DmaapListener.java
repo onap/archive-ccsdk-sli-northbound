@@ -106,7 +106,7 @@ public class DmaapListener {
 				try {
 					consumerClass = Class.forName(consumerClassName);
 				} catch (Exception e) {
-					LOG.error("Could not find DMaap consumer class " + consumerClassName);
+					LOG.error("Could not find DMaap consumer class {}", consumerClassName, e);
 				}
 
 				if (consumerClass != null) {

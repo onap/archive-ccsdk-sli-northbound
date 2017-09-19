@@ -132,7 +132,7 @@ public class SdncUebConfiguration implements IConfiguration{
 			try {
 				pollingInterval = Integer.parseInt(curval);
 			} catch (Exception e) {
-				LOG.warn("Illegal value for org.onap.ccsdk.sli.northbound.uebclient.polling-interval ("+curval+")");
+				LOG.warn("Illegal value for org.onap.ccsdk.sli.northbound.uebclient.polling-interval ({}) ", curval, e);
 			}
 		}
 
@@ -141,7 +141,7 @@ public class SdncUebConfiguration implements IConfiguration{
 			try {
 				pollingTimeout = Integer.parseInt(curval);
 			} catch (Exception e) {
-				LOG.warn("Illegal value for org.onap.ccsdk.sli.northbound.uebclient.polling-timeout ("+curval+")");
+				LOG.warn("Illegal value for org.onap.ccsdk.sli.northbound.uebclient.polling-timeout ({}) ", curval, e);
 			}
 		}
 

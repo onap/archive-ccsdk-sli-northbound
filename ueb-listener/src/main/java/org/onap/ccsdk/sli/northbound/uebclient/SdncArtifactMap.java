@@ -66,7 +66,7 @@ public class SdncArtifactMap {
 			try {
 				this.pass = Integer.parseInt(pass);
 			} catch (Exception e) {
-				LOG.error("Invalid pass value for artifact map entry ("+tag+","+rpc+","+pass+")");
+				LOG.error("Invalid pass value for artifact map entry ({} {} {})", tag, rpc, pass, e);
 			}
 		}
 	}

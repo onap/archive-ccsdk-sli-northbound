@@ -123,7 +123,7 @@ public class SdncFlatJsonDmaapConsumer extends SdncDmaapConsumer {
 				LOG.info("POST message body would be:\n"+rpcMsgbody);
 			}
 		} catch (Exception e) {
-
+			LOG.error("Unable to process message", e);
 		}
 
 	}
