@@ -22,24 +22,12 @@
 package org.onap.ccsdk.sli.northbound.dmaapclient;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.Authenticator;
-import java.net.HttpURLConnection;
-import java.net.PasswordAuthentication;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSession;
-
-import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,14 +96,14 @@ public class SdncFlatJsonDmaapConsumer extends SdncDmaapConsumer {
 		ObjectNode inputNode = oMapper.createObjectNode();
 
 
-		for (String fromField : fieldMap.keySet()) {
+		for (Map.Entry<String, String> entry: fieldMap.entrySet()) {
 
-			if (!SDNC_ENDPOINT.equals(fromField)) {
-				JsonNode curNode = instarRootNode.get(fromField);
+			if (!SDNC_ENDPOINT.equals(entry.getKey())) {
+				JsonNode curNode = instarRootNode.get(entry.getKey());
 				if (curNode != null) {
 					String fromValue = curNode.textValue();
 
-					inputNode.put(fieldMap.get(fromField), fromValue);
+					inputNode.put(entry.getValue(), fromValue);
 				}
 			}
 		}
@@ -141,7 +129,7 @@ public class SdncFlatJsonDmaapConsumer extends SdncDmaapConsumer {
 	}
 
 	private Map<String,String> loadMap(String msgType, String mapDirName) {
-		Map<String, String> results = new HashMap<String, String>();
+		Map<String, String> results = new HashMap<>();
 
 
 		if (mapDirName == null) {
