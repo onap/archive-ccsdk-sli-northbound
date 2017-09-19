@@ -32,7 +32,7 @@
         <bundle>mvn:org.onap.ccsdk.sli.northbound/asdcApi-model/${project.version}</bundle>
         <bundle>mvn:org.onap.ccsdk.sli.northbound/asdcApi-provider/${project.version}</bundle>
 
-        <feature version="${sdnctl.sli.version}">sdnc-sli</feature>
+        <feature>sdnc-sli</feature>
     </feature>
 
 </features>
