@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -91,7 +91,7 @@ public class SdncUebConfiguration implements IConfiguration{
 	}
 
 	public void init() throws IOException {
-		String propPath = null;
+		String propPath;
 		String propDir = System.getenv(SDNC_CONFIG_DIR);
 		if (propDir == null) {
 
@@ -149,18 +149,18 @@ public class SdncUebConfiguration implements IConfiguration{
 		if ((curval != null) && (curval.length() > 0)) {
 			String[] artifactTypes = curval.split(",");
 
-			relevantArtifactTypes = new LinkedList<String>();
+			relevantArtifactTypes = new LinkedList<>();
 
-			for (int i = 0 ; i < artifactTypes.length ; i++) {
+			for (String artifactType : artifactTypes) {
 				try {
-					if (ArtifactTypeEnum.valueOf(artifactTypes[i]) != null) {
-							relevantArtifactTypes.add(artifactTypes[i]);
+					if (ArtifactTypeEnum.valueOf(artifactType) != null) {
+							relevantArtifactTypes.add(artifactType);
 					} else {
-						LOG.warn("Skipping unrecognized artifact type "+artifactTypes[i]);
+						LOG.warn("Skipping unrecognized artifact type {}", artifactType);
 					}
 				} catch (Exception e) {
 
-					LOG.warn("Caught exception validating artifact type "+artifactTypes[i], e);
+					LOG.warn("Caught exception validating artifact type {}", artifactType, e);
 				}
 
 			}
@@ -263,11 +263,11 @@ public class SdncUebConfiguration implements IConfiguration{
 	}
 
 	public int getMaxPasses() {
-		return(artifactMap.getNumPasses());
+		return artifactMap.getNumPasses();
 	}
 
 	public SdncArtifactMap.SdncArtifactType getMapping(String tag) {
-		return(artifactMap.getMapping(tag));
+		return artifactMap.getMapping(tag);
 	}
 
 	@Override
