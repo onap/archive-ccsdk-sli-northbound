@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -192,7 +192,6 @@ public class SdncUebCallback implements INotificationCallback {
 		String propPath;
 		String propDir = System.getenv(SDNC_CONFIG_DIR);
 		if (propDir == null) {
-
 			propDir = "/opt/sdnc/data/properties";
 		}
 		propPath = propDir + "/dblib.properties";
@@ -209,8 +208,8 @@ public class SdncUebCallback implements INotificationCallback {
 		props.load(new FileInputStream(propFile));
 
 		jdbcDataSource = new DBResourceManager(props);
-		
-		if(((DBResourceManager)jdbcDataSource).isActive()){
+
+		if(jdbcDataSource.isActive()){
 			LOG.warn( "DBLIB: JDBC DataSource has been initialized.");
 		} else {
 			LOG.warn( "DBLIB: JDBC DataSource did not initialize successfully.");
@@ -238,15 +237,6 @@ public class SdncUebCallback implements INotificationCallback {
 
         File incomingDir = null;
         File archiveDir = null;
-
-        if (!incomingDir.exists()) {
-            incomingDir.mkdirs();
-        }
-
-
-        if (!archiveDir.exists()) {
-            archiveDir.mkdirs();
-        }
 
         // Process service level artifacts
         List<IArtifactInfo> artifactList = data.getServiceArtifacts();
@@ -280,12 +270,14 @@ public class SdncUebCallback implements INotificationCallback {
 
             if (artifactList != null) {
 
-                incomingDir = new File(incomingDirName + "/" + escapeFilename(data.getServiceName()) + "/" + escapeFilename(curResource.getResourceName()));
+                incomingDir = new File(incomingDirName + "/" + escapeFilename(data.getServiceName()) + "/"
+                    + escapeFilename(curResource.getResourceName()));
                 if (!incomingDir.exists()) {
                     incomingDir.mkdirs();
                 }
 
-                archiveDir = new File(archiveDirName + "/" + escapeFilename(data.getServiceName()) + "/" + escapeFilename(curResource.getResourceName()));
+                archiveDir = new File(archiveDirName + "/" + escapeFilename(data.getServiceName()) + "/"
+                    + escapeFilename(curResource.getResourceName()));
                 if (!archiveDir.exists()) {
                     archiveDir.mkdirs();
                 }
@@ -300,8 +292,6 @@ public class SdncUebCallback implements INotificationCallback {
         }
 
         deployDownloadedFiles(incomingDir, archiveDir, data);
-
-
     }
 
 
@@ -333,7 +323,7 @@ public class SdncUebCallback implements INotificationCallback {
         } catch (Exception x) {
             // IOException can never be thrown by the iteration.
             // In this snippet, it can only be thrown by newDirectoryStream.
-            LOG.warn("Cannot process spool file "+ curFileName, x);
+            LOG.warn("Cannot process spool file {}", curFileName, x);
         }
 
         // Deploy scheduled deployments
@@ -375,11 +365,11 @@ public class SdncUebCallback implements INotificationCallback {
         }
     }
 
-	private void handleArtifact(INotificationData data, String svcName, String resourceName, String resourceType, IArtifactInfo artifact, File incomingDir, File archiveDir) {
+	private void handleArtifact(INotificationData data, String svcName, String resourceName, String resourceType,
+        IArtifactInfo artifact, File incomingDir, File archiveDir) {
 
         // Download Artifact
-        IDistributionClientDownloadResult downloadResult = client
-                .download(artifact);
+        IDistributionClientDownloadResult downloadResult = client.download(artifact);
 
 		if (downloadResult == null) {
 
@@ -412,8 +402,6 @@ public class SdncUebCallback implements INotificationCallback {
 
 		if (writeSucceeded && (downloadResult.getDistributionActionResult() == DistributionActionResultEnum.SUCCESS)) {
             handleSuccessfulDownload(data, svcName, resourceName, artifact, spoolFile, archiveDir);
-
-
         } else {
             handleFailedDownload(data, artifact);
         }
@@ -495,15 +483,13 @@ public class SdncUebCallback implements INotificationCallback {
 
                 try {
 
-                    DocumentBuilderFactory dbf = DocumentBuilderFactory
-                            .newInstance();
+                    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                     DocumentBuilder db = dbf.newDocumentBuilder();
 
                     spoolDoc = db.parse(transformedFile);
                 } catch (Exception e) {
-                    LOG.error(
-                            "Caught exception trying to parse transformed XML file "
-                                    + transformedFile.getAbsolutePath(), e);
+                    LOG.error("Caught exception trying to parse transformed XML file {}",
+                                    transformedFile.getAbsolutePath(), e);
                 }
 
             } catch (Exception e) {
@@ -514,8 +500,7 @@ public class SdncUebCallback implements INotificationCallback {
 
         if (spoolDoc != null) {
             // Analyze file type
-            SdncArtifactType artifactType = analyzeFileType(artifactEnum,
-                    spoolFile, spoolDoc);
+            SdncArtifactType artifactType = analyzeFileType(artifactEnum, spoolFile, spoolDoc);
 
             if (artifactType != null) {
 
@@ -541,14 +526,14 @@ public class SdncUebCallback implements INotificationCallback {
 
 	private void processToscaYaml(INotificationData data, String svcName, String resourceName,
 			IArtifactInfo artifact, File spoolFile, File archiveDir) {
-		
+
 		// Use ASDC Dist Client 1.1.5 with TOSCA parsing APIs to extract relevant TOSCA model data
-		
+
 		// TOSCA data extraction flow 1707:
 		// Use ASDC dist-client to get yaml string - not yet available
 		String model_yaml = null;
 		LOG.info("Process TOSCA YAML file: "+spoolFile.toString());
-		
+
 		SdcToscaParserFactory factory = SdcToscaParserFactory.getInstance();
 		ISdcCsarHelper sdcCsarHelper = null;
 		try {
@@ -573,7 +558,7 @@ public class SdncUebCallback implements INotificationCallback {
 			LOG.error("Could not insert Tosca YAML data into the SERVICE_MODEL table ", e);
 			factory.close();
 			return;
-		}	
+		}
 
 		// Ingest Network (VL) Data - 1707
 		//List<NodeTemplate> vlNodeTemplatesList = sdcCsarHelper.getServiceNodeTemplatesByType("VL");
@@ -583,7 +568,7 @@ public class SdncUebCallback implements INotificationCallback {
 			SdncNodeModel nodeModel = new SdncNodeModel (sdcCsarHelper, nodeTemplate);
 			nodeModel.setServiceUUID(serviceModel.getServiceUUID());
 			nodeModel.setEcompGeneratedNaming(SdncBaseModel.extractBooleanInputDefaultValue(sdcCsarHelper, SdcPropertyNames.PROPERTY_NAME_SERVICENAMING_DEFAULT_ECOMPGENERATEDNAMING));//service_naming#default#ecomp_generated_naming
-			
+
 			try {
 				cleanUpExistingToscaData("NETWORK_MODEL", "customization_uuid", nodeModel.getCustomizationUUID());
 				cleanUpExistingToscaData("VPN_BINDINGS", "network_customization_uuid", nodeModel.getCustomizationUUID());
@@ -595,13 +580,13 @@ public class SdncUebCallback implements INotificationCallback {
 				LOG.error("Could not insert Tosca YAML data into the NETWORK_MODEL table ", e);
 			}
 		}
-		
+
 		// Ingest Allotted Resource Data - 1707
 		List<NodeTemplate> arNodeTemplatesList = sdcCsarHelper.getAllottedResources();
 
 		for (NodeTemplate nodeTemplate :  arNodeTemplatesList) {
 			SdncARModel nodeModel = new SdncARModel (sdcCsarHelper, nodeTemplate);
-			
+
 			try {
 				cleanUpExistingToscaData("ALLOTTED_RESOURCE_MODEL", "customization_uuid", nodeModel.getCustomizationUUID());
 				LOG.info("Call insertToscaData for ALLOTTED_RESOURCE_MODEL customizationUUID = " + nodeModel.getCustomizationUUID());
@@ -611,14 +596,14 @@ public class SdncUebCallback implements INotificationCallback {
 				LOG.error("Could not insert Tosca YAML data into the NETWORK_MODEL table ", e);
 			}
 		}
-		
+
 		// Ingest Network (VF) Data - 1707
 		//List<NodeTemplate> nodeTemplatesList = sdcCsarHelper.getServiceNodeTemplatesByType("VF");
 		List<NodeTemplate> vfNodeTemplatesList = sdcCsarHelper.getServiceVfList();
 
 		for (NodeTemplate nodeTemplate :  vfNodeTemplatesList) {
 			SdncVFModel vfNodeModel = new SdncVFModel (sdcCsarHelper, nodeTemplate);
-			
+
 			try {
 				cleanUpExistingToscaData("VF_MODEL", "customization_uuid", vfNodeModel.getCustomizationUUID()) ;
 				LOG.info("Call insertToscaData for VF_MODEL customizationUUID = " + vfNodeModel.getCustomizationUUID());
@@ -626,12 +611,12 @@ public class SdncUebCallback implements INotificationCallback {
 			} catch (IOException e) {
 				LOG.error("Could not insert Tosca YAML data into the VF_MODEL table ", e);
 			}
-			
+
 			// For each VF, insert VF_MODULE_MODEL data
 			List<Group> vfModules = sdcCsarHelper.getVfModulesByVf(vfNodeModel.getCustomizationUUIDNoQuotes());
 			for (Group group : vfModules){
 				SdncVFModuleModel vfModuleModel = new SdncVFModuleModel(sdcCsarHelper, group);
-			
+
 				try {
 					cleanUpExistingToscaData("VF_MODULE_MODEL", "customization_uuid", vfModuleModel.getCustomizationUUID());
 					LOG.info("Call insertToscaData for VF_MODULE_MODEL customizationUUID = " + vfModuleModel.getCustomizationUUID());
@@ -639,19 +624,19 @@ public class SdncUebCallback implements INotificationCallback {
 				} catch (IOException e) {
 					LOG.error("Could not insert Tosca YAML data into the VF_MODULE_MODEL table ", e);
 				}
-			
+
 				// For each VF Module, get the VFC list, insert VF_MODULE_TO_VFC_MAPPING data
 				// List<NodeTemplate> groupMembers = sdcCsarHelper.getMembersOfGroup(group); - old version
-				// For each vfcNode (group member) in the groupMembers list, extract vm_type and vm_count.  
+				// For each vfcNode (group member) in the groupMembers list, extract vm_type and vm_count.
 				// Insert vf_module.customizationUUID, vfcNode.customizationUUID and vm_type and vm_count into VF_MODULE_TO_VFC_MAPPING
 				List<NodeTemplate> groupMembers = sdcCsarHelper.getMembersOfVfModule(nodeTemplate, group); // not yet available
 				for (NodeTemplate vfcNode : groupMembers){
 					SdncVFCModel vfcModel = new SdncVFCModel(sdcCsarHelper, vfcNode);
-				
+
 					try {
 						cleanUpExistingToscaData("VF_MODULE_TO_VFC_MAPPING", "vf_module_customization_uuid", vfModuleModel.getCustomizationUUID());
 						LOG.info("Call insertToscaData for VF_MODULE_TO_VFC_MAPPING customizationUUID = " + vfModuleModel.getCustomizationUUID());
-						insertToscaData("insert into VF_MODULE_TO_VFC_MAPPING (vf_module_customization_uuid, vfc_customization_uuid, vm_type, vm_count) values (" + 
+						insertToscaData("insert into VF_MODULE_TO_VFC_MAPPING (vf_module_customization_uuid, vfc_customization_uuid, vm_type, vm_count) values (" +
 								vfModuleModel.getCustomizationUUID() + ", " + vfcModel.getCustomizationUUID() + ", \"" + vfcModel.getVmType() + "\", \"" + vfcModel.getVmCount() + "\")");
 					} catch (IOException e) {
 						LOG.error("Could not insert Tosca YAML data into the VF_MODULE_TO_VFC_MAPPING table ", e);
@@ -660,12 +645,12 @@ public class SdncUebCallback implements INotificationCallback {
 				}
 
 			}
-			
+
 			// For each VF, insert VFC_MODEL data
 			List<NodeTemplate> vfcNodes = sdcCsarHelper.getVfcListByVf(vfNodeModel.getCustomizationUUIDNoQuotes());
 			for (NodeTemplate vfcNode : vfcNodes){
 				SdncVFCModel vfcModel = new SdncVFCModel(sdcCsarHelper, vfcNode);
-			
+
 				try {
 					cleanUpExistingToscaData("VFC_MODEL", "customization_uuid", vfcModel.getCustomizationUUID());
 					LOG.info("Call insertToscaData for VFC_MODEL customizationUUID = " + vfcModel.getCustomizationUUID());
@@ -675,35 +660,35 @@ public class SdncUebCallback implements INotificationCallback {
 				}
 
 			}
-			
+
 			// For each VF, insert VF_TO_NETWORK_ROLE_MAPPING data
 			List<NodeTemplate> cpNodes = sdcCsarHelper.getCpListByVf(vfNodeModel.getCustomizationUUIDNoQuotes());
 			for (NodeTemplate cpNode : cpNodes){
-		
+
 				// Insert into VF_TO_NETWORK_ROLE_MAPPING vf_customization_uuid and network_role
 				String cpNetworkRole = sdcCsarHelper.getNodeTemplatePropertyLeafValue(cpNode, "network_role_tag");
-			
+
 				try {
 					cleanUpExistingToscaData("VF_TO_NETWORK_ROLE_MAPPING", "vf_customization_uuid", vfNodeModel.getCustomizationUUID());
 					LOG.info("Call insertToscaData for VF_TO_NETWORK_ROLE_MAPPING vfCustomizationUUID = " + vfNodeModel.getCustomizationUUID());
-					insertToscaData("insert into VF_TO_NETWORK_ROLE_MAPPING (vf_customization_uuid, network_role) values (" + 
+					insertToscaData("insert into VF_TO_NETWORK_ROLE_MAPPING (vf_customization_uuid, network_role) values (" +
 					vfNodeModel.getCustomizationUUID() + ", \"" + cpNetworkRole + "\")");
 				} catch (IOException e) {
 					LOG.error("Could not insert Tosca YAML data into the VF_TO_NETWORK_ROLE_MAPPING table ", e);
 				}
-				
+
 				// Insert VFC_TO_NETWORK_ROLE_MAPPING data
 				Map<String, String> mappingParams = new HashMap<String, String>();
 				//String cpNetworkRoleTag = "\"" + sdcCsarHelper.getNodeTemplatePropertyLeafValue(cpNode, SdcPropertyNames.PROPERTY_NAME_NETWORKROLETAG) + "\"";
 				// extract network_role, network_role_tag and virtual_binding from this cpNode
 				SdncBaseModel.addParameter("network_role", SdncBaseModel.extractValue(sdcCsarHelper, cpNode, "network_role"), mappingParams);
 				SdncBaseModel.addParameter("network_role_tag", SdncBaseModel.extractValue(sdcCsarHelper, cpNode, "network_role_tag"), mappingParams);
-				String virtualBinding = "\"" + SdncBaseModel.extractValue(sdcCsarHelper, cpNode, "requirements#virtualBinding") + "\""; 
+				String virtualBinding = "\"" + SdncBaseModel.extractValue(sdcCsarHelper, cpNode, "requirements#virtualBinding") + "\"";
 
 				// get list of cpNodes and vfcNodes with matching virtualBinding
-				List<Pair<NodeTemplate, NodeTemplate>> matchList = sdcCsarHelper.getNodeTemplatePairsByReqName(sdcCsarHelper.getCpListByVf(vfNodeModel.getCustomizationUUIDNoQuotes()), sdcCsarHelper.getVfcListByVf(vfNodeModel.getCustomizationUUIDNoQuotes()), virtualBinding);				
+				List<Pair<NodeTemplate, NodeTemplate>> matchList = sdcCsarHelper.getNodeTemplatePairsByReqName(sdcCsarHelper.getCpListByVf(vfNodeModel.getCustomizationUUIDNoQuotes()), sdcCsarHelper.getVfcListByVf(vfNodeModel.getCustomizationUUIDNoQuotes()), virtualBinding);
 				for (Pair<NodeTemplate, NodeTemplate> match : matchList) {  // should be 1 match?
-					
+
 					// extract values from the left "CP" Node
 					SdncBaseModel.addParameter("ipv4_use_dhcp", SdncBaseModel.extractBooleanValue(sdcCsarHelper, match.getLeft(), SdcPropertyNames.PROPERTY_NAME_NETWORKASSIGNMENTS_IPV4SUBNETDEFAULTASSIGNMENTS_DHCPENABLED), mappingParams);
 					//SdncBaseModel.addParameter("ipv4_ip_version", SdncBaseModel.extractValue(sdcCsarHelper, match.getLeft(), SdcPropertyNames.PROPERTY_NAME_NETWORKASSIGNMENTS_IPV4SUBNETDEFAULTASSIGNMENTS_IPVERSION), mappingParams);
@@ -711,14 +696,14 @@ public class SdncUebCallback implements INotificationCallback {
 					SdncBaseModel.addParameter("ipv6_use_dhcp", SdncBaseModel.extractBooleanValue(sdcCsarHelper, match.getLeft(), SdcPropertyNames.PROPERTY_NAME_NETWORKASSIGNMENTS_IPV6SUBNETDEFAULTASSIGNMENTS_DHCPENABLED), mappingParams);
 					//SdncBaseModel.addParameter("ipv6_ip_version", SdncBaseModel.extractValue(sdcCsarHelper, match.getLeft(), SdcPropertyNames.PROPERTY_NAME_NETWORKASSIGNMENTS_IPV6SUBNETDEFAULTASSIGNMENTS_IPVERSION), mappingParams);
 					SdncBaseModel.addParameter("ipv6_ip_version", "dummy_ipv6_vers", mappingParams);
-					//String extcp_subnetpool_id = "\"" + SdncBaseModel.extractValue(sdcCsarHelper, match.getLeft(), SdcPropertyNames.PROPERTY_NAME_SUBNETPOOLID) + "\""; // need path to subnetpoolid 
-					
+					//String extcp_subnetpool_id = "\"" + SdncBaseModel.extractValue(sdcCsarHelper, match.getLeft(), SdcPropertyNames.PROPERTY_NAME_SUBNETPOOLID) + "\""; // need path to subnetpoolid
+
 					// extract values from the right "VFC" Node
 					String vfcCustomizationUuid = "\"" + SdncBaseModel.extractValue(sdcCsarHelper, match.getRight().getMetadata(), "customization_uuid") + "\"";
 					SdncBaseModel.addParameter("vm_type", SdncBaseModel.extractValue(sdcCsarHelper, match.getRight(), SdcPropertyNames.PROPERTY_NAME_VMTYPE), mappingParams);
 					SdncBaseModel.addIntParameter("ipv4_count", SdncBaseModel.extractValue(sdcCsarHelper, match.getRight(), SdcPropertyNames.PROPERTY_NAME_NETWORKASSIGNMENTS_IPV4SUBNETDEFAULTASSIGNMENTS_MINSUBNETSCOUNT), mappingParams);
 					SdncBaseModel.addIntParameter("ipv6_count", SdncBaseModel.extractValue(sdcCsarHelper, match.getRight(), SdcPropertyNames.PROPERTY_NAME_NETWORKASSIGNMENTS_IPV6SUBNETDEFAULTASSIGNMENTS_MINSUBNETSCOUNT), mappingParams);
-				
+
 					try {
 						cleanUpExistingToscaData("VFC_TO_NETWORK_ROLE_MAPPING", "vfc_customization_uuid", vfcCustomizationUuid);
 						LOG.info("Call insertToscaData for VFC_TO_NETWORK_ROLE_MAPPING vfcCustomizationUUID = " + vfcCustomizationUuid);
@@ -726,16 +711,16 @@ public class SdncUebCallback implements INotificationCallback {
 					} catch (IOException e) {
 						LOG.error("Could not insert Tosca YAML data into the VFC_TO_NETWORK_ROLE_MAPPING table ", e);
 					}
-				
-				}	
-				
-			} // CP loop	
-			
+
+				}
+
+			} // CP loop
+
 		} // VF loop
-		
+
 		// Close ASDC TOSCA Parser factory - we are done processing this distribution
 		factory.close();
-		
+
 		if ((artifact != null) && (data != null)) {
 			LOG.info("Update to SDN-C succeeded");
 			IDistributionClientResult deploymentStatus;
@@ -743,58 +728,58 @@ public class SdncUebCallback implements INotificationCallback {
 						client, data, artifact,
 						DistributionStatusEnum.DEPLOY_OK));
 		}
-	
+
 	}
-	
+
 	 private void cleanUpExistingToscaData(String tableName, String keyName, String keyValue) throws IOException
      {
-         
+
             if (jdbcDataSource == null) {
             	 setJdbcDataSource();
             }
              try {
             	int rowCount = 0;
             	CachedRowSet data = jdbcDataSource.getData("SELECT * from " + tableName + " where " + keyName + " = " + keyValue + ";", null, "");
-            	while(data.next()) { 
-     				rowCount ++; 
+            	while(data.next()) {
+     				rowCount ++;
             	}
             	if (rowCount != 0) {
                     LOG.info("cleanUpExistingToscaData: " + keyValue);
                		jdbcDataSource.writeData("DELETE from " + tableName + " where " + keyName + " = " + keyValue + ";", null, null);
             	}
-            	 
-			} catch (SQLException e) {				
+
+			} catch (SQLException e) {
 				LOG.error("Could not clean up existing " + tableName  + " for " + keyValue, e);
-			}    
-			
+			}
+
      }
 
-	
+
 	 private void cleanUpExistingToscaServiceData(String serviceUUID) throws IOException
      {
-         
+
             if (jdbcDataSource == null) {
             	 setJdbcDataSource();
             }
              try {
             	int rowCount = 0;
             	CachedRowSet data = jdbcDataSource.getData("SELECT * from SERVICE_MODEL where service_uuid = " + serviceUUID + ";", null, "");
-            	while(data.next()) { 
-     				rowCount ++; 
+            	while(data.next()) {
+     				rowCount ++;
             	}
             	if (rowCount != 0) {
                     LOG.info("cleanUpExistingToscaData: " + serviceUUID);
                		jdbcDataSource.writeData("DELETE from NETWORK_MODEL where service_uuid = " + serviceUUID + ";", null, null);
                		jdbcDataSource.writeData("DELETE from SERVICE_MODEL where service_uuid = " + serviceUUID + ";", null, null);
             	}
-            	 
-			} catch (SQLException e) {				
+
+			} catch (SQLException e) {
 				LOG.error("Could not clean up existing NETWORK_MODEL and SERVICE_MODEL for service_UUID " + serviceUUID, e);
-			}    
-			
+			}
+
      }
 
-	
+
 	 private void insertToscaData(String toscaDataString) throws IOException
      {
             LOG.debug("insertToscaData: " + toscaDataString);
@@ -867,11 +852,8 @@ public class SdncUebCallback implements INotificationCallback {
                 Date now = new Date();
                 String artifactVersion = sdfDate.format(now);
                 LOG.debug("Scheduling "+spoolFileName+" version "+artifactVersion+" for deployment");
-                String artifactName = spoolFileName;
-                if (artifactInfo != null) {
-                    artifactName = artifactInfo.getArtifactName();
-                }
-                deployList[type.getPass()].add(new DeployableArtifact(type, svcName, resourceName, artifactName, artifactVersion, spoolFile));
+                deployList[type.getPass()].add(new DeployableArtifact(type, svcName, resourceName, spoolFileName,
+                    artifactVersion, spoolFile));
             }
         } else {
             LOG.info("Pass for type "+type.getTag()+" is "+type.getPass()+" which is not <= "+deployList.length);
