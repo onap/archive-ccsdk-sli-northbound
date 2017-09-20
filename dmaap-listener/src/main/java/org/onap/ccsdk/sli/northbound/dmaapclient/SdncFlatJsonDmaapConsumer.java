@@ -59,8 +59,8 @@ public class SdncFlatJsonDmaapConsumer extends SdncDmaapConsumer {
 		}
 
 		ObjectMapper oMapper = new ObjectMapper();
-		JsonNode instarRootNode = null;
-		ObjectNode sdncRootNode = null;
+		JsonNode instarRootNode	;
+		ObjectNode sdncRootNode;
 
 		String instarMsgName = null;
 

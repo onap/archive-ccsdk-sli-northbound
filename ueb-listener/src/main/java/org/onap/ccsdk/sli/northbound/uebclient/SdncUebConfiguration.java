@@ -91,7 +91,7 @@ public class SdncUebConfiguration implements IConfiguration{
 	}
 
 	public void init() throws IOException {
-		String propPath = null;
+		String propPath;
 		String propDir = System.getenv(SDNC_CONFIG_DIR);
 		if (propDir == null) {
 

@@ -189,7 +189,7 @@ public class SdncUebCallback implements INotificationCallback {
 
 	private static void setJdbcDataSource() throws IOException {
 
-		String propPath = null;
+		String propPath;
 		String propDir = System.getenv(SDNC_CONFIG_DIR);
 		if (propDir == null) {
 
@@ -1056,8 +1056,7 @@ public class SdncUebCallback implements INotificationCallback {
 
     private File applyXslts(File srcFile) {
 
-        Document doc = null;
-
+        Document doc;
 
         File inFile = srcFile;
         File outFile = null;
