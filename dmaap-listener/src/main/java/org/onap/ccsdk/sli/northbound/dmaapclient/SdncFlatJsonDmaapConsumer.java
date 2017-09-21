@@ -21,163 +21,148 @@
 
 package org.onap.ccsdk.sli.northbound.dmaapclient;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 
 public class SdncFlatJsonDmaapConsumer extends SdncDmaapConsumer {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(SdncFlatJsonDmaapConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SdncFlatJsonDmaapConsumer.class);
 
-	private static final String DMAAPLISTENERROOT = "DMAAPLISTENERROOT";
-	private static final String SDNC_ENDPOINT = "SDNC.endpoint";
+    private static final String DMAAPLISTENERROOT = "DMAAPLISTENERROOT";
+    private static final String SDNC_ENDPOINT = "SDNC.endpoint";
 
+    @Override
+    public void processMsg(String msg) throws InvalidMessageException {
 
+        processMsg(msg, null);
+    }
 
-	@Override
-	public void processMsg(String msg) throws InvalidMessageException {
+    public void processMsg(String msg, String mapDirName) throws InvalidMessageException {
 
-		processMsg(msg, null);
-	}
+        if (msg == null) {
+            throw new InvalidMessageException("Null message");
+        }
 
-	public void processMsg(String msg, String mapDirName) throws InvalidMessageException {
+        ObjectMapper oMapper = new ObjectMapper();
+        JsonNode instarRootNode;
+        ObjectNode sdncRootNode;
 
-		if (msg == null) {
-			throw new InvalidMessageException("Null message");
-		}
+        String instarMsgName = null;
 
-		ObjectMapper oMapper = new ObjectMapper();
-		JsonNode instarRootNode	;
-		ObjectNode sdncRootNode;
+        try {
+            instarRootNode = oMapper.readTree(msg);
+        } catch (Exception e) {
+            throw new InvalidMessageException("Cannot parse json object", e);
+        }
 
-		String instarMsgName = null;
+        Iterator<Map.Entry<String, JsonNode>> instarFields = instarRootNode.fields();
 
-		try {
-			 instarRootNode = oMapper.readTree(msg);
-		} catch (Exception e) {
-			throw new InvalidMessageException("Cannot parse json object", e);
-		}
+        while (instarFields.hasNext()) {
+            Map.Entry<String, JsonNode> entry = instarFields.next();
 
-		Iterator<Map.Entry<String, JsonNode>> instarFields = instarRootNode.fields();
+            instarMsgName = entry.getKey();
+            instarRootNode = entry.getValue();
+            break;
+        }
 
-		while (instarFields.hasNext()) {
-			Map.Entry<String, JsonNode> entry = instarFields.next();
+        Map<String, String> fieldMap = loadMap(instarMsgName, mapDirName);
 
-			instarMsgName = entry.getKey();
-			instarRootNode = entry.getValue();
-			break;
-		}
+        if (fieldMap == null) {
+            throw new InvalidMessageException("Unable to process message - cannot load field mappings");
+        }
 
-		Map<String,String> fieldMap = loadMap(instarMsgName, mapDirName);
+        if (!fieldMap.containsKey(SDNC_ENDPOINT)) {
+            throw new InvalidMessageException("No SDNC endpoint known for message " + instarMsgName);
+        }
 
-		if (fieldMap == null) {
-			throw new InvalidMessageException("Unable to process message - cannot load field mappings");
-		}
+        String sdncEndpoint = fieldMap.get(SDNC_ENDPOINT);
 
-		if (!fieldMap.containsKey(SDNC_ENDPOINT)) {
-			throw new InvalidMessageException("No SDNC endpoint known for message "+instarMsgName);
-		}
+        sdncRootNode = oMapper.createObjectNode();
+        ObjectNode inputNode = oMapper.createObjectNode();
 
-		String sdncEndpoint = fieldMap.get(SDNC_ENDPOINT);
+        for (Map.Entry<String, String> entry : fieldMap.entrySet()) {
 
-		sdncRootNode = oMapper.createObjectNode();
-		ObjectNode inputNode = oMapper.createObjectNode();
+            if (!SDNC_ENDPOINT.equals(entry.getKey())) {
+                JsonNode curNode = instarRootNode.get(entry.getKey());
+                if (curNode != null) {
+                    String fromValue = curNode.textValue();
 
+                    inputNode.put(entry.getValue(), fromValue);
+                }
+            }
+        }
+        sdncRootNode.put("input", inputNode);
 
-		for (Map.Entry<String, String> entry: fieldMap.entrySet()) {
+        try {
+            String rpcMsgbody = oMapper.writeValueAsString(sdncRootNode);
+            String odlUrlBase = getProperty("sdnc.odl.url-base");
+            String odlUser = getProperty("sdnc.odl.user");
+            String odlPassword = getProperty("sdnc.odl.password");
 
-			if (!SDNC_ENDPOINT.equals(entry.getKey())) {
-				JsonNode curNode = instarRootNode.get(entry.getKey());
-				if (curNode != null) {
-					String fromValue = curNode.textValue();
+            if ((odlUrlBase != null) && (odlUrlBase.length() > 0)) {
+                SdncOdlConnection conn = SdncOdlConnection.newInstance(odlUrlBase + sdncEndpoint, odlUser, odlPassword);
 
-					inputNode.put(entry.getValue(), fromValue);
-				}
-			}
-		}
-		sdncRootNode.put("input", inputNode);
+                conn.send("POST", "application/json", rpcMsgbody);
+            } else {
+                LOG.info("POST message body would be:\n" + rpcMsgbody);
+            }
+        } catch (Exception e) {
+            LOG.error("Unable to process message", e);
+        }
+    }
 
-		try {
-			String rpcMsgbody = oMapper.writeValueAsString(sdncRootNode);
-			String odlUrlBase = getProperty("sdnc.odl.url-base");
-			String odlUser = getProperty("sdnc.odl.user");
-			String odlPassword = getProperty("sdnc.odl.password");
+    private Map<String, String> loadMap(String msgType, String mapDirName) {
+        Map<String, String> results = new HashMap<>();
 
-			if ((odlUrlBase != null) && (odlUrlBase.length() > 0)) {
-				SdncOdlConnection conn = SdncOdlConnection.newInstance(odlUrlBase + sdncEndpoint, odlUser, odlPassword);
+        if (mapDirName == null) {
+            String rootdir = System.getenv(DMAAPLISTENERROOT);
 
-				conn.send("POST", "application/json", rpcMsgbody);
-			} else {
-				LOG.info("POST message body would be:\n"+rpcMsgbody);
-			}
-		} catch (Exception e) {
-			LOG.error("Unable to process message", e);
-		}
+            if ((rootdir == null) || (rootdir.length() == 0)) {
+                rootdir = "/opt/app/dmaap-listener";
+            }
 
-	}
+            mapDirName = rootdir + "/lib";
+        }
 
-	private Map<String,String> loadMap(String msgType, String mapDirName) {
-		Map<String, String> results = new HashMap<>();
+        String mapFilename = mapDirName + "/" + msgType + ".map";
 
+        File mapFile = new File(mapFilename);
 
-		if (mapDirName == null) {
-			String rootdir = System.getenv(DMAAPLISTENERROOT);
+        if (!mapFile.canRead()) {
+            LOG.error(String.format("Cannot read map file (%s)", mapFilename));
+            return (null);
+        }
 
-			if ((rootdir == null) || (rootdir.length() == 0)) {
-				rootdir = "/opt/app/dmaap-listener";
-			}
+        try (BufferedReader mapReader = new BufferedReader(new FileReader(mapFile))) {
 
-			mapDirName = rootdir + "/lib";
+            String curLine;
 
-		}
+            while ((curLine = mapReader.readLine()) != null) {
+                curLine = curLine.trim();
 
-		String mapFilename = mapDirName + "/" + msgType + ".map";
+                if ((curLine.length() > 0) && (!curLine.startsWith("#")) && curLine.contains("=>")) {
+                    String[] entry = curLine.split("=>");
+                    if (entry.length == 2) {
+                        results.put(entry[0].trim(), entry[1].trim());
+                    }
+                }
+            }
+            mapReader.close();
+        } catch (Exception e) {
+            LOG.error("Caught exception reading map " + mapFilename, e);
+            return (null);
+        }
 
-		File mapFile = new File(mapFilename);
-
-		if (!mapFile.canRead()) {
-			LOG.error("Cannot read map file ("+mapFilename+")");
-			return(null);
-		}
-
-		try (BufferedReader mapReader = new BufferedReader(new FileReader(mapFile))) {
-
-			String curLine;
-
-			while ((curLine = mapReader.readLine()) != null) {
-				curLine = curLine.trim();
-
-				if ((curLine.length() > 0) && (!curLine.startsWith("#"))) {
-
-					if (curLine.contains("=>")) {
-						String[] entry = curLine.split("=>");
-						if (entry.length == 2) {
-							results.put(entry[0].trim(), entry[1].trim());
-						}
-					}
-				}
-			}
-			mapReader.close();
-		} catch (Exception e) {
-			LOG.error("Caught exception reading map "+mapFilename, e);
-			return(null);
-		}
-
-		return(results);
-	}
-
-
-
+        return (results);
+    }
 }

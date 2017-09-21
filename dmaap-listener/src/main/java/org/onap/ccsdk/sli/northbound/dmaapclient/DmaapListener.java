@@ -26,140 +26,156 @@ import java.io.FileInputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DmaapListener {
-	
-	private static final String DMAAP_LISTENER_PROPERTIES = "dmaap-listener.properties";
-	private static final String SDNC_CONFIG_DIR = "SDNC_CONFIG_DIR";
-	private static final Logger LOG = LoggerFactory
-			.getLogger(DmaapListener.class);
-	
-	public static void main(String[] args) {
-		
-		Properties properties = new Properties();
-		
 
-		String propFileName = DMAAP_LISTENER_PROPERTIES;
-		
-		if (args.length > 0) {
-			propFileName = args[0];
-		}
-		
-		String propPath = null;
-		String propDir = System.getenv(SDNC_CONFIG_DIR);
-		
-		List<SdncDmaapConsumer> consumers = new LinkedList();
-		
-		if (propDir == null) {
-			
-			propDir = "/opt/sdnc/data/properties";
-		}
-		
-		if (!propFileName.startsWith("/")) {
-			propPath = propDir + "/" + propFileName;
-		}
-		
-		File propFile = new File(propPath);
-		
-		if (!propFile.canRead()) {
-			LOG.error("Cannot read properties file "+propPath);
-			System.exit(1);
-		}
-		
-		try {
-			properties.load(new FileInputStream(propFile));
-		} catch (Exception e) {
-			LOG.error("Caught exception loading properties from "+propPath, e);
-			System.exit(1);
-		}
-		
-		String subscriptionStr = properties.getProperty("subscriptions");
-		
-		boolean threadsRunning = false;
-		
-		LOG.debug("Dmaap subscriptions : "+subscriptionStr);
-		
-		if (subscriptionStr != null) {
-			String[] subscriptions = subscriptionStr.split(";");
-			
-			for (int i = 0; i < subscriptions.length; i++) {
-				String[] subscription = subscriptions[i].split(":");
-				String consumerClassName = subscription[0];
-				String propertyPath = subscription[1];
+    private static final String DMAAP_LISTENER_PROPERTIES = "dmaap-listener.properties";
+    private static final String DMAAP_LISTENER_PROPERTIES_DIR = "/opt/sdnc/data/properties";
+    private static final String SDNC_CONFIG_DIR = "SDNC_CONFIG_DIR";
+    private static final Logger LOG = LoggerFactory.getLogger(DmaapListener.class);
 
-				LOG.debug("Handling subscription [" + consumerClassName + "," + propertyPath + "]");
+    public static void main(String[] args) {
 
-				if (propertyPath == null) {
-					LOG.error("Invalid subscription (" + subscriptions[i] + ") property file missing");
-					continue;
-				}
+        Properties properties = new Properties();
+        String propFileName = DMAAP_LISTENER_PROPERTIES;
+        String propPath = null;
+        String propDir = System.getenv(SDNC_CONFIG_DIR);
+        List<SdncDmaapConsumer> consumers = new LinkedList<>();
 
-				if (!propertyPath.startsWith("/")) {
-					propertyPath = propDir + "/" + propertyPath;
-				}
+        if (args.length > 0) {
+            propFileName = args[0];
+        }
 
-				Class<?> consumerClass = null;
+        if (propDir == null) {
+            propDir = DMAAP_LISTENER_PROPERTIES_DIR;
+        }
 
-				try {
-					consumerClass = Class.forName(consumerClassName);
-				} catch (Exception e) {
-					LOG.error("Could not find DMaap consumer class {}", consumerClassName, e);
-				}
+        if (!propFileName.startsWith("/")) {
+            propPath = propDir + "/" + propFileName;
+        }
 
-				if (consumerClass != null) {
+        if (propPath != null) {
+            properties = loadProperties(propPath, properties);
 
-					SdncDmaapConsumer consumer = null;
+            String subscriptionStr = properties.getProperty("subscriptions");
 
-					try {
-						consumer = (SdncDmaapConsumer) consumerClass.newInstance();
-					} catch (Exception e) {
-						LOG.error("Could not create consumer from class " + consumerClassName, e);
-					}
+            boolean threadsRunning = false;
 
-					if (consumer != null) {
-						LOG.debug("Initializing consumer " + consumerClassName + "(" + propertyPath + ")");
-						consumer.init(properties, propertyPath);
+            LOG.debug("Dmaap subscriptions : " + subscriptionStr);
 
-						if (consumer.isReady()) {
-							Thread consumerThread = new Thread(consumer);
-							consumerThread.start();
-							consumers.add(consumer);
-							threadsRunning = true;
-							LOG.info("Started consumer thread (" + consumerClassName + " : " + propertyPath + ")");
-						} else {
-							LOG.debug("Consumer " + consumerClassName + " is not ready");
-						}
-					}
+            if (subscriptionStr != null) {
+                threadsRunning = handleSubscriptions(subscriptionStr, propDir, properties, consumers);
+            }
 
-				}
+            while (threadsRunning) {
+                threadsRunning = updateThreadState(consumers);
+                if (!threadsRunning) {
+                    break;
+                }
 
-			}
-		}
-		
-		while (threadsRunning) {
-			
-			threadsRunning = false;
-			for (SdncDmaapConsumer consumer : consumers) {
-				if (consumer.isRunning()) {
-					threadsRunning = true;
-				}
-			}
-			
-			if (!threadsRunning) {
-				break;
-			}
-			
-			try {
-				Thread.sleep(10000);
-			} catch (InterruptedException e) {
-				
-			}
-		}
-		
-		LOG.info("No listener threads running - exitting");
+                try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException e) {
+                    LOG.error(e.getLocalizedMessage(), e);
+                }
+            }
 
-	}
+            LOG.info("No listener threads running - exiting");
+        }
+    }
+
+    private static boolean updateThreadState(List<SdncDmaapConsumer> consumers) {
+        boolean threadsRunning = false;
+        for (SdncDmaapConsumer consumer : consumers) {
+            if (consumer.isRunning()) {
+                threadsRunning = true;
+            }
+        }
+        return threadsRunning;
+    }
+
+    private static Properties loadProperties(String propPath, Properties properties) {
+        File propFile = new File(propPath);
+
+        if (!propFile.canRead()) {
+            LOG.error("Cannot read properties file " + propPath);
+            System.exit(1);
+        }
+
+        try (FileInputStream in = new FileInputStream(propFile)) {
+            properties.load(in);
+        } catch (Exception e) {
+            LOG.error("Caught exception loading properties from " + propPath, e);
+            System.exit(1);
+        }
+        return properties;
+    }
+
+    private static boolean handleSubscriptions(String subscriptionStr, String propDir, Properties properties,
+        List<SdncDmaapConsumer> consumers) {
+        String[] subscriptions = subscriptionStr.split(";");
+
+        for (String subscription1 : subscriptions) {
+            String[] subscription = subscription1.split(":");
+            String consumerClassName = subscription[0];
+            String propertyPath = subscription[1];
+
+            LOG.debug(String.format("Handling subscription [%s,%s]", consumerClassName, propertyPath));
+
+            if (propertyPath == null) {
+                LOG.error(String.format("Invalid subscription (%s) property file missing", subscription1));
+                continue;
+            }
+
+            if (!propertyPath.startsWith("/")) {
+                propertyPath = propDir + "/" + propertyPath;
+            }
+
+            Class<?> consumerClass = null;
+
+            try {
+                consumerClass = Class.forName(consumerClassName);
+            } catch (Exception e) {
+                LOG.error("Could not find DMaap consumer class {}", consumerClassName, e);
+            }
+
+            if (consumerClass != null) {
+                return handleConsumerClass(consumerClass, consumerClassName, propertyPath,
+                    properties, consumers);
+            }
+        }
+        return false;
+    }
+
+    private static boolean handleConsumerClass(Class<?> consumerClass, String consumerClassName, String propertyPath,
+        Properties properties, List<SdncDmaapConsumer> consumers) {
+
+        SdncDmaapConsumer consumer = null;
+
+        try {
+            consumer = (SdncDmaapConsumer) consumerClass.newInstance();
+        } catch (Exception e) {
+            LOG.error("Could not create consumer from class " + consumerClassName, e);
+        }
+
+        if (consumer != null) {
+            LOG.debug(String.format("Initializing consumer %s(%s)", consumerClassName, propertyPath));
+            consumer.init(properties, propertyPath);
+
+            if (consumer.isReady()) {
+                Thread consumerThread = new Thread(consumer);
+                consumerThread.start();
+                consumers.add(consumer);
+
+                LOG.info(String.format("Started consumer thread (%s : %s)", consumerClassName,
+                    propertyPath));
+                return true;
+            } else {
+                LOG.debug(String.format("Consumer %s is not ready", consumerClassName));
+            }
+        }
+        return false;
+    }
 }

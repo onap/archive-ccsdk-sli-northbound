@@ -29,130 +29,123 @@ import java.net.Authenticator;
 import java.net.HttpURLConnection;
 import java.net.PasswordAuthentication;
 import java.net.URL;
-
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
-
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 public class SdncOdlConnection {
-	
-	private static final Logger LOG = LoggerFactory
-			.getLogger(SdncOdlConnection.class);
-	
-	private HttpURLConnection httpConn = null;
-	
-	private String url = null;
-	private String user = null;
-	private String password = null;
-	
-	private class SdncAuthenticator extends Authenticator {
-		
-		private String user;
-		private String passwd;
 
-		SdncAuthenticator(String user, String passwd) {
-			this.user = user;
-			this.passwd = passwd;
-		}
-		@Override
-		protected PasswordAuthentication getPasswordAuthentication() {
-			return new PasswordAuthentication(user, passwd.toCharArray());
-		}
-		
-	}
-	
-	private SdncOdlConnection() {
-		
-	}
-	
-	private SdncOdlConnection(String url, String user, String password) {
-		this.url = url;
-		this.user = user;
-		this.password = password;
-		
-		try {
-			URL sdncUrl = new URL(url);
-			Authenticator.setDefault(new SdncAuthenticator(user, password));
-		
-			this.httpConn = (HttpURLConnection) sdncUrl.openConnection();
-		} catch (Exception e) {
-			LOG.error("Unable to create http connection", e);
-		}
-	}
-	
-	public static  SdncOdlConnection newInstance(String url, String user, String password) throws IOException
-	{
-		return new SdncOdlConnection(url, user, password);
-	}
-		
+    private static final Logger LOG = LoggerFactory
+        .getLogger(SdncOdlConnection.class);
 
-	
-	public String send(String method, String contentType, String msg) throws IOException {
+    private HttpURLConnection httpConn = null;
 
-		LOG.info("Sending REST " + method + " to " + url);
-		LOG.info("Message body:\n" + msg);
-		String authStr = user + ":" + password;
-		String encodedAuthStr = new String(Base64.encodeBase64(authStr.getBytes()));
+    private String url = null;
+    private String user = null;
+    private String password = null;
 
-		httpConn.addRequestProperty("Authentication", "Basic " + encodedAuthStr);
+    private class SdncAuthenticator extends Authenticator {
 
-		httpConn.setRequestMethod(method);
-		httpConn.setRequestProperty("Content-Type", contentType);
-		httpConn.setRequestProperty("Accept", contentType);
+        private String user;
+        private String passwd;
 
-		httpConn.setDoInput(true);
-		httpConn.setDoOutput(true);
-		httpConn.setUseCaches(false);
+        SdncAuthenticator(String user, String passwd) {
+            this.user = user;
+            this.passwd = passwd;
+        }
 
-		if (httpConn instanceof HttpsURLConnection) {
-			HostnameVerifier hostnameVerifier = new HostnameVerifier() {
-				@Override
-				public boolean verify(String hostname, SSLSession session) {
-					return true;
-				}
-			};
-			((HttpsURLConnection) httpConn).setHostnameVerifier(hostnameVerifier);
-		}
+        @Override
+        protected PasswordAuthentication getPasswordAuthentication() {
+            return new PasswordAuthentication(user, passwd.toCharArray());
+        }
+    }
 
-		// Write message
-		httpConn.setRequestProperty("Content-Length", Integer.toString(msg.length()));
-		DataOutputStream outStr = new DataOutputStream(httpConn.getOutputStream());
-		outStr.write(msg.getBytes());
-		outStr.close();
+    private SdncOdlConnection() {
 
-		// Read response
-		BufferedReader respRdr;
+    }
 
-		LOG.info("Response: " + httpConn.getResponseCode() + " " + httpConn.getResponseMessage());
+    private SdncOdlConnection(String url, String user, String password) {
+        this.url = url;
+        this.user = user;
+        this.password = password;
 
-		if (httpConn.getResponseCode() < 300) {
+        try {
+            URL sdncUrl = new URL(url);
+            Authenticator.setDefault(new SdncAuthenticator(user, password));
 
-			respRdr = new BufferedReader(new InputStreamReader(httpConn.getInputStream()));
-		} else {
-			respRdr = new BufferedReader(new InputStreamReader(httpConn.getErrorStream()));
-		}
+            this.httpConn = (HttpURLConnection) sdncUrl.openConnection();
+        } catch (Exception e) {
+            LOG.error("Unable to create http connection", e);
+        }
+    }
 
-		StringBuffer respBuff = new StringBuffer();
+    public static SdncOdlConnection newInstance(String url, String user, String password) throws IOException {
+        return new SdncOdlConnection(url, user, password);
+    }
 
-		String respLn;
 
-		while ((respLn = respRdr.readLine()) != null) {
-			respBuff.append(respLn + "\n");
-		}
-		respRdr.close();
+    public String send(String method, String contentType, String msg) throws IOException {
 
-		String respString = respBuff.toString();
+        LOG.info(String.format("Sending REST %s to %s", method, url));
+        LOG.info(String.format("Message body:%n%s", msg));
+        String authStr = user + ":" + password;
+        String encodedAuthStr = new String(Base64.encodeBase64(authStr.getBytes()));
 
-		LOG.info("Response body :\n" + respString);
+        httpConn.addRequestProperty("Authentication", "Basic " + encodedAuthStr);
 
-		return respString;
+        httpConn.setRequestMethod(method);
+        httpConn.setRequestProperty("Content-Type", contentType);
+        httpConn.setRequestProperty("Accept", contentType);
 
-	}
-		
+        httpConn.setDoInput(true);
+        httpConn.setDoOutput(true);
+        httpConn.setUseCaches(false);
 
+        if (httpConn instanceof HttpsURLConnection) {
+            HostnameVerifier hostnameVerifier = new HostnameVerifier() {
+                @Override
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            };
+            ((HttpsURLConnection) httpConn).setHostnameVerifier(hostnameVerifier);
+        }
+
+        // Write message
+        httpConn.setRequestProperty("Content-Length", Integer.toString(msg.length()));
+        DataOutputStream outStr = new DataOutputStream(httpConn.getOutputStream());
+        outStr.write(msg.getBytes());
+        outStr.close();
+
+        // Read response
+        BufferedReader respRdr;
+
+        LOG.info("Response: " + httpConn.getResponseCode() + " " + httpConn.getResponseMessage());
+
+        if (httpConn.getResponseCode() < 300) {
+
+            respRdr = new BufferedReader(new InputStreamReader(httpConn.getInputStream()));
+        } else {
+            respRdr = new BufferedReader(new InputStreamReader(httpConn.getErrorStream()));
+        }
+
+        StringBuilder respBuff = new StringBuilder();
+
+        String respLn;
+
+        while ((respLn = respRdr.readLine()) != null) {
+            respBuff.append(respLn).append("\n");
+        }
+        respRdr.close();
+
+        String respString = respBuff.toString();
+
+        LOG.info(String.format("Response body :%n%s", respString));
+
+        return respString;
+    }
 }
