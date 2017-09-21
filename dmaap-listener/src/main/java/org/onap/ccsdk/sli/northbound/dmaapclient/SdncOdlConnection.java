@@ -28,7 +28,6 @@ import java.io.InputStreamReader;
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
 import java.net.PasswordAuthentication;
-import java.net.ProtocolException;
 import java.net.URL;
 
 import javax.net.ssl.HostnameVerifier;
@@ -88,7 +87,7 @@ public class SdncOdlConnection {
 	
 	public static  SdncOdlConnection newInstance(String url, String user, String password) throws IOException
 	{
-		return (new SdncOdlConnection(url, user, password));
+		return new SdncOdlConnection(url, user, password);
 	}
 		
 
@@ -121,7 +120,7 @@ public class SdncOdlConnection {
 		}
 
 		// Write message
-		httpConn.setRequestProperty("Content-Length", "" + msg.length());
+		httpConn.setRequestProperty("Content-Length", Integer.toString(msg.length()));
 		DataOutputStream outStr = new DataOutputStream(httpConn.getOutputStream());
 		outStr.write(msg.getBytes());
 		outStr.close();
@@ -151,7 +150,7 @@ public class SdncOdlConnection {
 
 		LOG.info("Response body :\n" + respString);
 
-		return (respString);
+		return respString;
 
 	}
 		
