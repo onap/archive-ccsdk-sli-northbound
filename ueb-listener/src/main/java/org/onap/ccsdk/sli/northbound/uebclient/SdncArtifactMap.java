@@ -24,7 +24,6 @@ package org.onap.ccsdk.sli.northbound.uebclient;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,7 +56,7 @@ public class SdncArtifactMap {
 		}
 
         public String getRpcUrl(String base) {
-			return(base+rpc);
+			return base+rpc;
         }
 
 		private SdncArtifactType(String tag, String rpc, String pass) {
@@ -73,7 +72,7 @@ public class SdncArtifactMap {
 
 
 
-	private Map<String, SdncArtifactType> mapItems = new HashMap<String, SdncArtifactType>();
+	private Map<String, SdncArtifactType> mapItems = new HashMap<>();
 
 	private int NumPasses = 1;
 
@@ -110,9 +109,9 @@ public class SdncArtifactMap {
 
 	public SdncArtifactType getMapping(String tag) {
 		if (mapItems.containsKey(tag)) {
-			return(mapItems.get(tag));
+			return mapItems.get(tag);
 		} else {
-			return(null);
+			return null;
 		}
 	}
 
