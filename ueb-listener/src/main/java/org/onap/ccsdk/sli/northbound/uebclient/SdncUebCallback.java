@@ -332,7 +332,7 @@ public class SdncUebCallback implements INotificationCallback {
         deployList = new LinkedList[numPasses];
 
         for (int i = 0 ; i < numPasses ; i++) {
-			deployList[i] = new LinkedList<DeployableArtifact>();
+			deployList[i] = new LinkedList<>();
         }
         for (int pass = 0 ; pass < config.getMaxPasses() ; pass++) {
 
@@ -450,7 +450,7 @@ public class SdncUebCallback implements INotificationCallback {
 
         }
 
-		if (toscaYamlType == true) {
+		if (toscaYamlType) {
 			processToscaYaml (data, svcName, resourceName, artifact, spoolFile, archiveDir);
 
 			try {
@@ -547,7 +547,8 @@ public class SdncUebCallback implements INotificationCallback {
 		// Ingest Service Data - 1707
 		Metadata serviceMetadata = sdcCsarHelper.getServiceMetadata();
 		SdncServiceModel serviceModel = new SdncServiceModel(sdcCsarHelper, serviceMetadata);
-		serviceModel.setFilename(spoolFile.toString().substring(spoolFile.toString().lastIndexOf("/")+1));  // will be csar file name
+		serviceModel.setFilename(spoolFile.toString().substring(spoolFile
+                                                                        .toString().lastIndexOf('/')+1));  // will be csar file name
 		serviceModel.setServiceInstanceNamePrefix(SdncBaseModel.extractSubstitutionMappingTypeName(sdcCsarHelper).substring(SdncBaseModel.extractSubstitutionMappingTypeName(sdcCsarHelper).lastIndexOf(".")+1));
 
 		try {
@@ -678,7 +679,7 @@ public class SdncUebCallback implements INotificationCallback {
 				}
 
 				// Insert VFC_TO_NETWORK_ROLE_MAPPING data
-				Map<String, String> mappingParams = new HashMap<String, String>();
+				Map<String, String> mappingParams = new HashMap<>();
 				//String cpNetworkRoleTag = "\"" + sdcCsarHelper.getNodeTemplatePropertyLeafValue(cpNode, SdcPropertyNames.PROPERTY_NAME_NETWORKROLETAG) + "\"";
 				// extract network_role, network_role_tag and virtual_binding from this cpNode
 				SdncBaseModel.addParameter("network_role", SdncBaseModel.extractValue(sdcCsarHelper, cpNode, "network_role"), mappingParams);
@@ -963,8 +964,7 @@ public class SdncUebCallback implements INotificationCallback {
 
             @Override
 			public long getTimestamp() {
-                long currentTimeMillis = System.currentTimeMillis();
-                return currentTimeMillis;
+                return System.currentTimeMillis();
             }
 
             @Override
