@@ -480,20 +480,13 @@ public class SdncUebCallback implements INotificationCallback {
 
         if (transformedFile != null) {
             try {
+                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                DocumentBuilder db = dbf.newDocumentBuilder();
 
-                try {
-
-                    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-                    DocumentBuilder db = dbf.newDocumentBuilder();
-
-                    spoolDoc = db.parse(transformedFile);
-                } catch (Exception e) {
-                    LOG.error("Caught exception trying to parse transformed XML file {}",
-                                    transformedFile.getAbsolutePath(), e);
-                }
-
+                spoolDoc = db.parse(transformedFile);
             } catch (Exception e) {
-                LOG.error("Caught exception trying to deploy file", e);
+                LOG.error("Caught exception trying to parse transformed XML file {}",
+                          transformedFile.getAbsolutePath(), e);
             }
         }
 
