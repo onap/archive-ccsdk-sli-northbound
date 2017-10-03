@@ -74,8 +74,8 @@ import org.openecomp.sdc.tosca.parser.exceptions.SdcToscaParserException;
 import org.openecomp.sdc.tosca.parser.impl.SdcPropertyNames;
 import org.openecomp.sdc.tosca.parser.impl.SdcToscaParserFactory;
 import org.openecomp.sdc.toscaparser.api.Group;
-import org.openecomp.sdc.toscaparser.api.Metadata;
 import org.openecomp.sdc.toscaparser.api.NodeTemplate;
+import org.openecomp.sdc.toscaparser.api.elements.Metadata;
 import org.openecomp.sdc.utils.ArtifactTypeEnum;
 import org.openecomp.sdc.utils.DistributionActionResultEnum;
 import org.openecomp.sdc.utils.DistributionStatusEnum;
@@ -238,6 +238,8 @@ public class SdncUebCallback implements INotificationCallback {
         File incomingDir = null;
         File archiveDir = null;
 
+        LOG.debug("IncomingDirName is {}", incomingDirName);
+
         // Process service level artifacts
         List<IArtifactInfo> artifactList = data.getServiceArtifacts();
 
@@ -298,12 +300,15 @@ public class SdncUebCallback implements INotificationCallback {
     public void deployDownloadedFiles(File incomingDir, File archiveDir, INotificationData data) {
 
         if (incomingDir == null) {
+        	    LOG.debug("incomingDir is null - using {}", config.getIncomingDir());
             incomingDir = new File(config.getIncomingDir());
 
             if (!incomingDir.exists()) {
                 incomingDir.mkdirs();
             }
 
+        } else {
+        		LOG.debug("incomingDir is not null - it is {}", incomingDir.getPath());
         }
 
         if (archiveDir == null) {
@@ -315,6 +320,7 @@ public class SdncUebCallback implements INotificationCallback {
         }
 
         String curFileName = "";
+        LOG.debug("Scanning {} - {} for downloaded files", incomingDir.getPath(), incomingDir.toPath());
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(incomingDir.toPath())) {
             for (Path file: stream) {
                 curFileName = file.toString();
@@ -533,7 +539,6 @@ public class SdncUebCallback implements INotificationCallback {
 			sdcCsarHelper = factory.getSdcCsarHelper(spoolFile.getAbsolutePath());
 		} catch (SdcToscaParserException e) {
 			LOG.error("Could not create SDC TOSCA Parser ", e);
-			factory.close();
 			return;
 		}
 
@@ -550,7 +555,6 @@ public class SdncUebCallback implements INotificationCallback {
 			insertToscaData(serviceModel.getSql(model_yaml));
 		} catch (IOException e) {
 			LOG.error("Could not insert Tosca YAML data into the SERVICE_MODEL table ", e);
-			factory.close();
 			return;
 		}
 
@@ -693,7 +697,7 @@ public class SdncUebCallback implements INotificationCallback {
 					//String extcp_subnetpool_id = "\"" + SdncBaseModel.extractValue(sdcCsarHelper, match.getLeft(), SdcPropertyNames.PROPERTY_NAME_SUBNETPOOLID) + "\""; // need path to subnetpoolid
 
 					// extract values from the right "VFC" Node
-					String vfcCustomizationUuid = "\"" + SdncBaseModel.extractValue(sdcCsarHelper, match.getRight().getMetadata(), "customization_uuid") + "\"";
+					String vfcCustomizationUuid = "\"" + SdncBaseModel.extractValue(sdcCsarHelper, match.getRight().getMetaData(), "customization_uuid") + "\"";
 					SdncBaseModel.addParameter("vm_type", SdncBaseModel.extractValue(sdcCsarHelper, match.getRight(), SdcPropertyNames.PROPERTY_NAME_VMTYPE), mappingParams);
 					SdncBaseModel.addIntParameter("ipv4_count", SdncBaseModel.extractValue(sdcCsarHelper, match.getRight(), SdcPropertyNames.PROPERTY_NAME_NETWORKASSIGNMENTS_IPV4SUBNETDEFAULTASSIGNMENTS_MINSUBNETSCOUNT), mappingParams);
 					SdncBaseModel.addIntParameter("ipv6_count", SdncBaseModel.extractValue(sdcCsarHelper, match.getRight(), SdcPropertyNames.PROPERTY_NAME_NETWORKASSIGNMENTS_IPV6SUBNETDEFAULTASSIGNMENTS_MINSUBNETSCOUNT), mappingParams);
@@ -712,8 +716,7 @@ public class SdncUebCallback implements INotificationCallback {
 
 		} // VF loop
 
-		// Close ASDC TOSCA Parser factory - we are done processing this distribution
-		factory.close();
+
 
 		if ((artifact != null) && (data != null)) {
 			LOG.info("Update to SDN-C succeeded");

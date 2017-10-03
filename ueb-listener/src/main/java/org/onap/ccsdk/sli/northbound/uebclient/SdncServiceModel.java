@@ -23,7 +23,7 @@ package org.onap.ccsdk.sli.northbound.uebclient;
 
 import org.openecomp.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.openecomp.sdc.tosca.parser.impl.SdcPropertyNames;
-import org.openecomp.sdc.toscaparser.api.Metadata;
+import org.openecomp.sdc.toscaparser.api.elements.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

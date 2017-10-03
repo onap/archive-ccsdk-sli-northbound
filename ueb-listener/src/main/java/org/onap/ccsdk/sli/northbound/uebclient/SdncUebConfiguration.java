@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Properties;
 
 import org.openecomp.sdc.api.consumer.IConfiguration;
-import org.openecomp.sdc.utils.ArtifactTypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -162,16 +161,8 @@ public class SdncUebConfiguration implements IConfiguration{
 			relevantArtifactTypes = new LinkedList<>();
 
 			for (String artifactType : artifactTypes) {
-				try {
-					if (ArtifactTypeEnum.valueOf(artifactType) != null) {
-							relevantArtifactTypes.add(artifactType);
-					} else {
-						LOG.warn("Skipping unrecognized artifact type {}", artifactType);
-					}
-				} catch (Exception e) {
 
-					LOG.warn("Caught exception validating artifact type {}", artifactType, e);
-				}
+				relevantArtifactTypes.add(artifactType);
 
 			}
 
@@ -282,7 +273,11 @@ public class SdncUebConfiguration implements IConfiguration{
 
 	@Override
 	public boolean isFilterInEmptyResources() {
-		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Boolean isUseHttpsWithDmaap() {
 		return false;
 	}
 

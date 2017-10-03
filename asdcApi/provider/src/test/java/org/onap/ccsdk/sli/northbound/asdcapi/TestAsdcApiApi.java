@@ -19,7 +19,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.sdnc.northbound.asdcapi;
+package org.onap.ccsdk.sli.northbound.asdcapi;
 
 import org.junit.Before;
 import org.junit.Test;
