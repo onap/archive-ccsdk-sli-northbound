@@ -82,21 +82,31 @@ public class SdncUebConfiguration implements IConfiguration{
 	}
 
 	public SdncUebConfiguration() {
-
-		try {
-			init();
-		} catch (Exception e) {
-			LOG.error("Cannot initialize SdncUebConfiguration", e);
-		}
-	}
-
-	public void init() throws IOException {
-		String propPath;
 		String propDir = System.getenv(SDNC_CONFIG_DIR);
 		if (propDir == null) {
 
 			propDir = "/opt/sdnc/data/properties";
 		}
+		try {
+			init(propDir);
+		} catch (Exception e) {
+			LOG.error("Cannot initialize SdncUebConfiguration", e);
+		}
+	}
+
+	public SdncUebConfiguration(String propDir) {
+		try {
+			init(propDir);
+		} catch (Exception e) {
+			LOG.error("Cannot initialize SdncUebConfiguration", e);
+		}
+	}
+
+
+	public void init(String propDir) throws IOException {
+		String propPath;
+
+
 		propPath = propDir + "/ueb-listener.properties";
 		File propFile = new File(propPath);
 

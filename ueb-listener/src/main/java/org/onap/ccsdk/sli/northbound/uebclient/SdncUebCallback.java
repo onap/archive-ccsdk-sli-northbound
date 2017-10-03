@@ -1073,6 +1073,10 @@ public class SdncUebCallback implements INotificationCallback {
     }
 
     private String escapeFilename(String str) {
+
+    		if (str == null) {
+    			str = "";
+    		}
         StringBuffer retval = new StringBuffer();
 
         for (int i = 0 ; i < str.length() ; i++) {
