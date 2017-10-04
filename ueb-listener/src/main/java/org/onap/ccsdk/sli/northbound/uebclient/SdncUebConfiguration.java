@@ -177,7 +177,10 @@ public class SdncUebConfiguration implements IConfiguration{
 
 		String artifactMapFile = props.getProperty("org.onap.ccsdk.sli.northbound.uebclient.artifact-map");
 		if (artifactMapFile != null) {
+			LOG.info("Loading artifactMapFile {}", artifactMapFile);
 			artifactMap.load(artifactMapFile);
+		} else {
+			LOG.warn("artifact-map is unset");
 		}
 
 	}
