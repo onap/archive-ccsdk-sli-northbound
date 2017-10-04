@@ -25,6 +25,125 @@ import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 
 public class TestSdncUebCallback {
 
+
+	private static final String CRTBL_SERVICE_MODEL = "CREATE TABLE `SERVICE_MODEL` (\n" +
+			"  `service_uuid` varchar(255) NOT NULL,\n" +
+			"  `model_yaml` longblob,\n" +
+			"  `invariant_uuid` varchar(255) DEFAULT NULL,\n" +
+			"  `version` varchar(255) DEFAULT NULL,\n" +
+			"  `name` varchar(255) DEFAULT NULL,\n" +
+			"  `description` varchar(1024) DEFAULT NULL,\n" +
+			"  `type` varchar(255) DEFAULT NULL,\n" +
+			"  `category` varchar(255) DEFAULT NULL,\n" +
+			"  `ecomp_naming` char(1) DEFAULT NULL,\n" +
+			"  `service_instance_name_prefix` varchar(255) DEFAULT NULL,\n" +
+			"  `filename` varchar(100) DEFAULT NULL,\n" +
+			"  `naming_policy` varchar(255) DEFAULT NULL,\n" +
+			"  PRIMARY KEY (`service_uuid`)\n" +
+			") ";
+
+	private static final String CRTBL_NETWORK_MODEL = "CREATE TABLE `NETWORK_MODEL` (\n" +
+			"  `customization_uuid` varchar(255) NOT NULL,\n" +
+			"  `service_uuid` varchar(255) NOT NULL,\n" +
+			"  `model_yaml` longblob,\n" +
+			"  `invariant_uuid` varchar(255) DEFAULT NULL,\n" +
+			"  `uuid` varchar(255) DEFAULT NULL,\n" +
+			"  `network_type` varchar(255) DEFAULT NULL,\n" +
+			"  `network_role` varchar(255) DEFAULT NULL,\n" +
+			"  `network_technology` varchar(255) DEFAULT NULL,\n" +
+			"  `network_scope` varchar(255) DEFAULT NULL,\n" +
+			"  `naming_policy` varchar(255) DEFAULT NULL,\n" +
+			"  `ecomp_generated_naming` char(1) DEFAULT NULL,\n" +
+			"  `is_shared_network` char(1) DEFAULT NULL,\n" +
+			"  `is_external_network` char(1) DEFAULT NULL,\n" +
+			"  `is_provider_network` char(1) DEFAULT NULL,\n" +
+			"  `physical_network_name` varchar(255) DEFAULT NULL,\n" +
+			"  `is_bound_to_vpn` char(1) DEFAULT NULL,\n" +
+			"  `vpn_binding` varchar(255) DEFAULT NULL,\n" +
+			"  `use_ipv4` char(1) DEFAULT NULL,\n" +
+			"  `ipv4_dhcp_enabled` char(1) DEFAULT NULL,\n" +
+			"  `ipv4_ip_version` char(1) DEFAULT NULL,\n" +
+			"  `ipv4_cidr_mask` varchar(255) DEFAULT NULL,\n" +
+			"  `eipam_v4_address_plan` varchar(255) DEFAULT NULL,\n" +
+			"  `use_ipv6` char(1) DEFAULT NULL,\n" +
+			"  `ipv6_dhcp_enabled` char(1) DEFAULT NULL,\n" +
+			"  `ipv6_ip_version` char(1) DEFAULT NULL,\n" +
+			"  `ipv6_cidr_mask` varchar(255) DEFAULT NULL,\n" +
+			"  `eipam_v6_address_plan` varchar(255) DEFAULT NULL,\n" +
+			"  `version` varchar(255) DEFAULT NULL,\n" +
+			"  PRIMARY KEY (`customization_uuid`),\n" +
+			"  KEY `FK_NETWORK_MODEL` (`service_uuid`),\n" +
+			"  CONSTRAINT `FK_NETWORK_MODEL` FOREIGN KEY (`service_uuid`) REFERENCES `SERVICE_MODEL` (`service_uuid`) ON DELETE NO ACTION ON UPDATE NO ACTION\n" +
+			")";
+
+	private static final String CRTBL_ALLOTTED_RESOURCE_MODEL = "CREATE TABLE `ALLOTTED_RESOURCE_MODEL` (\n" +
+			"  `customization_uuid` varchar(255) NOT NULL,\n" +
+			"  `model_yaml` longblob,\n" +
+			"  `invariant_uuid` varchar(255) DEFAULT NULL,\n" +
+			"  `uuid` varchar(255) DEFAULT NULL,\n" +
+			"  `version` varchar(255) DEFAULT NULL,\n" +
+			"  `naming_policy` varchar(255) DEFAULT NULL,\n" +
+			"  `ecomp_generated_naming` char(1) DEFAULT NULL,\n" +
+			"  `depending_service` varchar(255) DEFAULT NULL,\n" +
+			"  `role` varchar(255) DEFAULT NULL,\n" +
+			"  `type` varchar(255) DEFAULT NULL,\n" +
+			"  `service_dependency` varchar(255) DEFAULT NULL,\n" +
+			"  `allotted_resource_type` varchar(255) DEFAULT NULL,\n" +
+			"  PRIMARY KEY (`customization_uuid`)\n" +
+			") ";
+
+	private static final String CRTBL_VFC_MODEL = "CREATE TABLE `VFC_MODEL` (\n" +
+			"  `customization_uuid` varchar(255) NOT NULL,\n" +
+			"  `model_yaml` longblob,\n" +
+			"  `invariant_uuid` varchar(255) DEFAULT NULL,\n" +
+			"  `uuid` varchar(255) DEFAULT NULL,\n" +
+			"  `version` varchar(255) DEFAULT NULL,\n" +
+			"  `naming_policy` varchar(255) DEFAULT NULL,\n" +
+			"  `ecomp_generated_naming` char(1) DEFAULT NULL,\n" +
+			"  `nfc_function` varchar(255) DEFAULT NULL,\n" +
+			"  `nfc_naming_code` varchar(255) DEFAULT NULL,\n" +
+			"  `vm_type` varchar(255) DEFAULT NULL,\n" +
+			"  `vm_type_tag` varchar(255) DEFAULT NULL,\n" +
+			"  `vm_image_name` varchar(255) DEFAULT NULL,\n" +
+			"  `vm_flavor_name` varchar(255) DEFAULT NULL,\n" +
+			"  `high_availability` varchar(255) DEFAULT NULL,\n" +
+			"  `nfc_naming` varchar(255) DEFAULT NULL,\n" +
+			"  `min_instances` int(11) DEFAULT NULL,\n" +
+			"  `max_instances` int(11) DEFAULT NULL,\n" +
+			"  PRIMARY KEY (`customization_uuid`)\n" +
+			") ";
+
+	private static final String CRTBL_VF_MODEL = "CREATE TABLE `VF_MODEL` (\n" +
+			"  `customization_uuid` varchar(255) NOT NULL,\n" +
+			"  `model_yaml` longblob,\n" +
+			"  `invariant_uuid` varchar(255) DEFAULT NULL,\n" +
+			"  `uuid` varchar(255) DEFAULT NULL,\n" +
+			"  `version` varchar(255) DEFAULT NULL,\n" +
+			"  `name` varchar(255) DEFAULT NULL,\n" +
+			"  `naming_policy` varchar(255) DEFAULT NULL,\n" +
+			"  `ecomp_generated_naming` char(1) DEFAULT NULL,\n" +
+			"  `avail_zone_max_count` int(11) DEFAULT NULL,\n" +
+			"  `nf_function` varchar(255) DEFAULT NULL,\n" +
+			"  `nf_code` varchar(255) DEFAULT NULL,\n" +
+			"  `nf_type` varchar(255) DEFAULT NULL,\n" +
+			"  `nf_role` varchar(255) DEFAULT NULL,\n" +
+			"  `vendor` varchar(255) DEFAULT NULL,\n" +
+			"  `vendor_version` varchar(255) DEFAULT NULL,\n" +
+			"  PRIMARY KEY (`customization_uuid`)\n" +
+			")";
+
+	private static final String CRTBL_VF_MODULE_MODEL = "CREATE TABLE `VF_MODULE_MODEL` (\n" +
+			"  `customization_uuid` varchar(255) NOT NULL,\n" +
+			"  `model_yaml` longblob,\n" +
+			"  `invariant_uuid` varchar(255) DEFAULT NULL,\n" +
+			"  `uuid` varchar(255) DEFAULT NULL,\n" +
+			"  `version` varchar(255) DEFAULT NULL,\n" +
+			"  `vf_module_type` varchar(255) DEFAULT NULL,\n" +
+			"  `availability_zone_count` int(11) DEFAULT NULL,\n" +
+			"  `ecomp_generated_vm_assignments` char(1) DEFAULT NULL,\n" +
+			"  PRIMARY KEY (`customization_uuid`)\n" +
+			")";
+
 	 private static final Logger LOG = LoggerFactory
 	            .getLogger(TestSdncUebCallback.class);
 	SdncUebConfiguration config;
@@ -34,6 +153,7 @@ public class TestSdncUebCallback {
 	@Before
 	public void setUp() throws Exception {
 		config = new SdncUebConfiguration("src/test/resources");
+
 
 		URL propUrl = getClass().getResource("/dblib.properties");
 
@@ -56,7 +176,16 @@ public class TestSdncUebCallback {
 		props.setProperty("org.onap.ccsdk.sli.jdbc.url", config.getURL("test"));
 
 
+		// Create dblib connection
 		dblibSvc = new DBResourceManager(props);
+
+		// Create TOSCA tables
+		dblibSvc.writeData(CRTBL_SERVICE_MODEL, null, null);
+		dblibSvc.writeData(CRTBL_NETWORK_MODEL, null, null);
+		dblibSvc.writeData(CRTBL_VFC_MODEL, null, null);
+		dblibSvc.writeData(CRTBL_VF_MODEL, null, null);
+		dblibSvc.writeData(CRTBL_VF_MODULE_MODEL, null, null);
+		dblibSvc.writeData(CRTBL_ALLOTTED_RESOURCE_MODEL, null, null);
 	}
 
 	@After
