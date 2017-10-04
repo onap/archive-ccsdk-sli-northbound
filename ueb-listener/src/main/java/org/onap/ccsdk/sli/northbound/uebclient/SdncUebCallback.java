@@ -207,7 +207,13 @@ public class SdncUebCallback implements INotificationCallback {
 		Properties props = new Properties();
 		props.load(new FileInputStream(propFile));
 
-		jdbcDataSource = new DBResourceManager(props);
+		setJdbcDataSource(new DBResourceManager(props));
+
+	}
+
+	static void setJdbcDataSource(DBResourceManager dbMgr) {
+
+		jdbcDataSource = dbMgr;
 
 		if(jdbcDataSource.isActive()){
 			LOG.warn( "DBLIB: JDBC DataSource has been initialized.");
