@@ -46,6 +46,7 @@ public class SdncUebConfiguration implements IConfiguration{
 	private String password = null;
 	private int pollingInterval = 30;
 	private int pollingTimeout = 15;
+	private int clientStartupTimeout = 900;
 	private List<String> relevantArtifactTypes = null;
 	private String user = null;
 
@@ -154,6 +155,14 @@ public class SdncUebConfiguration implements IConfiguration{
 			}
 		}
 
+		curval = props.getProperty("org.onap.ccsdk.sli.northbound.uebclient.client-startup-timeout");
+		if ((curval != null) && (curval.length() > 0)) {
+			try {
+				clientStartupTimeout = Integer.parseInt(curval);
+			} catch (Exception e) {
+				LOG.warn("Illegal value for org.onap.ccsdk.sli.northbound.uebclient.polling-timeout ({}) ", curval, e);
+			}
+		}
 		curval = props.getProperty("org.onap.ccsdk.sli.northbound.uebclient.relevant-artifact-types");
 		if ((curval != null) && (curval.length() > 0)) {
 			String[] artifactTypes = curval.split(",");
@@ -223,6 +232,10 @@ public class SdncUebConfiguration implements IConfiguration{
 	@Override
 	public List<String> getRelevantArtifactTypes() {
 		return relevantArtifactTypes;
+	}
+
+	public int getClientStartupTimeout() {
+		return clientStartupTimeout;
 	}
 
 	@Override

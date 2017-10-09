@@ -39,6 +39,7 @@ public class SdncUebClient {
 
 		SdncUebCallback cb = new SdncUebCallback(client, config);
 
+
 		LOG.info("Scanning for local distribution artifacts before starting client");
 		cb.deployDownloadedFiles(null, null, null);
 
@@ -48,11 +49,37 @@ public class SdncUebClient {
 
 		LOG.info("Initialized ASDC distribution client - results = {}", result.getDistributionMessageResult());
 
-		if (result.getDistributionActionResult() == DistributionActionResultEnum.SUCCESS) {
-			LOG.info("Starting client...");
-			IDistributionClientResult start = client.start();
-			LOG.info("Client startup result = {}", start.getDistributionMessageResult());
+		long startTm = System.currentTimeMillis();
+		int sleepTm = config.getPollingInterval() * 1000;
+		long maxWaitTm = config.getClientStartupTimeout() * 1000;
+
+		boolean keepWaiting = true;
+
+		while (keepWaiting) {
+			if (result.getDistributionActionResult() == DistributionActionResultEnum.SUCCESS) {
+				LOG.info("Starting client...");
+				try {
+					IDistributionClientResult start = client.start();
+					LOG.info("Client startup result = {}", start.getDistributionMessageResult());
+					keepWaiting = false;
+				} catch(Exception e) {
+					LOG.info("Client startup failure", e);
+				}
+
+				if (System.currentTimeMillis() - startTm < maxWaitTm) {
+					keepWaiting = false;
+				} else {
+
+					try {
+						Thread.sleep(sleepTm);
+					} catch (InterruptedException e) {
+						// Ignore
+					}
+				}
+			}
+
 		}
+
 
 
 	}
