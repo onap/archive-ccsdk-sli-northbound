@@ -119,7 +119,7 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<mainClass>org.openecomp.sdnc.uebclient.SdncUebClient</mainClass>
+							<mainClass>org.onap.ccsdk.sli.northbound.uebclient.SdncUebClient</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
