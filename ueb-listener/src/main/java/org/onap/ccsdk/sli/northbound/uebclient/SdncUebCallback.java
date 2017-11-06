@@ -440,15 +440,15 @@ public class SdncUebCallback implements INotificationCallback {
         // If an override file exists, read that instead of the file we just downloaded
         ArtifactTypeEnum artifactEnum = ArtifactTypeEnum.YANG_XML;
 
-		boolean toscaYamlType = false;
+		boolean toscaCsarType = false;
         if (artifact != null) {
 			String artifactTypeString = artifact.getArtifactType();
-			if (artifactTypeString.contains("TOSCA_TEMPLATE")) {
-				toscaYamlType = true;
+			if (artifactTypeString.contains("TOSCA_CSAR")) {
+				toscaCsarType = true;
 			}
 		} else {
-			if (spoolFile.toString().contains(".yml") || spoolFile.toString().contains(".csar")) {
-				toscaYamlType = true;
+			if (spoolFile.toString().contains(".csar")) {
+				toscaCsarType = true;
 			}
         }
         String overrideFileName = config.getOverrideFile();
@@ -462,8 +462,8 @@ public class SdncUebCallback implements INotificationCallback {
 
         }
 
-		if (toscaYamlType) {
-			processToscaYaml (data, svcName, resourceName, artifact, spoolFile, archiveDir);
+		if (toscaCsarType) {
+			processToscaCsar (data, svcName, resourceName, artifact, spoolFile, archiveDir);
 
 			try {
 				Path source = spoolFile.toPath();
@@ -529,7 +529,7 @@ public class SdncUebCallback implements INotificationCallback {
     }
 
 
-	private void processToscaYaml(INotificationData data, String svcName, String resourceName,
+	private void processToscaCsar(INotificationData data, String svcName, String resourceName,
 			IArtifactInfo artifact, File spoolFile, File archiveDir) {
 
 		// Use ASDC Dist Client 1.1.5 with TOSCA parsing APIs to extract relevant TOSCA model data
@@ -537,7 +537,7 @@ public class SdncUebCallback implements INotificationCallback {
 		// TOSCA data extraction flow 1707:
 		// Use ASDC dist-client to get yaml string - not yet available
 		String model_yaml = null;
-		LOG.info("Process TOSCA YAML file: "+spoolFile.toString());
+		LOG.info("Process TOSCA CSAR file: "+spoolFile.toString());
 
 		SdcToscaParserFactory factory = SdcToscaParserFactory.getInstance();
 		ISdcCsarHelper sdcCsarHelper = null;
