@@ -26,6 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -396,21 +397,35 @@ public class SdncUebCallback implements INotificationCallback {
 			return;
 		}
 
-		String payload = new String(payloadBytes);
-
 
         File spoolFile = new File(incomingDir.getAbsolutePath() + "/" + artifact.getArtifactName());
 
         boolean writeSucceeded = false;
 
-        try (FileWriter spoolFileWriter = new FileWriter(spoolFile)) {
-            spoolFileWriter.write(payload);
-            spoolFileWriter.close();
-            writeSucceeded = true;
-        } catch (Exception e) {
-            LOG.error("Unable to save downloaded file to spool directory ("+ incomingDir.getAbsolutePath() +")", e);
-        }
+        // Save zip if TOSCA_CSAR
+        if (artifact.getArtifactType().contains("TOSCA_CSAR") || artifact.getArtifactName().contains(".csar")) {
 
+	        try {      	
+			FileOutputStream outFile = new FileOutputStream(incomingDir.getAbsolutePath() + "/" + artifact.getArtifactName());
+			outFile.write(payloadBytes, 0, payloadBytes.length);
+			outFile.close();
+	            writeSucceeded = true;
+	        } catch (Exception e) {
+	            LOG.error("Unable to save downloaded zip file to spool directory ("+ incomingDir.getAbsolutePath() +")", e);
+	        }
+
+        } else {
+		String payload = new String(payloadBytes);
+	
+	        try {
+	            FileWriter spoolFileWriter = new FileWriter(spoolFile);
+	            spoolFileWriter.write(payload);
+	            spoolFileWriter.close();
+	            writeSucceeded = true;
+	        } catch (Exception e) {
+	            LOG.error("Unable to save downloaded file to spool directory ("+ incomingDir.getAbsolutePath() +")", e);
+	        }
+        }
 
 		if (writeSucceeded && (downloadResult.getDistributionActionResult() == DistributionActionResultEnum.SUCCESS)) {
             handleSuccessfulDownload(data, svcName, resourceName, artifact, spoolFile, archiveDir);
