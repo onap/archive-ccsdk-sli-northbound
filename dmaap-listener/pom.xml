@@ -34,7 +34,7 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.7.10</version>
+			<version>1.7.21</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -68,6 +68,13 @@
 			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
+                <dependency>
+            <groupId>ch.vorburger.mariaDB4j</groupId>
+            <artifactId>mariaDB4j</artifactId>
+            <version>2.2.3</version>
+            <scope>test</scope>
+        </dependency>
+
   		<dependency>
 			<groupId>org.onap.ccsdk.sli.core</groupId>
 			<artifactId>dblib-provider</artifactId>
