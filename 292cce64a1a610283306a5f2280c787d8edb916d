@@ -1,0 +1,7 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+2: Dan Timoney <dtimoney@att.com>
+Submitted-by: Dan Timoney <dtimoney@att.com>
+Submitted-at: Fri, 10 Nov 2017 16:56:35 +0000
+Reviewed-on: http://gerrit.onap.org/r/23125
+Project: ccsdk/sli/northbound
+Branch: refs/heads/master
