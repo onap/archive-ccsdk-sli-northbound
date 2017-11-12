@@ -71,19 +71,25 @@ public abstract class SdncDmaapConsumer implements Runnable {
 
         try (FileInputStream in = new FileInputStream(new File(propertiesPath))) {
 
+	    LOG.debug("propertiesPath: " + propertiesPath);
             this.properties = (Properties) properties.clone();
             this.properties.load(in);
 
-            String timeoutStr = properties.getProperty("timeout");
+
+            String timeoutStr = this.properties.getProperty("timeout");
+	    LOG.debug("timeoutStr: " + timeoutStr);
 
             if ((timeoutStr != null) && (timeoutStr.length() > 0)) {
                 timeout = parseTimeOutValue(timeoutStr);
             }
 
-            String fetchPauseStr = properties.getProperty("fetchPause");
+            String fetchPauseStr = this.properties.getProperty("fetchPause");
+	    LOG.debug("fetchPause(Str): " + fetchPauseStr);
             if ((fetchPauseStr != null) && (fetchPauseStr.length() > 0)) {
                 fetchPause = parseFetchPause(fetchPauseStr);
             }
+	    LOG.debug("fetchPause: " + fetchPause);
+
 
             this.consumer = MRClientFactory.createConsumer(propertiesPath);
             ready = true;

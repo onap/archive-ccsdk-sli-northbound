@@ -18,7 +18,8 @@
 		<fasterxml.jackson.version>2.9.0.pr1</fasterxml.jackson.version>
 		<skip.SWM>true</skip.SWM>
 		<dmaap.listener.base>/opt/app/dmaap-listener</dmaap.listener.base>
-		<dmaap.listener.version>0.2.12</dmaap.listener.version>
+		<dmaap.listener.version>1.0.0-SNAPSHOT</dmaap.listener.version>
+
 		<maven.build.timestamp.format>yyMMdd-HHmmss</maven.build.timestamp.format>
 		<build.number>${maven.build.timestamp}</build.number>
 		<SWM_VERSION>${project.version}-${build.number}</SWM_VERSION>
@@ -27,7 +28,7 @@
 	<dependencies>
 
 		<dependency>
-			<groupId>com.att.nsa</groupId>
+			<groupId>org.onap.dmaap.messagerouter.dmaapclient</groupId>
 			<artifactId>dmaapClient</artifactId>
 			<version>${dmaap.listener.version}</version>
 		</dependency>
