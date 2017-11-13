@@ -124,8 +124,7 @@ public class SdncDhcpEventConsumer extends SdncDmaapConsumer {
 
 		try {
 
-			jdbcDataSource.writeData("INSERT INTO DHCP_MAP(mac_addr, ip_addr) VALUES('" + macAddr + "','" + ipAddr + "')",
-					null, null);
+			jdbcDataSource.writeData("INSERT INTO DHCP_MAP(mac_addr, ip_addr) VALUES('" + macAddr + "','" + ipAddr + "') ON DUPLICATE KEY UPDATE ip_addr = '"+ipAddr+"'", null, null);
 
 		} catch (SQLException e) {
 			LOG.error("Could not insert DHCP event data into the database ", e);

@@ -42,6 +42,9 @@ public class TestSdncDhcpEventConsumer {
 	private static final String VALID_DHCP_EVENT =  "{\"msg_name\":\"DHCPACK\"," +
 												     "\"macaddr\":\"fa:16:3e:8f:ea:68\"," +
 												     "\"yiaddr\":\"10.3.0.2\"}";
+	private static final String SECOND_DHCP_EVENT =  "{\"msg_name\":\"DHCPACK\"," +
+		     "\"macaddr\":\"fa:16:3e:8f:ea:68\"," +
+		     "\"yiaddr\":\"10.3.0.3\"}";
 	private static final String MISSING_MSG_NAME_DHCP_EVENT =  "{\"macaddr\":\"fa:16:3e:8f:ea:68\"," +
 												              "\"yiaddr\":\"10.3.0.2\"}";
 	private static final String MISSING_MAC_ADDR_DHCP_EVENT =   "{\"msg_name\":\"DHCPACK\"," +
@@ -104,11 +107,17 @@ public class TestSdncDhcpEventConsumer {
 	@Test
 	public void testValid() throws InvalidMessageException, SQLException {
 		consumer.processMsg(VALID_DHCP_EVENT);
+		consumer.processMsg(SECOND_DHCP_EVENT);
 
 		CachedRowSet results = dblibSvc.getData(GET_DHCP_MAPPING, null, null);
 
 		if (!results.next()) {
 			fail("Test query ["+GET_DHCP_MAPPING+"] returned no data");
+		} else {
+			String ipAddr = results.getString("ip_addr");
+			if (!"10.3.0.3".equals(ipAddr)) {
+				fail("Expecting ipAddr to be 10.3.0.3, but was "+ipAddr);
+			}
 		}
 
 	}
