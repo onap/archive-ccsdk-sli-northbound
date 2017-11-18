@@ -4,21 +4,21 @@
         <groupId>org.onap.ccsdk.sli.northbound</groupId>
 	<packaging>jar</packaging>
 	<artifactId>dmaap-listener</artifactId>
-	<version>0.1.1-SNAPSHOT</version>
+	<version>0.2.0-SNAPSHOT</version>
 
 	<name>DMAAP Listener</name>
 	<description>DMAAP Listener</description>
 	<parent>
 		<groupId>org.onap.ccsdk.sli.northbound</groupId>
 		<artifactId>ccsdk-sli-northbound</artifactId>
-		<version>0.1.1-SNAPSHOT</version>
+		<version>0.2.0-SNAPSHOT</version>
 	</parent>
 	<properties>
-		<sdc.client.version>1.1.7-SNAPSHOT</sdc.client.version>
+		<sdc.client.version>1.2.0-SNAPSHOT</sdc.client.version>
 		<fasterxml.jackson.version>2.9.0.pr1</fasterxml.jackson.version>
 		<skip.SWM>true</skip.SWM>
 		<dmaap.listener.base>/opt/app/dmaap-listener</dmaap.listener.base>
-		<dmaap.listener.version>1.0.0-SNAPSHOT</dmaap.listener.version>
+		<dmaap.listener.version>1.1.0-SNAPSHOT</dmaap.listener.version>
 
 		<maven.build.timestamp.format>yyMMdd-HHmmss</maven.build.timestamp.format>
 		<build.number>${maven.build.timestamp}</build.number>
