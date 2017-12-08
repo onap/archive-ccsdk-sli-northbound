@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-        <groupId>org.onap.ccsdk.sli.northbound</groupId>
+	<groupId>org.onap.ccsdk.sli.northbound</groupId>
 	<packaging>jar</packaging>
 	<artifactId>dmaap-listener</artifactId>
 	<version>0.1.1-SNAPSHOT</version>
@@ -34,7 +35,12 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.7.10</version>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>${slf4j.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -57,21 +63,28 @@
 			<artifactId>jackson-databind</artifactId>
 			<version>${fasterxml.jackson.version}</version>
 		</dependency>
-               <dependency>
-                        <groupId>com.fasterxml.jackson.core</groupId>
-                        <artifactId>jackson-annotations</artifactId>
-                        <version>${fasterxml.jackson.version}</version>
-                </dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>${fasterxml.jackson.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
-  		<dependency>
+		<dependency>
+			<groupId>ch.vorburger.mariaDB4j</groupId>
+			<artifactId>mariaDB4j</artifactId>
+			<version>2.2.3</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>org.onap.ccsdk.sli.core</groupId>
 			<artifactId>dblib-provider</artifactId>
- 			<version>${sdnctl.dblib.version}</version>
+			<version>${sdnctl.dblib.version}</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -90,19 +103,19 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
-                        <plugin>
-                                <groupId>org.apache.maven.plugins</groupId>
-                                <artifactId>maven-jar-plugin</artifactId>
-                                <version>2.6</version>
-                                <configuration>
-                                        <archive>
-                                                <manifest>
-                                                        <addClasspath>true</addClasspath>
-                                                        <mainClass>org.onap.ccsdk.sli.northbound.dmaapclient.DmaapListener</mainClass>
-                                                </manifest>
-                                        </archive>
-                                </configuration>
-                        </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<mainClass>org.onap.ccsdk.sli.northbound.dmaapclient.DmaapListener</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.6</version>
