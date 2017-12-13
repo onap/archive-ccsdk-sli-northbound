@@ -121,15 +121,13 @@ public class DataChangeProvider implements AutoCloseable, DataChangeService {
 		MdsalHelper.toProperties(parms, inputBuilder.build());
 
 		// Call SLI sync method
-		Properties respProps = null;
-
 		try
 		{
 			if (dataChangeClient.hasGraph("DataChange", SVC_OPERATION , null, "sync"))
 			{
 				try
 				{
-					respProps = dataChangeClient.execute("DataChange", SVC_OPERATION, null, "sync", serviceDataBuilder, parms);
+					dataChangeClient.execute("DataChange", SVC_OPERATION, null, "sync", serviceDataBuilder, parms);
 				}
 				catch (Exception e)
 				{
