@@ -42,7 +42,7 @@ public class DataChangeClient {
 
 	public boolean hasGraph(String module, String rpc, String version, String mode) throws SvcLogicException
 	{
-		return(svcLogicService.hasGraph(module, rpc, version, mode));
+		return svcLogicService.hasGraph(module, rpc, version, mode);
 	}
 
 	public Properties execute(String module, String rpc, String version, String mode, DataChangeNotificationOutputBuilder serviceData)
@@ -56,22 +56,23 @@ public class DataChangeClient {
 	public Properties execute(String module, String rpc, String version, String mode, DataChangeNotificationOutputBuilder serviceData, Properties parms)
 				throws SvcLogicException {
 
-		parms = MdsalHelper.toProperties(parms, serviceData);
+        Properties localProp;
+        localProp = MdsalHelper.toProperties(parms, serviceData);
 
 		if (LOG.isDebugEnabled())
 		{
 			LOG.debug("Parameters passed to SLI");
 
-			for (Object key : parms.keySet()) {
+			for (Object key : localProp.keySet()) {
 				String parmName = (String) key;
-				String parmValue = parms.getProperty(parmName);
+				String parmValue = localProp.getProperty(parmName);
 
 				LOG.debug(parmName+" = "+parmValue);
 
 			}
 		}
 
-		Properties respProps = svcLogicService.execute(module, rpc, version, mode, parms);
+		Properties respProps = svcLogicService.execute(module, rpc, version, mode, localProp);
 
 		if (LOG.isDebugEnabled())
 		{
@@ -86,12 +87,12 @@ public class DataChangeClient {
 			}
 		}
 		if ("failure".equalsIgnoreCase(respProps.getProperty("SvcLogic.status"))) {
-			return (respProps);
+			return respProps;
 		}
 
 		MdsalHelper.toBuilder(respProps, serviceData);
 
-		return (respProps);
+		return respProps;
 	}
 
 }

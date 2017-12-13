@@ -301,19 +301,20 @@ public Future<RpcResult<VfLicenseModelUpdateOutput>> vfLicenseModelUpdate(VfLice
     }
 
     VfLicenseModelUpdateInputBuilder inputBuilder = new VfLicenseModelUpdateInputBuilder(input);
-    input = inputBuilder.build();
+
+    VfLicenseModelUpdateInput inputVfLic = inputBuilder.build();
 
     String errorMessage = "Success";
     String errorCode = "200";
 
     // If this artifact already exists, reject this update
-    if (artifactVersionExists(input.getArtifactName(), input.getArtifactVersion())) {
+    if (artifactVersionExists(inputVfLic.getArtifactName(), inputVfLic.getArtifactVersion())) {
         errorCode = "409";
         errorMessage = "Artifact version already exists";
     } else {
         // Translate input object into SLI-consumable properties
-        LOG.info("Adding INPUT data for "+SVC_OPERATION+" input: " + input);
-        AsdcApiUtil.toProperties(parms, input);
+        LOG.info("Adding INPUT data for "+SVC_OPERATION+" input: " + inputVfLic);
+        AsdcApiUtil.toProperties(parms, inputVfLic);
 
 
         // Call directed graph
@@ -356,8 +357,8 @@ public Future<RpcResult<VfLicenseModelUpdateOutput>> vfLicenseModelUpdate(VfLice
         LOG.info("ASDC update succeeded");
 
         // Update config tree
-        applyVfLicenseModelUpdate(input);
-        addArtifactVersion(input.getArtifactName(), input.getArtifactVersion());
+        applyVfLicenseModelUpdate(inputVfLic);
+        addArtifactVersion(inputVfLic.getArtifactName(), inputVfLic.getArtifactVersion());
 
     } else {
         LOG.info("ASDC update failed ("+errorCode+" : "+errorMessage);
