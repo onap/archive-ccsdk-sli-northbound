@@ -18,7 +18,7 @@
 		<fasterxml.jackson.version>2.9.0.pr1</fasterxml.jackson.version>
 		<skip.SWM>true</skip.SWM>
 		<dmaap.listener.base>/opt/app/dmaap-listener</dmaap.listener.base>
-		<dmaap.listener.version>1.0.0-SNAPSHOT</dmaap.listener.version>
+		<dmaap.listener.version>1.1.0-SNAPSHOT</dmaap.listener.version>
 
 		<maven.build.timestamp.format>yyMMdd-HHmmss</maven.build.timestamp.format>
 		<build.number>${maven.build.timestamp}</build.number>
