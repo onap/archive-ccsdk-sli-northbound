@@ -266,7 +266,7 @@ public class SdncUebCallback implements INotificationCallback {
 
                 LOG.info("Received artifact " + curArtifact.getArtifactName());
 
-				handleArtifact(data, data.getServiceName(), null, null, curArtifact, incomingDir, archiveDir);
+				handleArtifact(data, data.getServiceName(), null, curArtifact, incomingDir, archiveDir);
             }
         }
 
@@ -295,7 +295,7 @@ public class SdncUebCallback implements INotificationCallback {
 
                     LOG.info("Received artifact " + curArtifact.getArtifactName());
 
-					handleArtifact(data, data.getServiceName(), curResource.getResourceName(), curResource.getResourceType(), curArtifact, incomingDir, archiveDir);
+					handleArtifact(data, data.getServiceName(), curResource.getResourceName(), curArtifact, incomingDir, archiveDir);
                 }
             }
         }
@@ -325,18 +325,16 @@ public class SdncUebCallback implements INotificationCallback {
                 archiveDir.mkdirs();
             }
         }
-
-        String curFileName = "";
+        
         LOG.debug("Scanning {} - {} for downloaded files", incomingDir.getPath(), incomingDir.toPath());
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(incomingDir.toPath())) {
             for (Path file: stream) {
-                curFileName = file.toString();
                 handleSuccessfulDownload(null,null, null, null, file.toFile(), archiveDir);
             }
         } catch (Exception x) {
             // IOException can never be thrown by the iteration.
             // In this snippet, it can only be thrown by newDirectoryStream.
-            LOG.warn("Cannot process spool file {}", curFileName, x);
+            LOG.warn("Cannot process spool file {}", x);
         }
 
         // Deploy scheduled deployments
@@ -367,8 +365,7 @@ public class SdncUebCallback implements INotificationCallback {
                     IArtifactInfo artifactInfo = artifact.getArtifactInfo();
 
 					if ((artifactInfo != null) && (data != null)) {
-                        IDistributionClientResult deploymentStatus;
-                            deploymentStatus = client.sendDeploymentStatus(buildStatusMessage(
+                        client.sendDeploymentStatus(buildStatusMessage(
                                     client, data, artifactInfo,
                                     deployResult));
                     }
@@ -378,7 +375,7 @@ public class SdncUebCallback implements INotificationCallback {
         }
     }
 
-	private void handleArtifact(INotificationData data, String svcName, String resourceName, String resourceType,
+	private void handleArtifact(INotificationData data, String svcName, String resourceName,
         IArtifactInfo artifact, File incomingDir, File archiveDir) {
 
         // Download Artifact
@@ -438,22 +435,21 @@ public class SdncUebCallback implements INotificationCallback {
     private void handleFailedDownload(INotificationData data,
             IArtifactInfo relevantArtifact) {
         // Send Download Status
-        IDistributionClientResult sendDownloadStatus = client
-                .sendDownloadStatus(buildStatusMessage(client, data,
+        client.sendDownloadStatus(buildStatusMessage(client, data,
                         relevantArtifact, DistributionStatusEnum.DOWNLOAD_ERROR));
     }
 
     private void handleSuccessfulDownload(INotificationData data, String svcName, String resourceName,
-            IArtifactInfo artifact, File spoolFile, File archiveDir) {
+            IArtifactInfo artifact, File inpSpoolFile, File archiveDir) {
 
 		if ((data != null) && (artifact != null)) {
             // Send Download Status
-            IDistributionClientResult sendDownloadStatus = client
-                    .sendDownloadStatus(buildStatusMessage(client, data, artifact, DistributionStatusEnum.DOWNLOAD_OK));
+            client.sendDownloadStatus(buildStatusMessage(client, data, artifact, DistributionStatusEnum.DOWNLOAD_OK));
         }
 
         // If an override file exists, read that instead of the file we just downloaded
         ArtifactTypeEnum artifactEnum = ArtifactTypeEnum.YANG_XML;
+        File spoolFile = inpSpoolFile;
 
 		boolean toscaCsarType = false;
         if (artifact != null) {
@@ -478,7 +474,7 @@ public class SdncUebCallback implements INotificationCallback {
         }
 
 		if (toscaCsarType) {
-			processToscaCsar (data, svcName, resourceName, artifact, spoolFile, archiveDir);
+			processToscaCsar (data, resourceName, artifact, spoolFile, archiveDir);
 
 			try {
 				Path source = spoolFile.toPath();
@@ -544,7 +540,7 @@ public class SdncUebCallback implements INotificationCallback {
     }
 
 
-	private void processToscaCsar(INotificationData data, String svcName, String resourceName,
+	private void processToscaCsar(INotificationData data, String resourceName,
 			IArtifactInfo artifact, File spoolFile, File archiveDir) {
 
 		// Use ASDC Dist Client 1.1.5 with TOSCA parsing APIs to extract relevant TOSCA model data
