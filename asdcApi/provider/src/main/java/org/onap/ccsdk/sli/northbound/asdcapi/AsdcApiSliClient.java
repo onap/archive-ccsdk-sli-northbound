@@ -40,7 +40,7 @@ public class AsdcApiSliClient {
 
 	public boolean hasGraph(String module, String rpc, String version, String mode) throws SvcLogicException
 	{
-		return(svcLogicService.hasGraph(module, rpc, version, mode));
+		return svcLogicService.hasGraph(module, rpc, version, mode);
 	}
 
 
@@ -88,7 +88,7 @@ public class AsdcApiSliClient {
 		}
 
 
-		return (respProps);
+		return respProps;
 	}
 
 }
