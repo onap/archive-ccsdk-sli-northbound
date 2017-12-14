@@ -28,10 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SdncServiceModel extends SdncBaseModel {
-	
-	private static final Logger LOG = LoggerFactory
-			.getLogger(SdncServiceModel.class);
-	
+
 	private String UUID = null;
 	private String serviceInstanceNamePrefix = null;
 	private String filename = null;
@@ -48,7 +45,7 @@ public class SdncServiceModel extends SdncBaseModel {
 	}
 
 	public String getServiceUUID() {
-		return ("\"" + UUID + "\"");
+		return "\"" + UUID + "\"";
 	}
 	public void setServiceUUID(String serviceUUID) {
 		this.UUID = serviceUUID;

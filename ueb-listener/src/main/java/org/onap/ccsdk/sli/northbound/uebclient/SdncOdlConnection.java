@@ -87,7 +87,7 @@ public class SdncOdlConnection {
 	
 	public static  SdncOdlConnection newInstance(String url, String user, String password) throws IOException
 	{
-		return (new SdncOdlConnection(url, user, password));
+		return new SdncOdlConnection(url, user, password);
 	}
 		
 
