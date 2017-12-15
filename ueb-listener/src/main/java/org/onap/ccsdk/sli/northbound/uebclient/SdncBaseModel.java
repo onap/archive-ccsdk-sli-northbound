@@ -34,9 +34,6 @@ import org.slf4j.LoggerFactory;
 
 public class SdncBaseModel {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(SdncBaseModel.class);
-
 	protected String customizationUUID = null;
 	protected String invariantUUID = null;
 	protected String model_yaml = null;
