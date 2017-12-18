@@ -30,9 +30,6 @@ import org.slf4j.LoggerFactory;
 
 public class SdncARModel extends SdncBaseModel {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(SdncARModel.class);
-
 	public SdncARModel(ISdcCsarHelper sdcCsarHelper, NodeTemplate nodeTemplate) {
 
 		super(sdcCsarHelper, nodeTemplate);
