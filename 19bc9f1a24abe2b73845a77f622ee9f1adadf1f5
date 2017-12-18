@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_84966c93",
+        "filename": "ueb-listener/src/main/java/org/onap/ccsdk/sli/northbound/uebclient/SdncUebCallback.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 337,
+      "author": {
+        "id": 373
+      },
+      "writtenOn": "2017-12-18T06:51:00Z",
+      "side": 1,
+      "message": "remove the {} and change the catch to IOException",
+      "revId": "19bc9f1a24abe2b73845a77f622ee9f1adadf1f5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
