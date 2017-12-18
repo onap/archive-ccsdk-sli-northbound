@@ -230,10 +230,10 @@ public class SdncBaseModel {
 	}
 
 	public String getCustomizationUUID() {
-		return ("\"" + customizationUUID + "\"");
+		return "\"" + customizationUUID + "\"";
 	}
 	public String getCustomizationUUIDNoQuotes() {
-		return (customizationUUID);
+		return customizationUUID;
 	}
 	public void setCustomizationUUID(String customizationUUID) {
 		this.customizationUUID = customizationUUID;

@@ -28,10 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SdncNodeModel extends SdncBaseModel {
-	
-	private static final Logger LOG = LoggerFactory
-			.getLogger(SdncNodeModel.class);
-	
+
 	private String serviceUUID = null;
 	private String ecompGeneratedNaming = null;
 	private String [] bindingUuids = null; 
@@ -41,7 +38,7 @@ public class SdncNodeModel extends SdncBaseModel {
 		
 		super(sdcCsarHelper, nodeTemplate);
 
-		// extract inputs
+		// extract inpuecompGeneratedNamingts
 		String ecompGeneratedNaming = extractBooleanInputDefaultValue(SdcPropertyNames.PROPERTY_NAME_SERVICENAMING_DEFAULT_ECOMPGENERATEDNAMING);
 		addParameter("ecomp_generated_naming",ecompGeneratedNaming);
 		addParameter("naming_policy", extractInputDefaultValue(SdcPropertyNames.PROPERTY_NAME_SERVICENAMING_DEFAULT_NAMINGPOLICY));
