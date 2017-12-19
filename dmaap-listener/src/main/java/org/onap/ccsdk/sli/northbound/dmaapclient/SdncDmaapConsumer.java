@@ -44,15 +44,6 @@ public abstract class SdncDmaapConsumer implements Runnable {
     private int fetchPause = 5000; // Default pause between fetch - 5 seconds
     private int timeout = 15000; // Default timeout - 15 seconds
 
-    public boolean isReady() {
-        return ready;
-    }
-
-
-    public boolean isRunning() {
-        return running;
-    }
-
     public SdncDmaapConsumer() {
 
     }
@@ -61,8 +52,16 @@ public abstract class SdncDmaapConsumer implements Runnable {
         init(properties, propertiesPath);
     }
 
+    public boolean isReady() {
+        return ready;
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+
     public String getProperty(String name) {
-        return (properties.getProperty(name, ""));
+        return properties.getProperty(name, "");
     }
 
     public void init(Properties properties, String propertiesPath) {
