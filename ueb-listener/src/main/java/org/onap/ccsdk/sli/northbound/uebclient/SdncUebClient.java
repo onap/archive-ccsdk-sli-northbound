@@ -51,7 +51,7 @@ public class SdncUebClient {
 
 		long startTm = System.currentTimeMillis();
 		int sleepTm = config.getPollingInterval() * 1000;
-		long maxWaitTm = config.getClientStartupTimeout() * 1000;
+		long maxWaitTm = (long)config.getClientStartupTimeout() * (long)1000;
 
 		boolean keepWaiting = true;
 
