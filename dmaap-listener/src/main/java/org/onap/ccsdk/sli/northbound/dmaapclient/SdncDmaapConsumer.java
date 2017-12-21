@@ -35,7 +35,6 @@ public abstract class SdncDmaapConsumer implements Runnable {
     private static final Logger LOG = LoggerFactory
         .getLogger(SdncDmaapConsumer.class);
 
-    private String propertiesPath = "";
     private Properties properties = null;
     private MRConsumer consumer = null;
     private MRConsumerResponse consumerResponse = null;
@@ -62,12 +61,10 @@ public abstract class SdncDmaapConsumer implements Runnable {
     }
 
     public String getProperty(String name) {
-        return (properties.getProperty(name, ""));
+        return properties.getProperty(name, "");
     }
 
     public void init(Properties properties, String propertiesPath) {
-
-        this.propertiesPath = propertiesPath;
 
         try (FileInputStream in = new FileInputStream(new File(propertiesPath))) {
 

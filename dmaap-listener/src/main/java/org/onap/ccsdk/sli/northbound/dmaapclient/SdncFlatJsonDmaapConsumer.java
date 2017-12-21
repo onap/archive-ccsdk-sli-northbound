@@ -124,6 +124,8 @@ public class SdncFlatJsonDmaapConsumer extends SdncDmaapConsumer {
     private Map<String, String> loadMap(String msgType, String mapDirName) {
         Map<String, String> results = new HashMap<>();
 
+        String dirName = mapDirName;
+
         if (mapDirName == null) {
             String rootdir = System.getenv(DMAAPLISTENERROOT);
 
@@ -131,16 +133,16 @@ public class SdncFlatJsonDmaapConsumer extends SdncDmaapConsumer {
                 rootdir = "/opt/app/dmaap-listener";
             }
 
-            mapDirName = rootdir + "/lib";
+            dirName = rootdir + "/lib";
         }
 
-        String mapFilename = mapDirName + "/" + msgType + ".map";
+        String mapFilename = dirName + "/" + msgType + ".map";
 
         File mapFile = new File(mapFilename);
 
         if (!mapFile.canRead()) {
             LOG.error(String.format("Cannot read map file (%s)", mapFilename));
-            return (null);
+            return null;
         }
 
         try (BufferedReader mapReader = new BufferedReader(new FileReader(mapFile))) {
@@ -160,9 +162,9 @@ public class SdncFlatJsonDmaapConsumer extends SdncDmaapConsumer {
             mapReader.close();
         } catch (Exception e) {
             LOG.error("Caught exception reading map " + mapFilename, e);
-            return (null);
+            return null;
         }
 
-        return (results);
+        return results;
     }
 }
