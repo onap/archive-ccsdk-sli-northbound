@@ -142,7 +142,7 @@ public class SdncFlatJsonDmaapConsumer extends SdncDmaapConsumer {
 
         if (!mapFile.canRead()) {
             LOG.error(String.format("Cannot read map file (%s)", mapFilename));
-            return (null);
+            return null;
         }
 
         try (BufferedReader mapReader = new BufferedReader(new FileReader(mapFile))) {
@@ -162,9 +162,9 @@ public class SdncFlatJsonDmaapConsumer extends SdncDmaapConsumer {
             mapReader.close();
         } catch (Exception e) {
             LOG.error("Caught exception reading map " + mapFilename, e);
-            return (null);
+            return null;
         }
 
-        return (results);
+        return results;
     }
 }
