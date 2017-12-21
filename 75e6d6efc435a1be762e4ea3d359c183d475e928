@@ -63,6 +63,30 @@
       "revId": "75e6d6efc435a1be762e4ea3d359c183d475e928",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_dbca0fa1",
+        "filename": "ueb-listener/src/main/java/org/onap/ccsdk/sli/northbound/uebclient/SdncUebClient.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 87
+      },
+      "writtenOn": "2017-12-21T14:26:54Z",
+      "side": 1,
+      "message": "Please ignore \"Done\" comment - clicked wrong button and cant seem to remove that comment",
+      "parentUuid": "5a93c517_7b5f3b0f",
+      "range": {
+        "startLine": 54,
+        "startChar": 53,
+        "endLine": 54,
+        "endChar": 60
+      },
+      "revId": "75e6d6efc435a1be762e4ea3d359c183d475e928",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
