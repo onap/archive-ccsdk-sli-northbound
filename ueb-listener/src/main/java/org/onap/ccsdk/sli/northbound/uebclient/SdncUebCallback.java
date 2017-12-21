@@ -845,15 +845,15 @@ public class SdncUebCallback implements INotificationCallback {
 
                     LOG.error("Unexpected file contents - root tag is "+rootName);
                 }
-				return(mapEntry);
+				return mapEntry;
             } else {
                 LOG.error("Cannot get root tag from file");
-				return(null);
+				return null;
             }
 
         } catch (Exception e) {
             LOG.error("Could not parse YANG_XML file "+spoolFile.getName(), e);
-			return(null);
+			return null;
         }
     }
 
@@ -922,7 +922,7 @@ public class SdncUebCallback implements INotificationCallback {
             }
         } catch (Exception e) {
             LOG.error("Could not process spool file "+artifact.getFile().getName(), e);
-			return(DistributionStatusEnum.DEPLOY_ERROR);
+			return DistributionStatusEnum.DEPLOY_ERROR;
         }
 
         msgBuffer.append("</input>\n");
@@ -966,7 +966,7 @@ public class SdncUebCallback implements INotificationCallback {
 
 
 
-		return(deployResult);
+		return deployResult;
     }
 
 
