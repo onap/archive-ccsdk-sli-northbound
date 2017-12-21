@@ -137,7 +137,7 @@ public class SdncOdlConnection {
 			respRdr = new BufferedReader(new InputStreamReader(httpConn.getErrorStream()));
 		}
 
-		StringBuffer respBuff = new StringBuffer();
+		StringBuilder respBuff = new StringBuilder();
 
 		String respLn;
 
@@ -150,7 +150,7 @@ public class SdncOdlConnection {
 
 		LOG.info("Response body :\n" + respString);
 
-		return (respString);
+		return respString;
 
 	}
 		
