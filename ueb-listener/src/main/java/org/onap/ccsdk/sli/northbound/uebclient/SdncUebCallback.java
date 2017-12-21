@@ -881,7 +881,7 @@ public class SdncUebCallback implements INotificationCallback {
 
     private DistributionStatusEnum deploySpoolFile(DeployableArtifact artifact) {
 
-        DistributionStatusEnum deployResult = DistributionStatusEnum.DEPLOY_OK;
+        DistributionStatusEnum deployResult;
 
         StringBuffer msgBuffer = new StringBuffer();
 
