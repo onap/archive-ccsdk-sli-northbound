@@ -437,8 +437,7 @@ public class SdncUebCallback implements INotificationCallback {
     private void handleFailedDownload(INotificationData data,
             IArtifactInfo relevantArtifact) {
         // Send Download Status
-        IDistributionClientResult sendDownloadStatus = client
-                .sendDownloadStatus(buildStatusMessage(client, data,
+        client.sendDownloadStatus(buildStatusMessage(client, data,
                         relevantArtifact, DistributionStatusEnum.DOWNLOAD_ERROR));
     }
 
