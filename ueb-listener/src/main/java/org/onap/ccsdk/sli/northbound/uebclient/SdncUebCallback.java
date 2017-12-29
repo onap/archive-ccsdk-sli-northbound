@@ -367,8 +367,7 @@ public class SdncUebCallback implements INotificationCallback {
                     IArtifactInfo artifactInfo = artifact.getArtifactInfo();
 
 					if ((artifactInfo != null) && (data != null)) {
-                        IDistributionClientResult deploymentStatus;
-                            deploymentStatus = client.sendDeploymentStatus(buildStatusMessage(
+                        client.sendDeploymentStatus(buildStatusMessage(
                                     client, data, artifactInfo,
                                     deployResult));
                     }
