@@ -446,8 +446,7 @@ public class SdncUebCallback implements INotificationCallback {
 
 		if ((data != null) && (artifact != null)) {
             // Send Download Status
-            IDistributionClientResult sendDownloadStatus = client
-                    .sendDownloadStatus(buildStatusMessage(client, data, artifact, DistributionStatusEnum.DOWNLOAD_OK));
+            client.sendDownloadStatus(buildStatusMessage(client, data, artifact, DistributionStatusEnum.DOWNLOAD_OK));
         }
 
         // If an override file exists, read that instead of the file we just downloaded
