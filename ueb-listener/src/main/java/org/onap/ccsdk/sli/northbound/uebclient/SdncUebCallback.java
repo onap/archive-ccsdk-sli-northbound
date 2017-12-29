@@ -614,7 +614,7 @@ public class SdncUebCallback implements INotificationCallback {
 		}
 
 		// Ingest Network (VF) Data - 1707
-		//List<NodeTemplate> nodeTemplatesList = sdcCsarHelper.getServiceNodeTemplatesByType("VF");
+
 		List<NodeTemplate> vfNodeTemplatesList = sdcCsarHelper.getServiceVfList();
 
 		for (NodeTemplate nodeTemplate :  vfNodeTemplatesList) {
@@ -642,9 +642,8 @@ public class SdncUebCallback implements INotificationCallback {
 				}
 
 				// For each VF Module, get the VFC list, insert VF_MODULE_TO_VFC_MAPPING data
-				// List<NodeTemplate> groupMembers = sdcCsarHelper.getMembersOfGroup(group); - old version
 				// For each vfcNode (group member) in the groupMembers list, extract vm_type and vm_count.
-				// Insert vf_module.customizationUUID, vfcNode.customizationUUID and vm_type and vm_count into VF_MODULE_TO_VFC_MAPPING
+
 				List<NodeTemplate> groupMembers = sdcCsarHelper.getMembersOfVfModule(nodeTemplate, group); // not yet available
 				for (NodeTemplate vfcNode : groupMembers){
 					SdncVFCModel vfcModel = new SdncVFCModel(sdcCsarHelper, vfcNode);
@@ -707,12 +706,12 @@ public class SdncUebCallback implements INotificationCallback {
 
 					// extract values from the left "CP" Node
 					SdncBaseModel.addParameter("ipv4_use_dhcp", SdncBaseModel.extractBooleanValue(sdcCsarHelper, match.getLeft(), SdcPropertyNames.PROPERTY_NAME_NETWORKASSIGNMENTS_IPV4SUBNETDEFAULTASSIGNMENTS_DHCPENABLED), mappingParams);
-					//SdncBaseModel.addParameter("ipv4_ip_version", SdncBaseModel.extractValue(sdcCsarHelper, match.getLeft(), SdcPropertyNames.PROPERTY_NAME_NETWORKASSIGNMENTS_IPV4SUBNETDEFAULTASSIGNMENTS_IPVERSION), mappingParams);
+
 					SdncBaseModel.addParameter("ipv4_ip_version", "dummy_ipv4_vers", mappingParams);
 					SdncBaseModel.addParameter("ipv6_use_dhcp", SdncBaseModel.extractBooleanValue(sdcCsarHelper, match.getLeft(), SdcPropertyNames.PROPERTY_NAME_NETWORKASSIGNMENTS_IPV6SUBNETDEFAULTASSIGNMENTS_DHCPENABLED), mappingParams);
-					//SdncBaseModel.addParameter("ipv6_ip_version", SdncBaseModel.extractValue(sdcCsarHelper, match.getLeft(), SdcPropertyNames.PROPERTY_NAME_NETWORKASSIGNMENTS_IPV6SUBNETDEFAULTASSIGNMENTS_IPVERSION), mappingParams);
+
 					SdncBaseModel.addParameter("ipv6_ip_version", "dummy_ipv6_vers", mappingParams);
-					//String extcp_subnetpool_id = "\"" + SdncBaseModel.extractValue(sdcCsarHelper, match.getLeft(), SdcPropertyNames.PROPERTY_NAME_SUBNETPOOLID) + "\""; // need path to subnetpoolid
+
 
 					// extract values from the right "VFC" Node
 					String vfcCustomizationUuid = "\"" + SdncBaseModel.extractValue(sdcCsarHelper, match.getRight().getMetaData(), "customization_uuid") + "\"";
