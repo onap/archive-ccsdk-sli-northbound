@@ -573,11 +573,11 @@ public class SdncUebCallback implements INotificationCallback {
 			insertToscaData(serviceModel.getSql(model_yaml));
 		} catch (IOException e) {
 			LOG.error("Could not insert Tosca YAML data into the SERVICE_MODEL table ", e);
-    
+
 		}
 
 		// Ingest Network (VL) Data - 1707
-		//List<NodeTemplate> vlNodeTemplatesList = sdcCsarHelper.getServiceNodeTemplatesByType("VL");
+
 		List<NodeTemplate> vlNodeTemplatesList = sdcCsarHelper.getServiceVlList();
 
 		for (NodeTemplate nodeTemplate :  vlNodeTemplatesList) {
