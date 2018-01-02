@@ -16,6 +16,24 @@
       "revId": "ebe5cb70deeb44a6b0e43a048a1ac6cb08f15203",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_35b696da",
+        "filename": "dataChange/provider/src/main/java/org/onap/ccsdk/sli/northbound/DataChangeProvider.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 87
+      },
+      "writtenOn": "2018-01-02T18:33:19Z",
+      "side": 1,
+      "message": "I agree - please change to svcOperation rather than svc_OPERATION",
+      "parentUuid": "5a93c517_9590ca96",
+      "revId": "ebe5cb70deeb44a6b0e43a048a1ac6cb08f15203",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
