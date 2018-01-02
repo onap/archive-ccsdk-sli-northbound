@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_92c46041",
+        "filename": "ueb-listener/src/main/java/org/onap/ccsdk/sli/northbound/uebclient/SdncUebCallback.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 875,
+      "author": {
+        "id": 373
+      },
+      "writtenOn": "2018-01-02T13:24:18Z",
+      "side": 1,
+      "message": "suggest to record error log here",
+      "revId": "df299c18dc8c00878dccdf3086556a08ca202896",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
