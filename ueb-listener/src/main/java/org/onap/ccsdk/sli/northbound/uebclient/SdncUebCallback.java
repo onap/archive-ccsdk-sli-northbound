@@ -325,18 +325,16 @@ public class SdncUebCallback implements INotificationCallback {
                 archiveDir.mkdirs();
             }
         }
-
-        String curFileName = "";
+        
         LOG.debug("Scanning {} - {} for downloaded files", incomingDir.getPath(), incomingDir.toPath());
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(incomingDir.toPath())) {
             for (Path file: stream) {
-                curFileName = file.toString();
                 handleSuccessfulDownload(null,null, null, null, file.toFile(), archiveDir);
             }
-        } catch (Exception x) {
+        } catch (IOException x) {
             // IOException can never be thrown by the iteration.
             // In this snippet, it can only be thrown by newDirectoryStream.
-            LOG.warn("Cannot process spool file {}", curFileName, x);
+            LOG.warn("Cannot process spool file", x);
         }
 
         // Deploy scheduled deployments
@@ -856,23 +854,24 @@ public class SdncUebCallback implements INotificationCallback {
     }
 
     private void scheduleDeployment(SdncArtifactType type, String svcName, String resourceName, IArtifactInfo artifactInfo, String spoolFileName, File spoolFile) {
+        if (deployList != null) {
+            if (type.getPass() < deployList.length) {
 
-        if (type.getPass() < deployList.length) {
+                if (artifactInfo != null) {
+                    LOG.debug("Scheduling "+artifactInfo.getArtifactName()+" version "+artifactInfo.getArtifactVersion()+" for deployment");
 
-            if (artifactInfo != null) {
-                LOG.debug("Scheduling "+artifactInfo.getArtifactName()+" version "+artifactInfo.getArtifactVersion()+" for deployment");
-
-                deployList[type.getPass()].add(new DeployableArtifact(type, svcName, resourceName, artifactInfo, spoolFile));
+                    deployList[type.getPass()].add(new DeployableArtifact(type, svcName, resourceName, artifactInfo, spoolFile));
+                } else {
+                    SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss.SSS");//dd/MM/yyyy
+                    Date now = new Date();
+                    String artifactVersion = sdfDate.format(now);
+                    LOG.debug("Scheduling "+spoolFileName+" version "+artifactVersion+" for deployment");
+                    deployList[type.getPass()].add(new DeployableArtifact(type, svcName, resourceName, spoolFileName,
+                            artifactVersion, spoolFile));
+                }
             } else {
-                SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss.SSS");//dd/MM/yyyy
-                Date now = new Date();
-                String artifactVersion = sdfDate.format(now);
-                LOG.debug("Scheduling "+spoolFileName+" version "+artifactVersion+" for deployment");
-                deployList[type.getPass()].add(new DeployableArtifact(type, svcName, resourceName, spoolFileName,
-                    artifactVersion, spoolFile));
+                LOG.info("Pass for type "+type.getTag()+" is "+type.getPass()+" which is not <= "+deployList.length);
             }
-        } else {
-            LOG.info("Pass for type "+type.getTag()+" is "+type.getPass()+" which is not <= "+deployList.length);
         }
     }
 
