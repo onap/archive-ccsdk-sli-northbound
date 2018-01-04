@@ -189,11 +189,7 @@ public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
 
         }
 
-        if (data.isPresent()) {
-            return true;
-        } else {
-            return false;
-        }
+        return data.isPresent();
     }
 
     protected void addArtifactVersion(String aName, String aVersion) {
@@ -347,7 +343,7 @@ public Future<RpcResult<VfLicenseModelUpdateOutput>> vfLicenseModelUpdate(VfLice
 
         if (respProps != null)
         {
-            errorCode = respProps.getProperty("error-code");
+            errorCode = respProps.getProperty("error    -code");
             errorMessage = respProps.getProperty("error-message", "");
         }
     }
