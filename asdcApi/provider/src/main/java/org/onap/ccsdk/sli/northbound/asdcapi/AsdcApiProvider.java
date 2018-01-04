@@ -289,14 +289,14 @@ public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
 
 @Override
 public Future<RpcResult<VfLicenseModelUpdateOutput>> vfLicenseModelUpdate(VfLicenseModelUpdateInput input) {
-    final String SVC_OPERATION = "vf-license-model-update";
+    final String svcOperation = "vf-license-model-update";
 
     Properties parms = new Properties();
 
-    LOG.info( SVC_OPERATION +" called." );
+    LOG.info( svcOperation +" called." );
 
     if(input == null ) {
-        LOG.debug("exiting " +SVC_OPERATION+ " because of invalid input");
+        LOG.debug("exiting " +svcOperation+ " because of invalid input");
         return null;
     }
 
@@ -313,7 +313,7 @@ public Future<RpcResult<VfLicenseModelUpdateOutput>> vfLicenseModelUpdate(VfLice
         errorMessage = "Artifact version already exists";
     } else {
         // Translate input object into SLI-consumable properties
-        LOG.info("Adding INPUT data for "+SVC_OPERATION+" input: " + inputVfLic);
+        LOG.info("Adding INPUT data for "+svcOperation+" input: " + inputVfLic);
         AsdcApiUtil.toProperties(parms, inputVfLic);
 
 
@@ -321,19 +321,19 @@ public Future<RpcResult<VfLicenseModelUpdateOutput>> vfLicenseModelUpdate(VfLice
         Properties respProps = null;
         try
         {
-            if (asdcApiSliClient.hasGraph("ASDC-API", SVC_OPERATION , null, "sync"))
+            if (asdcApiSliClient.hasGraph("ASDC-API", svcOperation , null, "sync"))
             {
 
                 try
                 {
-                    respProps = asdcApiSliClient.execute("ASDC-API", SVC_OPERATION, null, "sync", parms);
+                    respProps = asdcApiSliClient.execute("ASDC-API", svcOperation, null, "sync", parms);
                 }
                 catch (Exception e)
                 {
-                    LOG.error("Caught exception executing service logic for "+ SVC_OPERATION, e);
+                    LOG.error("Caught exception executing service logic for "+ svcOperation, e);
                 }
             } else {
-                errorMessage = "No service logic active for ASDC-API: '" + SVC_OPERATION + "'";
+                errorMessage = "No service logic active for ASDC-API: '" + svcOperation + "'";
                 errorCode = "503";
             }
         }
