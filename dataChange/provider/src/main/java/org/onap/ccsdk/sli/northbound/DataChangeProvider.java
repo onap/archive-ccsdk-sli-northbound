@@ -100,15 +100,15 @@ public class DataChangeProvider implements AutoCloseable, DataChangeService {
 	@Override
 	public Future<RpcResult<DataChangeNotificationOutput>> dataChangeNotification(
 			DataChangeNotificationInput input) {
-		final String SVC_OPERATION = "data-change-notification";
+		final String svcOperation = "data-change-notification";
 
 		Properties parms = new Properties();
 		DataChangeNotificationOutputBuilder serviceDataBuilder = new DataChangeNotificationOutputBuilder();
 
-		LOG.info( SVC_OPERATION +" called." );
+		LOG.info( svcOperation +" called." );
 
 		if(input == null || input.getAaiEventId() == null) {
-			LOG.debug("exiting " +SVC_OPERATION+ " because of invalid input");
+			LOG.debug("exiting " +svcOperation+ " because of invalid input");
 			serviceDataBuilder.setDataChangeResponseCode("403");
 			RpcResult<DataChangeNotificationOutput> rpcResult =
 				RpcResultBuilder.<DataChangeNotificationOutput> status(true).withResult(serviceDataBuilder.build()).build();
@@ -116,26 +116,26 @@ public class DataChangeProvider implements AutoCloseable, DataChangeService {
 		}
 
 		// add input to parms
-		LOG.info("Adding INPUT data for "+SVC_OPERATION+" input: " + input);
+		LOG.info("Adding INPUT data for "+svcOperation+" input: " + input);
 		DataChangeNotificationInputBuilder inputBuilder = new DataChangeNotificationInputBuilder(input);
 		MdsalHelper.toProperties(parms, inputBuilder.build());
 
 		// Call SLI sync method
 		try
 		{
-			if (dataChangeClient.hasGraph("DataChange", SVC_OPERATION , null, "sync"))
+			if (dataChangeClient.hasGraph("DataChange", svcOperation , null, "sync"))
 			{
 				try
 				{
-					dataChangeClient.execute("DataChange", SVC_OPERATION, null, "sync", serviceDataBuilder, parms);
+					dataChangeClient.execute("DataChange", svcOperation, null, "sync", serviceDataBuilder, parms);
 				}
 				catch (Exception e)
 				{
-					LOG.error("Caught exception executing service logic for "+ SVC_OPERATION, e);
+					LOG.error("Caught exception executing service logic for "+ svcOperation, e);
 					serviceDataBuilder.setDataChangeResponseCode("500");
 				}
 			} else {
-				LOG.error("No service logic active for DataChange: '" + SVC_OPERATION + "'");
+				LOG.error("No service logic active for DataChange: '" + svcOperation + "'");
 				serviceDataBuilder.setDataChangeResponseCode("503");
 			}
 		}
@@ -148,9 +148,9 @@ public class DataChangeProvider implements AutoCloseable, DataChangeService {
 		String errorCode = serviceDataBuilder.getDataChangeResponseCode();
 
 		if (!("0".equals(errorCode) || "200".equals(errorCode))) {
-			LOG.error("Returned FAILED for "+SVC_OPERATION+" error code: '" + errorCode + "'");
+			LOG.error("Returned FAILED for "+svcOperation+" error code: '" + errorCode + "'");
 		} else {
-			LOG.info("Returned SUCCESS for "+SVC_OPERATION+" ");
+			LOG.info("Returned SUCCESS for "+svcOperation+" ");
 		}
 
 		RpcResult<DataChangeNotificationOutput> rpcResult =
