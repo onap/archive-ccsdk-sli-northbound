@@ -43,8 +43,6 @@ public class SdncARModel extends SdncBaseModel {
 		addParameter("type", extractValue (nodeTemplate, "nf_type"));
 		addParameter("ecomp_generated_naming", extractBooleanValue (nodeTemplate, "nf_naming#ecomp_generated_naming"));
 		addParameter("naming_policy", extractValue (nodeTemplate, "nf_naming#naming_policy"));
-		//addParameter("depending_service", extractValue (sdcCsarHelper, nodeTemplate, SdcPropertyNames.PROPERTY_NAME_DEPENDINGSERVICE));
-		//addParameter("service_dependency", extractValue (sdcCsarHelper, nodeTemplate, SdcPropertyNames.PROPERTY_NAME_SERVICEDEPENDENCY));
 	}
 
 }
