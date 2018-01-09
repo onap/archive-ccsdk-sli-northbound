@@ -223,10 +223,6 @@ public class SdncUebCallback implements INotificationCallback {
 		}
 	}
 
-	private static void loadArtifactMap() {
-
-	}
-
     public SdncUebCallback(IDistributionClient client, SdncUebConfiguration config) {
         this.client = client;
         this.config = config;
@@ -475,7 +471,7 @@ public class SdncUebCallback implements INotificationCallback {
         }
 
 		if (toscaCsarType) {
-			processToscaCsar (data, resourceName, artifact, spoolFile, archiveDir);
+			processToscaCsar (data, artifact, spoolFile, archiveDir);
 
 			try {
 				Path source = spoolFile.toPath();
@@ -541,7 +537,7 @@ public class SdncUebCallback implements INotificationCallback {
     }
 
 
-	private void processToscaCsar(INotificationData data, String resourceName,
+	private void processToscaCsar(INotificationData data,
 			IArtifactInfo artifact, File spoolFile, File archiveDir) {
 
 		// Use ASDC Dist Client 1.1.5 with TOSCA parsing APIs to extract relevant TOSCA model data
