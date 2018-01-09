@@ -875,7 +875,7 @@ public class SdncUebCallback implements INotificationCallback {
 
         DistributionStatusEnum deployResult;
 
-        StringBuffer msgBuffer = new StringBuffer();
+        StringBuilder msgBuffer = new StringBuilder();
 
 
         String namespace = config.getAsdcApiNamespace();
@@ -1047,8 +1047,6 @@ public class SdncUebCallback implements INotificationCallback {
 
     private File applyXslts(File srcFile) {
 
-        Document doc;
-
         File inFile = srcFile;
         File outFile = null;
 
@@ -1093,7 +1091,7 @@ public class SdncUebCallback implements INotificationCallback {
     		if (str == null) {
     			str = "";
     		}
-        StringBuffer retval = new StringBuffer();
+        StringBuilder retval = new StringBuilder();
 
         for (int i = 0 ; i < str.length() ; i++) {
             char curchar = str.charAt(i);
