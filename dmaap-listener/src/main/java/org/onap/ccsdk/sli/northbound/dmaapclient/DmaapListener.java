@@ -142,7 +142,7 @@ public class DmaapListener {
             }
 
             if (consumerClass != null) {
-                return handleConsumerClass(consumerClass, consumerClassName, propertyPath,
+                handleConsumerClass(consumerClass, consumerClassName, propertyPath,
                     properties, consumers);
             }
         }
