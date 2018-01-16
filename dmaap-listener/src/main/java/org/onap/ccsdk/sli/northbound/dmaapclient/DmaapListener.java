@@ -142,11 +142,11 @@ public class DmaapListener {
             }
 
             if (consumerClass != null) {
-                return handleConsumerClass(consumerClass, consumerClassName, propertyPath,
+                handleConsumerClass(consumerClass, consumerClassName, propertyPath,
                     properties, consumers);
             }
         }
-        return false;
+        return !consumers.isEmpty();
     }
 
     private static boolean handleConsumerClass(Class<?> consumerClass, String consumerClassName, String propertyPath,
