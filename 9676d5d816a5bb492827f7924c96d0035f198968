@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_8d83c403",
+        "filename": "dmaap-listener/src/main/java/org/onap/ccsdk/sli/northbound/dmaapclient/DmaapListener.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 373
+      },
+      "writtenOn": "2018-01-17T14:09:56Z",
+      "side": 1,
+      "message": "after this change, handleSubscriptions() always return false which is not correct, in success case this method should return true. also in the caller the return value is used. i suggest to save the return value of handleConsumerClass() and return.",
+      "revId": "9676d5d816a5bb492827f7924c96d0035f198968",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
