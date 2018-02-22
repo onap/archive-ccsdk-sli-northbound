@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
-        <artifactId>asdcApi</artifactId>
-        <groupId>org.onap.ccsdk.sli.northbound</groupId>
-        <version>0.2.0-SNAPSHOT</version>
+        <groupId>org.onap.ccsdk.parent</groupId>
+        <artifactId>binding-parent</artifactId>
+        <version>1.0.1-SNAPSHOT</version>
+        <relativePath />
     </parent>
+
+    <groupId>org.onap.ccsdk.sli.northbound</groupId>
     <artifactId>asdcApi-provider</artifactId>
+    <version>0.2.1-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-            </plugin>
-        </plugins>
-    </build>
+    <name>ccsdk-sli-northbound :: asdcApi :: ${project.artifactId}</name>
+
 
     <dependencies>
         <dependency>
@@ -27,58 +26,47 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.controller</groupId>
-            <artifactId>config-api</artifactId>
-            <version>${odl.controller.config.api.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.controller</groupId>
             <artifactId>sal-binding-config</artifactId>
-            <version>${odl.mdsal.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.opendaylight.controller</groupId>
             <artifactId>sal-binding-api</artifactId>
-            <version>${odl.mdsal.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.opendaylight.controller</groupId>
             <artifactId>sal-common-util</artifactId>
-            <version>${odl.mdsal.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.onap.ccsdk.sli.core</groupId>
             <artifactId>sli-common</artifactId>
-            <version>${sdnctl.sli.version}</version>
         </dependency>
         <dependency>
             <groupId>org.onap.ccsdk.sli.core</groupId>
             <artifactId>sli-provider</artifactId>
-            <version>${sdnctl.sli.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.opendaylight.controller</groupId>
             <artifactId>sal-test-model</artifactId>
-            <version>${odl.mdsal.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.netconf</groupId>
             <artifactId>sal-rest-connector</artifactId>
-            <version>${odl.mdsal.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.opendaylight.controller</groupId>
             <artifactId>sal-binding-broker-impl</artifactId>
-            <version>${odl.mdsal.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.controller</groupId>
             <artifactId>sal-binding-broker-impl</artifactId>
-            <version>${odl.mdsal.version}</version>
             <type>test-jar</type>
             <classifier>tests</classifier>
             <scope>test</scope>
@@ -102,5 +90,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
 
 </project>
