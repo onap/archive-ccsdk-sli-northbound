@@ -3,8 +3,8 @@
 
 	<parent>
 		<groupId>org.onap.ccsdk.parent</groupId>
-		<artifactId>odlparent-carbon-sr1</artifactId>
-		<version>0.1.0</version>
+		<artifactId>odlparent-lite</artifactId>
+		<version>1.0.1-SNAPSHOT</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -13,32 +13,32 @@
 	<artifactId>ccsdk-sli-northbound</artifactId>
 
 	<name>ccsdk-sli-northbound</name>
-	<url>https://wiki.openecomp.org</url>
+	<url>https://wiki.onap.org</url>
 	<description>The SDN-C Northbound APIs repo contains code for northbound API adaptors, typically MD-SAL applications</description>
 
 
 	<issueManagement>
 		<system>JIRA</system>
-		<url>https://jira.openecomp.org/</url>
+		<url>https://jira.onap.org/</url>
 	</issueManagement>
 
 
 	<scm>
-		<connection>scm:git:ssh://git@${openecomp.git.host}/sdnc-northbound.git</connection>
+		<connection>scm:git:ssh://git@${onap.git.host}/sdnc-northbound.git</connection>
 
-		<developerConnection>scm:git:ssh://${openecomp.git.host}:${openecomp.git.port}/${openecomp.git.project}/sdnc-northbound.git</developerConnection>
-		<url>${openecomp.git.protocol}://${openecomp.git.host}/projects/${openecomp.git.project}/repos/sdnc-northbound/browse</url>
+		<developerConnection>scm:git:ssh://${onap.git.host}:${onap.git.port}/${onap.git.project}/sdnc-northbound.git</developerConnection>
+		<url>${onap.git.protocol}://${onap.git.host}/projects/${onap.git.project}/repos/sdnc-northbound/browse</url>
 	</scm>
 
 	<ciManagement>
 		<system>Jenkins</system>
-		<url>https://jenkins.openecomp.org/</url>
+		<url>https://jenkins.onap.org/</url>
 	</ciManagement>
 
 	<distributionManagement>
 		<site>
 			<id>sdnc-javadoc</id>
-			<url>dav:https://${openecomp.nexus.host}:${openecomp.nexus.port}/repository/sdn-c-javadoc/${project.artifactId}/${project.version}</url>
+			<url>dav:https://${onap.nexus.host}:${onap.nexus.port}/repository/sdn-c-javadoc/${project.artifactId}/${project.version}</url>
 		</site>
 	</distributionManagement>
 	<profiles>
@@ -110,9 +110,9 @@
 		<module>ueb-listener</module>
 	</modules>
 	<organization>
-		<name>AT&amp;T</name>
+		<name>ONAP</name>
 	</organization>
-	<version>0.2.0-SNAPSHOT</version>
+	<version>0.2.1-SNAPSHOT</version>
 
 
 </project>

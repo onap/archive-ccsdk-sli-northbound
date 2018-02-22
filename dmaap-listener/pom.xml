@@ -1,140 +1,144 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-        <groupId>org.onap.ccsdk.sli.northbound</groupId>
-	<packaging>jar</packaging>
-	<artifactId>dmaap-listener</artifactId>
-	<version>0.2.0-SNAPSHOT</version>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<name>DMAAP Listener</name>
-	<description>DMAAP Listener</description>
-	<parent>
-		<groupId>org.onap.ccsdk.sli.northbound</groupId>
-		<artifactId>ccsdk-sli-northbound</artifactId>
-		<version>0.2.0-SNAPSHOT</version>
-	</parent>
-	<properties>
-		<sdc.client.version>1.2.0-SNAPSHOT</sdc.client.version>
-		<fasterxml.jackson.version>2.9.0.pr1</fasterxml.jackson.version>
-		<skip.SWM>true</skip.SWM>
-		<dmaap.listener.base>/opt/app/dmaap-listener</dmaap.listener.base>
-		<dmaap.listener.version>1.1.0-SNAPSHOT</dmaap.listener.version>
+    <parent>
+        <groupId>org.onap.ccsdk.parent</groupId>
+        <artifactId>odlparent-lite</artifactId>
+        <version>1.0.1-SNAPSHOT</version>
+    </parent>
 
-		<maven.build.timestamp.format>yyMMdd-HHmmss</maven.build.timestamp.format>
-		<build.number>${maven.build.timestamp}</build.number>
-		<SWM_VERSION>${project.version}-${build.number}</SWM_VERSION>
-	</properties>
+    <groupId>org.onap.ccsdk.sli.northbound</groupId>
+    <artifactId>dmaap-listener</artifactId>
+    <version>0.2.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
-	<dependencies>
+    <name>ccsdk-sli-northbound :: dmaap-listener</name>
+    <description>DMAAP Listener</description>
 
-		<dependency>
-			<groupId>org.onap.dmaap.messagerouter.dmaapclient</groupId>
-			<artifactId>dmaapClient</artifactId>
-			<version>${dmaap.listener.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.21</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.6.1</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.17</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
-			<version>${fasterxml.jackson.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>${fasterxml.jackson.version}</version>
-		</dependency>
-               <dependency>
-                        <groupId>com.fasterxml.jackson.core</groupId>
-                        <artifactId>jackson-annotations</artifactId>
-                        <version>${fasterxml.jackson.version}</version>
-                </dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
-			<scope>test</scope>
-		</dependency>
-                <dependency>
+    <properties>
+        <sdc.client.version>1.2.0-SNAPSHOT</sdc.client.version>
+        <fasterxml.jackson.version>2.9.0.pr1</fasterxml.jackson.version>
+        <skip.SWM>true</skip.SWM>
+        <dmaap.listener.base>/opt/app/dmaap-listener</dmaap.listener.base>
+        <dmaap.listener.version>1.1.0-SNAPSHOT</dmaap.listener.version>
+
+        <maven.build.timestamp.format>yyMMdd-HHmmss</maven.build.timestamp.format>
+        <build.number>${maven.build.timestamp}</build.number>
+        <SWM_VERSION>${project.version}-${build.number}</SWM_VERSION>
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.onap.dmaap.messagerouter.dmaapclient</groupId>
+            <artifactId>dmaapClient</artifactId>
+            <version>${dmaap.listener.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.21</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.6.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${fasterxml.jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${fasterxml.jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${fasterxml.jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>ch.vorburger.mariaDB4j</groupId>
             <artifactId>mariaDB4j</artifactId>
             <version>2.2.3</version>
             <scope>test</scope>
         </dependency>
 
-  		<dependency>
-			<groupId>org.onap.ccsdk.sli.core</groupId>
-			<artifactId>dblib-provider</artifactId>
- 			<version>${sdnctl.dblib.version}</version>
-		</dependency>
-	</dependencies>
-	<build>
-		<plugins>
+        <dependency>
+            <groupId>org.onap.ccsdk.sli.core</groupId>
+            <artifactId>dblib-provider</artifactId>
+            <version>${sdnctl.dblib.version}</version>
+        </dependency>
+    </dependencies>
 
-			<!-- ================================================== -->
-			<!-- Set the JDK compiler version. -->
-			<!-- ================================================== -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.5.1</version>
-				<inherited>true</inherited>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-				</configuration>
-			</plugin>
-                        <plugin>
-                                <groupId>org.apache.maven.plugins</groupId>
-                                <artifactId>maven-jar-plugin</artifactId>
-                                <version>2.6</version>
-                                <configuration>
-                                        <archive>
-                                                <manifest>
-                                                        <addClasspath>true</addClasspath>
-                                                        <mainClass>org.onap.ccsdk.sli.northbound.dmaapclient.DmaapListener</mainClass>
-                                                </manifest>
-                                        </archive>
-                                </configuration>
-                        </plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.6</version>
-				<executions>
-					<execution>
-						<id>create-zip</id>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<phase>package</phase>
-						<configuration>
-							<attach>true</attach>
-							<finalName>${project.artifactId}.${project.version}</finalName>
-							<attach>true</attach>
-							<descriptors>
-								<descriptor>src/assembly/assemble_zip.xml</descriptor>
-							</descriptors>
-							<appendAssemblyId>false</appendAssemblyId>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+    <build>
+        <plugins>
 
-		</plugins>
-	</build>
+            <!-- ================================================== -->
+            <!-- Set the JDK compiler version. -->
+            <!-- ================================================== -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.5.1</version>
+                <inherited>true</inherited>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>org.onap.ccsdk.sli.northbound.dmaapclient.DmaapListener</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <id>create-zip</id>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <attach>true</attach>
+                            <finalName>${project.artifactId}.${project.version}</finalName>
+                            <attach>true</attach>
+                            <descriptors>
+                                <descriptor>src/assembly/assemble_zip.xml</descriptor>
+                            </descriptors>
+                            <appendAssemblyId>false</appendAssemblyId>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
+        </plugins>
+    </build>
 </project>

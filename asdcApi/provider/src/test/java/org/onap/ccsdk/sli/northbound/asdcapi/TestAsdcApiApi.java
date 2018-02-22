@@ -21,10 +21,12 @@
 
 package org.onap.ccsdk.sli.northbound.asdcapi;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
 import org.junit.Before;
 import org.junit.Test;
-import org.onap.ccsdk.sli.northbound.asdcapi.AsdcApiProvider;
-import org.onap.ccsdk.sli.northbound.asdcapi.AsdcApiSliClient;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.controller.md.sal.binding.test.AbstractConcurrentDataBrokerTest;
@@ -34,9 +36,6 @@ import org.opendaylight.yang.gen.v1.org.onap.ccsdk.rev170201.VfLicenseModelUpdat
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
 
 public class TestAsdcApiApi extends AbstractConcurrentDataBrokerTest {
 
