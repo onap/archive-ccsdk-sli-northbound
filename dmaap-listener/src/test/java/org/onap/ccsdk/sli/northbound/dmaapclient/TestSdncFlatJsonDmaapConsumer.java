@@ -10,7 +10,7 @@ package org.onap.ccsdk.sli.northbound.dmaapclient;
 
 import org.junit.Test;
 
-public class TestSdncJsonDmaapConsumer {
+public class TestSdncFlatJsonDmaapConsumer {
     private static final String DMAAP_LISTENER_PROPERTIES = "dmaap-listener.properties";
     private static final String DMAAP_LISTENER_PROPERTIES_DIR = "src/test/resources";
 
