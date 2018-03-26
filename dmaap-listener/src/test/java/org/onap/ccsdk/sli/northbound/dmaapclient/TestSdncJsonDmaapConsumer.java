@@ -19,4 +19,16 @@ public class TestSdncJsonDmaapConsumer {
         SdncFlatJsonDmaapConsumer consumer = new SdncFlatJsonDmaapConsumer();
         consumer.processMsg(null);
     }
+
+    @Test(expected = InvalidMessageException.class)
+    public void testProcessMsgNullFieldMap_shouldThrowException() throws Exception {
+        SdncFlatJsonDmaapConsumer consumer = new SdncFlatJsonDmaapConsumer();
+
+        String msg = "{\n" +
+                "    \"input\" : {        \n" +
+                "    }\n" +
+                "}";
+
+        consumer.processMsg(msg);
+    }
 }
