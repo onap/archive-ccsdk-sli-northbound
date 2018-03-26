@@ -20,6 +20,7 @@
     <properties>
         <sdc.client.version>1.2.0-SNAPSHOT</sdc.client.version>
         <fasterxml.jackson.version>2.9.0.pr1</fasterxml.jackson.version>
+        <velocity.version>1.7</velocity.version>
         <skip.SWM>true</skip.SWM>
         <dmaap.listener.base>/opt/app/dmaap-listener</dmaap.listener.base>
         <dmaap.listener.version>1.1.0-SNAPSHOT</dmaap.listener.version>
@@ -67,6 +68,11 @@
             <artifactId>jackson-annotations</artifactId>
             <version>${fasterxml.jackson.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+            <version>${velocity.version}</version>
+        </dependency>        
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
