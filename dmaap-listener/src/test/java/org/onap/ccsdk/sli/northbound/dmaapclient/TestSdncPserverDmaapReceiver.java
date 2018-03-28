@@ -10,7 +10,14 @@ package org.onap.ccsdk.sli.northbound.dmaapclient;
 
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.util.Map;
 import java.util.Properties;
+
+import org.apache.commons.io.FileUtils;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -80,6 +87,104 @@ public class TestSdncPserverDmaapReceiver {
         assertTrue(rpcMsgbody.indexOf("payload") != -1); 
         assertTrue(rpcMsgbody.indexOf("common-header") != -1);
 	}
+
+	@Test
+	public void testProcessMsgFieldMap() throws Exception {
+
+
+		String DMAAPLISTENERROOT = "DMAAPLISTENERROOT";
+		File directory = new File("lib");
+
+		if (! directory.exists()){
+			directory.mkdir();
+		}
+
+		File source = new File("src/main/resources");
+		File dest = new File("lib/");
+		try {
+			FileUtils.copyDirectory(source, dest);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		try {
+			Map<String, String> env = System.getenv();
+			Class<?> cl = env.getClass();
+			Field field = cl.getDeclaredField("m");
+			field.setAccessible(true);
+			Map<String, String> writableEnv = (Map<String, String>) field.get(env);
+			writableEnv.put(DMAAPLISTENERROOT, ".");
+		} catch (Exception e) {
+			throw new IllegalStateException("Failed to set environment variable", e);
+		}
+		Properties props = new Properties();
+
+		SdncAaiDmaapConsumer consumer = new SdncAaiDmaapConsumer();
+
+		InputStream propStr = TestSdncPserverDmaapReceiver.class.getResourceAsStream("/dmaap-consumer-pserver.properties");
+
+
+		props.load(propStr);
+
+		consumer.init(props, "src/test/resources/dmaap-consumer-pserver.properties");
+		consumer.processMsg(aaiInput);
+	}
+
+	@Test(expected = InvalidMessageException.class)
+	public void testProcessMsgNoMappingFile() throws Exception {
+		Properties props = new Properties();
+
+		SdncAaiDmaapConsumer consumer = new SdncAaiDmaapConsumer();
+
+		InputStream propStr = TestSdncPserverDmaapReceiver.class.getResourceAsStream("/dmaap-consumer-pserver.properties");
+
+
+		props.load(propStr);
+
+		consumer.init(props, "src/test/resources/dmaap-consumer-pserver.properties");
+		consumer.processMsg(aaiInput);
+	}
+
+	@Test(expected = InvalidMessageException.class)
+	public void testProcessMsgNullMessage() throws Exception {
+		Properties props = new Properties();
+
+		SdncAaiDmaapConsumer consumer = new SdncAaiDmaapConsumer();
+		consumer.processMsg(null);
+	}
+
+	@Test(expected = InvalidMessageException.class)
+	public void testProcessMsgInvalidMessage() throws Exception {
+		Properties props = new Properties();
+
+		SdncAaiDmaapConsumer consumer = new SdncAaiDmaapConsumer();
+		consumer.processMsg("test");
+	}
+
+	@Test
+	public void testProcessMsgMissingEventHeader() throws Exception {
+		Properties props = new Properties();
+
+		SdncAaiDmaapConsumer consumer = new SdncAaiDmaapConsumer();
+		consumer.processMsg("{\n" +
+				"    \"input\" : {        \n" +
+				"    }\n" +
+				"}");
+	}
+
+	@Test
+	public void testProcessMsgInvalidEventType() throws Exception {
+		Properties props = new Properties();
+
+		String msg = "{\"cambria.partition\": \"AAI\",\r\n" +
+				"    \"event-header\": {\"event-type\": \"TEST-EVENT\"}}";
+
+		SdncAaiDmaapConsumer consumer = new SdncAaiDmaapConsumer();
+		consumer.processMsg(msg);
+	}
+
+
+
 
 
 }
