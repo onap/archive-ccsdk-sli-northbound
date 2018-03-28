@@ -90,6 +90,9 @@ public class SdncAaiDmaapConsumer extends SdncDmaapConsumer {
       {
         context.put((String)key, jsonObj.get((String)key));
       }
+      
+      String id = jsonObj.getJSONObject(EVENT_HEADER).get("id").toString();
+      context.put("req_id", id);
 
       context.put("curr_time", Instant.now());
       
@@ -159,7 +162,7 @@ public class SdncAaiDmaapConsumer extends SdncDmaapConsumer {
             String odlPassword = getProperty("sdnc.odl.password");
 
             if ((odlUrlBase != null) && (odlUrlBase.length() > 0)) {
-                SdncOdlConnection conn = SdncOdlConnection.newInstance(odlUrlBase + sdncEndpoint, odlUser, odlPassword);
+                SdncOdlConnection conn = SdncOdlConnection.newInstance(odlUrlBase + "/" + sdncEndpoint, odlUser, odlPassword);
 
                 conn.send("POST", "application/json", rpcMsgbody);
             } else {

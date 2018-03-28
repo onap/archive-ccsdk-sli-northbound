@@ -9,7 +9,6 @@
 package org.onap.ccsdk.sli.northbound.dmaapclient;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
@@ -98,8 +97,6 @@ public class TestSdncPserverDmaapReceiver {
         assertTrue(aaiRootNode.get("input").get("payload") != null); 
         assertTrue(aaiRootNode.get("input").get("common-header") != null); 
         
-        assertEquals(aaiRootNode.get("input").get("action-identifiers").get("action-name").textValue(), "dmaap-notification");
-        assertEquals(aaiRootNode.get("input").get("action-identifiers").get("mode").textValue(), "async");
 	}
 
 	@Test
