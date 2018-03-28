@@ -1,14 +1,10 @@
 {
 	"input": {
 		"common-header": {
-			"request-id": "$event-header.id",
+			"request-id": "$req_id",
 			"timestamp": "$curr_time",
 			"originator-id": "AAI",
 			"api-ver": "2.00"
-		},
-		"action-identifiers": {
-			"action-name": "dmaap-notification",
-			"mode": "async"
 		},
 		"payload": $full_message
 	}
