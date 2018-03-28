@@ -18,10 +18,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.ccsdk.sli.core.dblib.DBResourceManager;
-import org.openecomp.sdc.api.IDistributionClient;
-import org.openecomp.sdc.api.notification.IArtifactInfo;
-import org.openecomp.sdc.api.notification.INotificationData;
-import org.openecomp.sdc.api.notification.IResourceInstance;
+import org.onap.sdc.api.IDistributionClient;
+import org.onap.sdc.api.notification.IArtifactInfo;
+import org.onap.sdc.api.notification.INotificationData;
+import org.onap.sdc.api.notification.IResourceInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

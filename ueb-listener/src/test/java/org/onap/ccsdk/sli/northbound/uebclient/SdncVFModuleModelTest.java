@@ -4,8 +4,8 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock; 
  
 import org.junit.Test; 
-import org.openecomp.sdc.tosca.parser.api.ISdcCsarHelper; 
-import org.openecomp.sdc.toscaparser.api.Group; 
+import org.onap.sdc.tosca.parser.api.ISdcCsarHelper; 
+import org.onap.sdc.toscaparser.api.Group; 
  
 public class SdncVFModuleModelTest { 
  

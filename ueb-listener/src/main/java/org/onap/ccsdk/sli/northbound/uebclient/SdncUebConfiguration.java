@@ -29,7 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
-import org.openecomp.sdc.api.consumer.IConfiguration;
+import org.onap.sdc.api.consumer.IConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +54,7 @@ public class SdncUebConfiguration implements IConfiguration{
 	private String sdncPasswd = null;
 	private String asdcApiBaseUrl = null;
 	private String asdcApiNamespace = null;
+	private List<String> msgBusAddress = null;
 
 	private SdncArtifactMap artifactMap = SdncArtifactMap.getInstance();
 
@@ -192,6 +193,16 @@ public class SdncUebConfiguration implements IConfiguration{
 			LOG.warn("artifact-map is unset");
 		}
 
+		msgBusAddress = new LinkedList<>();
+		String msgBusAddressStr = props.getProperty("org.onap.ccsdk.sli.northbound.uebclient.msg-bus-address");
+		if (msgBusAddressStr != null) {
+		    String[] msgBusAddressArray = msgBusAddressStr.split(",");
+		    for (int i = 0 ; i < msgBusAddressArray.length ; i++) {
+		        msgBusAddress.add(msgBusAddressArray[i]);
+		    }
+		}
+
+
 	}
 
 	@Override
@@ -296,6 +307,11 @@ public class SdncUebConfiguration implements IConfiguration{
 	public Boolean isUseHttpsWithDmaap() {
 		return false;
 	}
+
+    @Override
+    public List<String> getMsgBusAddress() {
+        return msgBusAddress;
+    }
 
 
 }

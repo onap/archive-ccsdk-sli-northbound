@@ -20,6 +20,7 @@ MANIFEST.MF
 
 ## Misc Ignores (OS specific etc) ##
 bin/
+lib/
 dist
 *~
 *.ipr

@@ -6,8 +6,8 @@ import static org.mockito.Mockito.*;
  
 import org.junit.Before; 
 import org.junit.Test; 
-import org.openecomp.sdc.tosca.parser.api.ISdcCsarHelper; 
-import org.openecomp.sdc.toscaparser.api.NodeTemplate; 
+import org.onap.sdc.tosca.parser.api.ISdcCsarHelper; 
+import org.onap.sdc.toscaparser.api.NodeTemplate; 
  
 public class SdncVFCModelTest { 
  
