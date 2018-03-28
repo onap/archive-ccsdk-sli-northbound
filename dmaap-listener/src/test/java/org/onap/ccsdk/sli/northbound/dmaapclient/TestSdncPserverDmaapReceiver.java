@@ -9,11 +9,15 @@
 package org.onap.ccsdk.sli.northbound.dmaapclient;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Properties;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class TestSdncPserverDmaapReceiver {
     private static final String aaiInput = "{\r\n" + 
@@ -75,10 +79,20 @@ public class TestSdncPserverDmaapReceiver {
 		Properties props = new Properties();
  
 	    String rpcMsgbody = new SdncAaiDmaapConsumer(props).publish("src/main/resources/template-pserver.vt", aaiInput);
+        
+	    ObjectMapper oMapper = new ObjectMapper();
+        JsonNode aaiRootNode;
+        try {
+            aaiRootNode = oMapper.readTree(rpcMsgbody);
+        } catch (Exception e) {
+            throw new InvalidMessageException("Cannot parse json object", e);
+        }       
 
-        assertTrue(rpcMsgbody.indexOf("input") != -1); 
-        assertTrue(rpcMsgbody.indexOf("payload") != -1); 
-        assertTrue(rpcMsgbody.indexOf("common-header") != -1);
+        assertTrue(aaiRootNode.get("input").get("payload") != null); 
+        assertTrue(aaiRootNode.get("input").get("common-header") != null); 
+        
+        assertEquals(aaiRootNode.get("input").get("action-identifiers").get("action-name").textValue(), "dmaap-notification");
+        assertEquals(aaiRootNode.get("input").get("action-identifiers").get("mode").textValue(), "async");
 	}
 
 
