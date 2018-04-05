@@ -21,10 +21,10 @@
 
 package org.onap.ccsdk.sli.northbound.uebclient;
 
-import org.openecomp.sdc.api.IDistributionClient;
-import org.openecomp.sdc.api.results.IDistributionClientResult;
-import org.openecomp.sdc.impl.DistributionClientFactory;
-import org.openecomp.sdc.utils.DistributionActionResultEnum;
+import org.onap.sdc.api.IDistributionClient;
+import org.onap.sdc.api.results.IDistributionClientResult;
+import org.onap.sdc.impl.DistributionClientFactory;
+import org.onap.sdc.utils.DistributionActionResultEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
