@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_11801345",
+        "filename": "ueb-listener/src/main/java/org/onap/ccsdk/sli/northbound/uebclient/SdncUebConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 1517
+      },
+      "writtenOn": "2018-04-05T14:18:58Z",
+      "side": 1,
+      "message": "There are easier ways to do this but all fodder for a follow up :).",
+      "range": {
+        "startLine": 199,
+        "startChar": 6,
+        "endLine": 202,
+        "endChar": 7
+      },
+      "revId": "d0bfc56359e3d5a9663ba6e48b7e1d187373d737",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
