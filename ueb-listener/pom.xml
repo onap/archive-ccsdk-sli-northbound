@@ -22,7 +22,7 @@
 		<fasterxml.jackson.version>2.9.0.pr1</fasterxml.jackson.version>
 		<skip.SWM>true</skip.SWM>
 		<ueb.listener.base>/opt/app/ueb-listener</ueb.listener.base>
-		<maven.build.timestamp.format>yyMMdd-HHmmss</maven.build.timestamp.format>
+		<maven.build.timestamp.format>yyyyMMdd'T'HHmmss'Z'</maven.build.timestamp.format>
 		<build.number>${maven.build.timestamp}</build.number>
 		<SWM_VERSION>${project.version}-${build.number}</SWM_VERSION>
 	</properties>
