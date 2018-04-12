@@ -1,0 +1,287 @@
+<!--
+  ============LICENSE_START=======================================================
+  ONAP : APPC
+  ================================================================================
+  Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+  ================================================================================
+  Copyright (C) 2017 Amdocs
+  =============================================================================
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  
+  ECOMP is a trademark and service mark of AT&T Intellectual Property.
+  ============LICENSE_END=========================================================
+  -->
+
+<configuration scan="true" scanPeriod="3 seconds" debug="true">
+  <!--<jmxConfigurator /> -->
+  <property name="logDirectory" value="logs" />
+  <property name="debugLogDirectory" value="debug-logs" />
+  <!-- Example evaluator filter applied against console appender -->
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{MM/dd-HH:mm:ss.SSS} [%-16thread] %.-5level
+        %-36.36logger - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!-- ============================================================================ -->
+  <!-- CDP Appenders -->
+  <!-- ============================================================================ -->
+
+  <!-- The CDPAppender is used to record events to the general CDP application 
+    log. This is the log file used by default as the application root log, if 
+    no other log is defined or the application creates specialized loggers of 
+    the form com.att.cdp.x.y.z where the name occupied by the "x" is NOT security, 
+    perf, server, coordinator, gui, or policy. These are defined as specialization 
+    loggers for various business purposes. -->
+  <appender name="CDP"
+    class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${logDirectory}/cdp.log</file>
+    <rollingPolicy
+      class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      <fileNamePattern>${logDirectory}/cdp.%i.log.zip
+      </fileNamePattern>
+      <minIndex>1</minIndex>
+      <maxIndex>9</maxIndex>
+    </rollingPolicy>
+    <triggeringPolicy
+      class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+      <maxFileSize>5MB</maxFileSize>
+    </triggeringPolicy>
+    <encoder>
+      <!-- <pattern>"%d{HH:mm:ss.SSS} [%thread] %-5level %logger{1024} - 
+        %msg%n"</pattern> -->
+      <pattern>%d{MM/dd-HH:mm:ss.SSS} [%-16thread] %.-5level
+        %-36.36logger [%X{User} %X{RemoteHost} %X{RequestId} %X{Method}
+        %X{Path}] - %msg%n</pattern>
+    </encoder>
+  </appender>
+  <appender name="asyncCDP" class="ch.qos.logback.classic.AsyncAppender">
+    <queueSize>256</queueSize>
+    <appender-ref ref="CDP" />
+  </appender>
+
+  <!-- CDP Security Appender. This appender is used to record security events 
+    to the security log file. Security events are separate from other loggers 
+    in CDP so that security log records can be captured and managed in a secure 
+    way separate from the other logs. This appender is set to never discard any 
+    events. -->
+  <appender name="CDPSecurity"
+    class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${logDirectory}/cdp-security.log</file>
+    <rollingPolicy
+      class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      <fileNamePattern>${logDirectory}/cdp-security.%i.log.zip
+      </fileNamePattern>
+      <minIndex>1</minIndex>
+      <maxIndex>9</maxIndex>
+    </rollingPolicy>
+    <triggeringPolicy
+      class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+      <maxFileSize>5MB</maxFileSize>
+    </triggeringPolicy>
+    <encoder>
+      <!-- <pattern>"%d{HH:mm:ss.SSS} [%thread] %-5level %logger{1024} - 
+        %msg%n"</pattern> -->
+      <pattern>%d{MM/dd-HH:mm:ss.SSS} [%-16thread] %.-5level
+        %-36.36logger [%X{User} %X{RemoteHost} %X{RequestId} %X{Method}
+        %X{Path}] - %msg%n</pattern>
+    </encoder>
+  </appender>
+  <appender name="asyncCDPSecurity" class="ch.qos.logback.classic.AsyncAppender">
+    <queueSize>256</queueSize>
+    <discardingThreshold>0</discardingThreshold>
+    <appender-ref ref="CDPSecurity" />
+  </appender>
+
+  <!-- CDP Performance Appender. This appender is used to record performance 
+    records. -->
+  <appender name="CDPPerformance"
+    class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${logDirectory}/cdp-performance.log</file>
+    <rollingPolicy
+      class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      <fileNamePattern>${logDirectory}/cdp-performance.%i.log.zip
+      </fileNamePattern>
+      <minIndex>1</minIndex>
+      <maxIndex>9</maxIndex>
+    </rollingPolicy>
+    <triggeringPolicy
+      class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+      <maxFileSize>5MB</maxFileSize>
+    </triggeringPolicy>
+    <encoder>
+      <outputPatternAsHeader>true</outputPatternAsHeader>
+      <pattern>%d{MM/dd-HH:mm:ss.SSS} [%-16thread] %.-5level
+        %-36.36logger [%X{User} %X{RemoteHost} %X{RequestId} %X{Method}
+        %X{Path}] - %msg%n</pattern>
+    </encoder>
+  </appender>
+  <appender name="asyncCDPPerformance" class="ch.qos.logback.classic.AsyncAppender">
+    <queueSize>256</queueSize>
+    <appender-ref ref="CDPPerformance" />
+  </appender>
+
+  <!-- CDP Server Appender. This appender is used to record Server related 
+    logging events. The Server logger and appender are specializations of the 
+    CDP application root logger and appender. This can be used to segregate Server 
+    events from other components, or it can be eliminated to record these events 
+    as part of the application root log. -->
+  <appender name="CDPServer"
+    class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${logDirectory}/cdp-server.log</file>
+    <rollingPolicy
+      class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      <fileNamePattern>${logDirectory}/cdp-server.%i.log.zip
+      </fileNamePattern>
+      <minIndex>1</minIndex>
+      <maxIndex>9</maxIndex>
+    </rollingPolicy>
+    <triggeringPolicy
+      class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+      <maxFileSize>5MB</maxFileSize>
+    </triggeringPolicy>
+    <encoder>
+      <!-- <pattern>"%d{HH:mm:ss.SSS} [%thread] %-5level %logger{1024} - 
+        %msg%n"</pattern> -->
+      <pattern>%d{MM/dd-HH:mm:ss.SSS} [%-16thread] %.-5level
+        %-36.36logger [%X{User} %X{RemoteHost} %X{RequestId} %X{Method}
+        %X{Path}] - %msg%n</pattern>
+    </encoder>
+  </appender>
+  <appender name="asyncCDPServer" class="ch.qos.logback.classic.AsyncAppender">
+    <queueSize>256</queueSize>
+    <appender-ref ref="CDPServer" />
+  </appender>
+
+  <!-- CDP Coordinator Appender. This appender is used to record Coordinator 
+    related logging events. The Coordinator logger and appender are specializations 
+    of the CDP application root logger and appender. This can be used to segregate 
+    Coordinator events from other components, or it can be eliminated to record 
+    these events as part of the application root log. -->
+  <appender name="CDPCoordinator"
+    class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${logDirectory}/cdp-coordinator.log</file>
+    <rollingPolicy
+      class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      <fileNamePattern>${logDirectory}/cdp-coordinator.%i.log.zip
+      </fileNamePattern>
+      <minIndex>1</minIndex>
+      <maxIndex>9</maxIndex>
+    </rollingPolicy>
+    <triggeringPolicy
+      class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+      <maxFileSize>5MB</maxFileSize>
+    </triggeringPolicy>
+    <encoder>
+      <!-- <pattern>"%d{HH:mm:ss.SSS} [%thread] %-5level %logger{1024} - 
+        %msg%n"</pattern> -->
+      <pattern>%d{MM/dd-HH:mm:ss.SSS} [%-16thread] %.-5level
+        %-36.36logger - %msg%n</pattern>
+    </encoder>
+  </appender>
+  <appender name="asyncCDPCoordinator" class="ch.qos.logback.classic.AsyncAppender">
+    <queueSize>256</queueSize>
+    <appender-ref ref="CDPCoordinator" />
+  </appender>
+
+  <!-- CDP Policy Appender. This appender is used to record Policy engine 
+    related logging events. The Policy logger and appender are specializations 
+    of the CDP application root logger and appender. This can be used to segregate 
+    Policy engine events from other components, or it can be eliminated to record 
+    these events as part of the application root log. -->
+  <appender name="CDPPolicy"
+    class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${logDirectory}/cdp-policy.log</file>
+    <rollingPolicy
+      class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      <fileNamePattern>${logDirectory}/cdp-policy.%i.log.zip
+      </fileNamePattern>
+      <minIndex>1</minIndex>
+      <maxIndex>9</maxIndex>
+    </rollingPolicy>
+    <triggeringPolicy
+      class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+      <maxFileSize>5MB</maxFileSize>
+    </triggeringPolicy>
+    <encoder>
+      <!-- <pattern>"%d{HH:mm:ss.SSS} [%thread] %-5level %logger{1024} - 
+        %msg%n"</pattern> -->
+      <pattern>%d{MM/dd-HH:mm:ss.SSS} [%-16thread] %.-5level
+        %-36.36logger - %msg%n</pattern>
+    </encoder>
+  </appender>
+  <appender name="asyncCDPPolicy" class="ch.qos.logback.classic.AsyncAppender">
+    <queueSize>256</queueSize>
+    <appender-ref ref="CDPPolicy" />
+  </appender>
+  <appender name="CommandExecutor"
+            class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${debugLogDirectory}/appc-debug.log</file>
+    <rollingPolicy
+            class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      <fileNamePattern>${logDirectory}/command-executor.%i.log.zip
+      </fileNamePattern>
+      <minIndex>1</minIndex>
+      <maxIndex>9</maxIndex>
+    </rollingPolicy>
+    <triggeringPolicy
+            class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+      <maxFileSize>5MB</maxFileSize>
+    </triggeringPolicy>
+    <encoder>
+      <!--<Pattern>
+        %d{yyyy-MM-dd'T'HH:mm:ss.SSSZ}|%X{RequestID}|%X{ServiceInstanceID}|%thread|%X{ServerName}|%X{ServiceName}|%X{UUID}|%-5.5p|%X{Severity}|%X{ServerIPAddress}|%X{Server}|%X{IPAddress}|[%c{3}]|%X{Timer}| - %msg%n
+      </Pattern>-->
+      <Pattern>
+        %d{MM/dd-HH:mm:ss.SSS}|%X{RequestId}|%X{ServiceInstanceId}|%t|%X{ServiceName} - %X{bundle.id} - %X{bundle.name} - %X{bundle.version}|%X{InstanceUUID}|%-5.5p|%X{AlertSeverity}|%X{ServerIPAddress}|%X{ServerFQDN}|%X{RemoteHost}|%X{Timer}|[%c{3}]|%m%n
+      </Pattern>
+    </encoder>
+  </appender>
+
+  <logger name="org.onap.appc" level="DEBUG" additivity="false">
+    <appender-ref ref="CommandExecutor" />
+  </logger>
+
+  <!-- ============================================================================ -->
+  <!-- CDP loggers -->
+  <!-- ============================================================================ -->
+  <logger name="com.att.cdp" level="info" additivity="false">
+    <appender-ref ref="asyncCDP" />
+  </logger>
+  <logger name="com.att.cdp.security" level="info" additivity="false">
+    <appender-ref ref="asyncCDPSecurity" />
+  </logger>
+  <logger name="com.att.cdp.perf" level="info" additivity="false">
+    <appender-ref ref="asyncCDPPerformance" />
+  </logger>
+  <logger name="com.att.cdp.server" level="debug" additivity="false">
+    <appender-ref ref="asyncCDPServer" />
+  </logger>
+  <logger name="com.att.cdp.coordinator" level="info" additivity="false">
+    <appender-ref ref="asyncCDPCoordinator" />
+  </logger>
+  <logger name="com.att.cdp.policy" level="info" additivity="false">
+    <appender-ref ref="asyncCDPPolicy" />
+  </logger>
+
+  <!-- The OpenStack connector logger -->
+  <logger name="os" level="debug" additivity="false">
+    <appender-ref ref="asyncCDPServer" />
+  </logger>
+
+  <root level="WARN">
+    <appender-ref ref="STDOUT" />
+  </root>
+
+</configuration>
