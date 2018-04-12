@@ -106,6 +106,7 @@
 	<modules>
 		<module>asdcApi</module>
 		<module>dataChange</module>
+		<module>lcm</module>
 		<module>dmaap-listener</module>
 		<module>ueb-listener</module>
 	</modules>
