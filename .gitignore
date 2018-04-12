@@ -26,6 +26,7 @@ dist
 *.ipr
 *.iml
 *.iws
+*.log
 classes
 out/
 .DS_STORE
