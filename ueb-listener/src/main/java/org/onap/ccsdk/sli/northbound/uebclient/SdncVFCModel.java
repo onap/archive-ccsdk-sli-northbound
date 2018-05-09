@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,19 +28,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SdncVFCModel extends SdncBaseModel {
-	
+
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SdncVFCModel.class);
-	
+
 	private String vmType = null;
 	private String vmCount = null;
 
 	public SdncVFCModel(ISdcCsarHelper sdcCsarHelper, NodeTemplate nodeTemplate) {
 
 		super(sdcCsarHelper, nodeTemplate);
-		
+
 		// extract properties
 		vmType = extractValue (nodeTemplate, SdcPropertyNames.PROPERTY_NAME_VMTYPE);
+		if ((vmType == null) || (vmType.length() == 0)) {
+			vmType = extractValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_VMTYPETAG);
+		}
 		//vmCount = extractValue (sdcCsarHelper, nodeTemplate, SdcPropertyNames.PROPERTY_NAME_VMCOUNT); - need path to vm_count
 		vmCount = "1";
 		addParameter("vm_type", vmType);
