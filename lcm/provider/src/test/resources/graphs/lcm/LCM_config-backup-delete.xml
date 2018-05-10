@@ -21,7 +21,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.onap.org/sdnc/svclogic ./svclogic.xsd"
 	module='LCM' version='1.0.0'>
-	<method rpc='ActionStatus' mode='sync'>
+	<method rpc='config-backup-delete' mode='sync'>
 		<set>
 			<parameter name='status.code' value='400' />
 			<parameter name='status.message' value='SUCCESS' />

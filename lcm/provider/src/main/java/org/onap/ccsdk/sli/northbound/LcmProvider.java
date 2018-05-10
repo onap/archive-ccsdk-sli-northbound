@@ -144,7 +144,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		CheckLockOutputBuilder oBuilder = new CheckLockOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("CheckLock", iBuilder.build());
+			CommonLcmFields retval = callDG("check-lock", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -166,7 +166,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		RebootOutputBuilder oBuilder = new RebootOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("Reboot", iBuilder.build());
+			CommonLcmFields retval = callDG("reboot", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -187,7 +187,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		UpgradeBackupOutputBuilder oBuilder = new UpgradeBackupOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("UpgradeBackup", iBuilder.build());
+			CommonLcmFields retval = callDG("upgrade-backup", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 
@@ -209,7 +209,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		RollbackOutputBuilder oBuilder = new RollbackOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("Rollback", iBuilder.build());
+			CommonLcmFields retval = callDG("rollback", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -230,7 +230,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		SyncOutputBuilder oBuilder = new SyncOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("Sync", iBuilder.build());
+			CommonLcmFields retval = callDG("sync", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -251,7 +251,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		QueryOutputBuilder oBuilder = new QueryOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("Query", iBuilder.build());
+			CommonLcmFields retval = callDG("query", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -272,7 +272,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		ConfigExportOutputBuilder oBuilder = new ConfigExportOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("ConfigExport", iBuilder.build());
+			CommonLcmFields retval = callDG("config-export", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -293,7 +293,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		StopApplicationOutputBuilder oBuilder = new StopApplicationOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("StopApplication", iBuilder.build());
+			CommonLcmFields retval = callDG("stop-application", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -314,7 +314,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		SoftwareUploadOutputBuilder oBuilder = new SoftwareUploadOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("SoftwareUpload", iBuilder.build());
+			CommonLcmFields retval = callDG("software-upload", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -335,7 +335,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		ResumeTrafficOutputBuilder oBuilder = new ResumeTrafficOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("ResumeTraffic", iBuilder.build());
+			CommonLcmFields retval = callDG("resume-traffic", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -356,7 +356,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		ConfigureOutputBuilder oBuilder = new ConfigureOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("Configure", iBuilder.build());
+			CommonLcmFields retval = callDG("configure", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -377,7 +377,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		ActionStatusOutputBuilder oBuilder = new ActionStatusOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("ActionStatus", iBuilder.build());
+			CommonLcmFields retval = callDG("action-status", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -398,7 +398,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		UpgradePreCheckOutputBuilder oBuilder = new UpgradePreCheckOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("UpgradePreCheck", iBuilder.build());
+			CommonLcmFields retval = callDG("upgrade-pre-check", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -419,7 +419,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		LiveUpgradeOutputBuilder oBuilder = new LiveUpgradeOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("LiveUpgrade", iBuilder.build());
+			CommonLcmFields retval = callDG("live-upgrade", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -440,7 +440,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		ConfigModifyOutputBuilder oBuilder = new ConfigModifyOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("ConfigModify", iBuilder.build());
+			CommonLcmFields retval = callDG("config-modify", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -461,7 +461,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		RestartOutputBuilder oBuilder = new RestartOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("Restart", iBuilder.build());
+			CommonLcmFields retval = callDG("restart", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -482,7 +482,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		HealthCheckOutputBuilder oBuilder = new HealthCheckOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("HealthCheck", iBuilder.build());
+			CommonLcmFields retval = callDG("health-check", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -503,7 +503,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		LockOutputBuilder oBuilder = new LockOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("Lock", iBuilder.build());
+			CommonLcmFields retval = callDG("lock", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -524,7 +524,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		TerminateOutputBuilder oBuilder = new TerminateOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("Terminate", iBuilder.build());
+			CommonLcmFields retval = callDG("terminate", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -545,7 +545,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		AttachVolumeOutputBuilder oBuilder = new AttachVolumeOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("AttachVolume", iBuilder.build());
+			CommonLcmFields retval = callDG("attach-volume", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -566,7 +566,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		MigrateOutputBuilder oBuilder = new MigrateOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("Migrate", iBuilder.build());
+			CommonLcmFields retval = callDG("migrate", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -587,7 +587,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		QuiesceTrafficOutputBuilder oBuilder = new QuiesceTrafficOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("QuiesceTraffic", iBuilder.build());
+			CommonLcmFields retval = callDG("quiesce-traffic", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -608,7 +608,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		ConfigRestoreOutputBuilder oBuilder = new ConfigRestoreOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("ConfigRestore", iBuilder.build());
+			CommonLcmFields retval = callDG("config-restore", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -629,7 +629,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		UpgradeBackoutOutputBuilder oBuilder = new UpgradeBackoutOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("UpgradeBackout", iBuilder.build());
+			CommonLcmFields retval = callDG("upgrade-backout", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -650,7 +650,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		EvacuateOutputBuilder oBuilder = new EvacuateOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("Evacuate", iBuilder.build());
+			CommonLcmFields retval = callDG("evacuate", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -671,7 +671,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		UnlockOutputBuilder oBuilder = new UnlockOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("Unlock", iBuilder.build());
+			CommonLcmFields retval = callDG("unlock", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -692,7 +692,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		ConfigBackupDeleteOutputBuilder oBuilder = new ConfigBackupDeleteOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("ConfigBackupDelete", iBuilder.build());
+			CommonLcmFields retval = callDG("config-backup-delete", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -713,7 +713,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		UpgradeSoftwareOutputBuilder oBuilder = new UpgradeSoftwareOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("UpgradeSoftware", iBuilder.build());
+			CommonLcmFields retval = callDG("upgrade-software", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -734,7 +734,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		StopOutputBuilder oBuilder = new StopOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("Stop", iBuilder.build());
+			CommonLcmFields retval = callDG("stop", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -755,7 +755,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		DetachVolumeOutputBuilder oBuilder = new DetachVolumeOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("DetachVolume", iBuilder.build());
+			CommonLcmFields retval = callDG("detach-volume", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -776,7 +776,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		ConfigScaleOutOutputBuilder oBuilder = new ConfigScaleOutOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("ConfigScaleOut", iBuilder.build());
+			CommonLcmFields retval = callDG("config-scale-out", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -797,7 +797,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		UpgradePostCheckOutputBuilder oBuilder = new UpgradePostCheckOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("UpgradePostCheck", iBuilder.build());
+			CommonLcmFields retval = callDG("upgrade-post-check", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -818,7 +818,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		TestOutputBuilder oBuilder = new TestOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("Test", iBuilder.build());
+			CommonLcmFields retval = callDG("test", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -839,7 +839,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		StartApplicationOutputBuilder oBuilder = new StartApplicationOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("StartApplication", iBuilder.build());
+			CommonLcmFields retval = callDG("start-application", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -860,7 +860,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		ConfigBackupOutputBuilder oBuilder = new ConfigBackupOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("ConfigBackup", iBuilder.build());
+			CommonLcmFields retval = callDG("config-backup", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -881,7 +881,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		RebuildOutputBuilder oBuilder = new RebuildOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("Rebuild", iBuilder.build());
+			CommonLcmFields retval = callDG("rebuild", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -902,7 +902,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		AuditOutputBuilder oBuilder = new AuditOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("Audit", iBuilder.build());
+			CommonLcmFields retval = callDG("audit", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -923,7 +923,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		StartOutputBuilder oBuilder = new StartOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("Start", iBuilder.build());
+			CommonLcmFields retval = callDG("start", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
@@ -944,7 +944,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		SnapshotOutputBuilder oBuilder = new SnapshotOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("Snapshot", iBuilder.build());
+			CommonLcmFields retval = callDG("snapshot", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
