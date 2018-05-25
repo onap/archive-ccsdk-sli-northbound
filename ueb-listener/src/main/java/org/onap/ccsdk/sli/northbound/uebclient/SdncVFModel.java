@@ -44,8 +44,8 @@ public class SdncVFModel extends SdncBaseModel {
 		addParameter("vendor_version", extractValue (metadata, SdcPropertyNames.PROPERTY_NAME_RESOURCEVENDORRELEASE));
 
 		// extract properties
-		addParameter("ecomp_generated_naming", extractBooleanValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_VNFECOMPNAMING_ECOMPGENERATEDNAMING));
-		addParameter("naming_policy", extractValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_VNFECOMPNAMING_NAMINGPOLICY));
+		addParameter("ecomp_generated_naming", extractBooleanValue(nodeTemplate, "nf_naming#ecomp_generated_naming"));
+		addParameter("naming_policy", extractValue(nodeTemplate, "nf_naming#naming_policy"));
 		addParameter("nf_type", extractValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFTYPE));
 		addParameter("nf_role", extractValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFROLE));
 		addParameter("nf_code", extractValue( nodeTemplate, "nf_naming_code"));
