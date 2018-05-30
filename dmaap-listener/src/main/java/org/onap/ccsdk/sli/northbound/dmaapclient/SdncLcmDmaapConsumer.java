@@ -50,16 +50,6 @@ public class SdncLcmDmaapConsumer extends SdncDmaapConsumer {
         } catch (Exception e) {
             throw new InvalidMessageException("Cannot parse LCM json input", e);
         }        
-       
-        JsonNode partitionNode = lcmRootNode.get(PARTITION);
-        if (partitionNode != null)
-        {
-        	String partition = partitionNode.textValue();
-        	if(PARTITION_VALUE.equals(partition) == false) {
-        		LOG.warn("Unknown Partition in LCM message- " + partition);
-        		return;
-        	}
-        }
 
         JsonNode bodyNode = lcmRootNode.get(BODY);
         if(bodyNode == null) {
