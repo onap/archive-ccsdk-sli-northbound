@@ -11,11 +11,11 @@
     </parent>
 
     <groupId>org.onap.ccsdk.sli.northbound</groupId>
-    <artifactId>ccsdk-dataChange</artifactId>
-    <version>0.2.4-SNAPSHOT</version>
+    <artifactId>ccsdk-asdcApi</artifactId>
+    <version>0.2.3-SNAPSHOT</version>
     <packaging>feature</packaging>
 
-    <name>ccsdk-sli-northbound :: dataChange :: ${project.artifactId}</name>
+    <name>ccsdk-sli-northbound :: asdcApi :: ${project.artifactId}</name>
 
 
     <dependencies>
@@ -34,12 +34,12 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>dataChange-model</artifactId>
+            <artifactId>asdcApi-model</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>dataChange-provider</artifactId>
+            <artifactId>asdcApi-provider</artifactId>
             <version>${project.version}</version>
         </dependency>
 

@@ -10,18 +10,17 @@
 	</parent>
 
 	<groupId>org.onap.ccsdk.sli.northbound</groupId>
-	<artifactId>asdcApi</artifactId>
-	<version>0.2.4-SNAPSHOT</version>
+	<artifactId>dataChange</artifactId>
+	<version>0.2.3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-    <name>ccsdk-sli-northbound :: asdcApi</name>
+    <name>ccsdk-sli-northbound :: dataChange</name>
 
 	<modules>
-		<module>model</module>
-		<module>features</module>
-		<module>provider</module>
-		<module>installer</module>
-	</modules>
-
+    <module>model</module>
+    <module>features</module>
+    <module>provider</module>
+    <module>installer</module>
+  </modules>
 
 </project>

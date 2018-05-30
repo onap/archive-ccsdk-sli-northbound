@@ -7,17 +7,18 @@
         <groupId>org.onap.ccsdk.parent</groupId>
         <artifactId>odlparent-lite</artifactId>
         <version>1.0.4-SNAPSHOT</version>
+        <relativePath/>
     </parent>
 
     <groupId>org.onap.ccsdk.sli.northbound</groupId>
-    <artifactId>lcm-features</artifactId>
-    <version>0.2.4-SNAPSHOT</version>
+    <artifactId>dataChange-features</artifactId>
+    <version>0.2.3-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>ccsdk-sli-northbound :: lcm :: ${project.artifactId}</name>
+    <name>ccsdk-sli-northbound :: dataChange :: ${project.artifactId}</name>
 
     <modules>
-        <module>ccsdk-lcm</module>
-        <module>features-lcm</module>
+        <module>ccsdk-dataChange</module>
+        <module>features-dataChange</module>
     </modules>
 </project>

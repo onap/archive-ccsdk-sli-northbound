@@ -10,16 +10,16 @@
 	</parent>
 
 	<groupId>org.onap.ccsdk.sli.northbound</groupId>
-	<artifactId>features-dataChange</artifactId>
-	<version>0.2.4-SNAPSHOT</version>
+	<artifactId>features-lcm</artifactId>
+	<version>0.2.3-SNAPSHOT</version>
 	<packaging>feature</packaging>
 
-	<name>ccsdk-sli-northbound :: dataChange :: ${project.artifactId}</name>
+	<name>ccsdk-sli-northbound :: lcm :: ${project.artifactId}</name>
 
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>ccsdk-dataChange</artifactId>
+			<artifactId>ccsdk-lcm</artifactId>
 			<version>${project.version}</version>
 			<type>xml</type>
 			<classifier>features</classifier>

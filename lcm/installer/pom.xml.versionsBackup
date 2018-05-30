@@ -10,14 +10,14 @@
 	</parent>
 
     <groupId>org.onap.ccsdk.sli.northbound</groupId>
-	<artifactId>asdcApi-installer</artifactId>
-    <version>0.2.4-SNAPSHOT</version>
+	<artifactId>lcm-installer</artifactId>
+    <version>0.2.3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<name>ccsdk-sli-northbound :: asdcApi :: ${project.artifactId}</name>
+	<name>ccsdk-sli-northbound :: lcm :: ${project.artifactId}</name>
 
 	<properties>
-		<application.name>ccsdk-asdcApi</application.name>
+		<application.name>ccsdk-lcm</application.name>
 		<features.boot>${application.name}</features.boot>
         <features.repositories>mvn:org.onap.ccsdk.sli.northbound/${features.boot}/${project.version}/xml/features</features.repositories>
 		<include.transitive.dependencies>false</include.transitive.dependencies>
@@ -40,12 +40,12 @@
 		</dependency>
         <dependency>
             <groupId>org.onap.ccsdk.sli.northbound</groupId>
-            <artifactId>asdcApi-model</artifactId>
+            <artifactId>lcm-model</artifactId>
             <version>${project.version}</version>
         </dependency>
 		<dependency>
 			<groupId>org.onap.ccsdk.sli.northbound</groupId>
-			<artifactId>asdcApi-provider</artifactId>
+			<artifactId>lcm-provider</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 

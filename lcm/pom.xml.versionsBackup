@@ -10,11 +10,11 @@
 	</parent>
 
 	<groupId>org.onap.ccsdk.sli.northbound</groupId>
-	<artifactId>asdcApi</artifactId>
-	<version>0.2.4-SNAPSHOT</version>
+	<artifactId>lcm</artifactId>
+	<version>0.2.3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-    <name>ccsdk-sli-northbound :: asdcApi</name>
+    <name>ccsdk-sli-northbound :: lcm</name>
 
 	<modules>
 		<module>model</module>
