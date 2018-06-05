@@ -27,7 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SdncLcmDmaapConsumer extends SdncDmaapConsumer {
+public class SdncLcmDmaapConsumer extends SdncDmaapConsumerImpl {
 
     private static final Logger LOG = LoggerFactory.getLogger(SdncLcmDmaapConsumer.class);
 

@@ -5,19 +5,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Properties;
-
 import org.onap.ccsdk.sli.core.dblib.DBResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class SdncDhcpEventConsumer extends SdncDmaapConsumer {
+public class SdncDhcpEventConsumer extends SdncDmaapConsumerImpl {
 	private static final Logger LOG = LoggerFactory.getLogger(SdncDhcpEventConsumer.class);
 
 	private static final String MAC_ADDR_TAG = "macaddr";

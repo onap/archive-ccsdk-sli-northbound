@@ -21,9 +21,6 @@
 
 package org.onap.ccsdk.sli.northbound.dmaapclient;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -34,14 +31,15 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class SdncAaiDmaapConsumer extends SdncDmaapConsumer {
+public class SdncAaiDmaapConsumer extends SdncDmaapConsumerImpl {
 
     private static final Logger LOG = LoggerFactory.getLogger(SdncAaiDmaapConsumer.class);
     private static final String SDNC_ENDPOINT = "SDNC.endpoint";
