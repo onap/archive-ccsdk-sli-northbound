@@ -24,7 +24,7 @@ package org.onap.ccsdk.sli.northbound.dmaapclient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DummyDmaapConsumer extends SdncDmaapConsumer {
+public class DummyDmaapConsumer extends SdncDmaapConsumerImpl {
 	
 	private static final Logger LOG = LoggerFactory
 			.getLogger(DummyDmaapConsumer.class);

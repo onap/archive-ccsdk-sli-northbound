@@ -21,9 +21,6 @@
 
 package org.onap.ccsdk.sli.northbound.dmaapclient;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -32,9 +29,12 @@ import java.util.Iterator;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 
-public class SdncFlatJsonDmaapConsumer extends SdncDmaapConsumer {
+public class SdncFlatJsonDmaapConsumer extends SdncDmaapConsumerImpl {
 
     private static final Logger LOG = LoggerFactory.getLogger(SdncFlatJsonDmaapConsumer.class);
 
