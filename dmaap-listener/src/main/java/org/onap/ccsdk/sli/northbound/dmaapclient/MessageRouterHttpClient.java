@@ -135,11 +135,14 @@ public class MessageRouterHttpClient implements SdncDmaapConsumer {
             Integer readTimeoutMinutes =
                     Integer.valueOf(baseProperties.getProperty("readTimeoutMinutes", DEFAULT_READ_TIMEOUT_MINUTES));
 
-            String authorizationString = buildAuthorizationString(username, password);
+            Builder builder = client.target(uri).request("application/json");
+            if (username != null && password != null && username.length() > 0 && password.length() > 0) {
+                String authorizationString = buildAuthorizationString(username, password);
+                builder.header("Authorization", authorizationString);
+            }
             this.uri = buildUri(topic, group, id, host, timeoutQueryParamValue, limit, filter);
             this.client = getClient(connectTimeoutSeconds, readTimeoutMinutes);
-            Builder builder =
-                    client.target(uri).request("application/json").header("Authorization", authorizationString);
+
             this.getMessages = builder.buildGet();
             this.fetchPause = Integer.valueOf(baseProperties.getProperty("fetchPause"));
             this.isReady = true;
