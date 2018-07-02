@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -57,6 +58,7 @@ public class MessageRouterHttpClient implements SdncDmaapConsumer {
     protected final String DEFAULT_READ_TIMEOUT_MINUTES = "3";
     protected final String DEFAULT_TIMEOUT_QUERY_PARAM_VALUE = "15000";
     protected final String DEFAULT_LIMIT = null;
+    protected final String DEFAULT_FETCH_PAUSE = "5000";
 
     public MessageRouterHttpClient() {
 
@@ -105,52 +107,60 @@ public class MessageRouterHttpClient implements SdncDmaapConsumer {
     public void init(Properties baseProperties, String consumerPropertiesPath) {
         try {
             baseProperties.load(new FileInputStream(new File(consumerPropertiesPath)));
-            this.properties = baseProperties;
-            String username = baseProperties.getProperty("username");
-            String password = baseProperties.getProperty("password");
-            String topic = baseProperties.getProperty("topic");
-            String group = baseProperties.getProperty("group");
-            String host = baseProperties.getProperty("host");
-            String id = baseProperties.getProperty("id");
-
-            String filter = baseProperties.getProperty("filter");
-            if (filter != null) {
-                if (filter.length() > 0) {
-                    filter = URLEncoder.encode(filter, StandardCharsets.UTF_8.name());
-                } else {
-                    filter = null;
-                }
-            }
-
-            String limitString = baseProperties.getProperty("limit", DEFAULT_LIMIT);
-            Integer limit = null;
-            if (limitString != null && limitString.length() > 0) {
-                limit = Integer.valueOf(limitString);
-            }
-
-            Integer timeoutQueryParamValue =
-                    Integer.valueOf(baseProperties.getProperty("timeout", DEFAULT_TIMEOUT_QUERY_PARAM_VALUE));
-            Integer connectTimeoutSeconds = Integer
-                    .valueOf(baseProperties.getProperty("connectTimeoutSeconds", DEFAULT_CONNECT_TIMEOUT_SECONDS));
-            Integer readTimeoutMinutes =
-                    Integer.valueOf(baseProperties.getProperty("readTimeoutMinutes", DEFAULT_READ_TIMEOUT_MINUTES));
-
-            Builder builder = client.target(uri).request("application/json");
-            if (username != null && password != null && username.length() > 0 && password.length() > 0) {
-                String authorizationString = buildAuthorizationString(username, password);
-                builder.header("Authorization", authorizationString);
-            }
-            this.uri = buildUri(topic, group, id, host, timeoutQueryParamValue, limit, filter);
-            this.client = getClient(connectTimeoutSeconds, readTimeoutMinutes);
-
-            this.getMessages = builder.buildGet();
-            this.fetchPause = Integer.valueOf(baseProperties.getProperty("fetchPause"));
-            this.isReady = true;
+            processProperties(baseProperties);
         } catch (FileNotFoundException e) {
             Log.error("FileNotFoundException while reading consumer properties", e);
         } catch (IOException e) {
             Log.error("IOException while reading consumer properties", e);
         }
+    }
+    
+    protected void processProperties(Properties properties) {
+        this.properties = properties;
+        String username = properties.getProperty("username");
+        String password = properties.getProperty("password");
+        String topic = properties.getProperty("topic");
+        String group = properties.getProperty("group");
+        String host = properties.getProperty("host");
+        String id = properties.getProperty("id");
+
+        String filter = properties.getProperty("filter");
+        if (filter != null) {
+            if (filter.length() > 0) {
+                try {
+                    filter = URLEncoder.encode(filter, StandardCharsets.UTF_8.name());
+                } catch (UnsupportedEncodingException e) {
+                    Log.error("Filter could not be encoded, setting to null", e);
+                    filter = null;
+                }
+            } else {
+                filter = null;
+            }
+        }
+
+        String limitString = properties.getProperty("limit", DEFAULT_LIMIT);
+        Integer limit = null;
+        if (limitString != null && limitString.length() > 0) {
+            limit = Integer.valueOf(limitString);
+        }
+
+        Integer timeoutQueryParamValue =
+                Integer.valueOf(properties.getProperty("timeout", DEFAULT_TIMEOUT_QUERY_PARAM_VALUE));
+        Integer connectTimeoutSeconds = Integer
+                .valueOf(properties.getProperty("connectTimeoutSeconds", DEFAULT_CONNECT_TIMEOUT_SECONDS));
+        Integer readTimeoutMinutes =
+                Integer.valueOf(properties.getProperty("readTimeoutMinutes", DEFAULT_READ_TIMEOUT_MINUTES));
+        this.client = getClient(connectTimeoutSeconds, readTimeoutMinutes);
+        this.uri = buildUri(topic, group, id, host, timeoutQueryParamValue, limit, filter);
+        Builder builder = client.target(uri).request("application/json");
+        if (username != null && password != null && username.length() > 0 && password.length() > 0) {
+            String authorizationString = buildAuthorizationString(username, password);
+            builder.header("Authorization", authorizationString);
+        }
+
+        this.getMessages = builder.buildGet();
+        this.fetchPause = Integer.valueOf(properties.getProperty("fetchPause",DEFAULT_FETCH_PAUSE));
+        this.isReady = true;
     }
 
     @Override

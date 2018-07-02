@@ -28,6 +28,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -36,7 +37,6 @@ import java.util.Base64;
 import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.net.HttpURLConnection;
 
 /*
  * java.net based client to build message router consumers
@@ -53,6 +53,8 @@ public class MessageRouterHttpClientJdk implements SdncDmaapConsumer {
     protected final String DEFAULT_READ_TIMEOUT = "180000";
     protected final String DEFAULT_TIMEOUT_QUERY_PARAM_VALUE = "15000";
     protected final String DEFAULT_LIMIT = null;
+    protected final String DEFAULT_FETCH_PAUSE = "5000";
+
     private String authorizationString;
     protected Integer connectTimeout;
     protected Integer readTimeout;
@@ -67,15 +69,7 @@ public class MessageRouterHttpClientJdk implements SdncDmaapConsumer {
             while (isRunning) {
                 HttpURLConnection httpUrlConnection = null;
                 try {
-                    httpUrlConnection = (HttpURLConnection) url.openConnection();
-                    if (authorizationString != null) {
-                        httpUrlConnection.addRequestProperty("Authorization", authorizationString);
-                    }
-                    httpUrlConnection.setRequestMethod("GET");
-                    httpUrlConnection.setRequestProperty("Accept", "application/json");
-                    httpUrlConnection.setUseCaches(false);
-                    httpUrlConnection.setConnectTimeout(connectTimeout);
-                    httpUrlConnection.setReadTimeout(readTimeout);
+                    httpUrlConnection = buildHttpURLConnection();
                     httpUrlConnection.connect();
                     int status = httpUrlConnection.getResponseCode();
                     Log.info("GET " + url + " returned http status " + status);
@@ -127,50 +121,53 @@ public class MessageRouterHttpClientJdk implements SdncDmaapConsumer {
     public void init(Properties baseProperties, String consumerPropertiesPath) {
         try {
             baseProperties.load(new FileInputStream(new File(consumerPropertiesPath)));
-
-            this.properties = baseProperties;
-            String username = properties.getProperty("username");
-            String password = properties.getProperty("password");
-            topic = properties.getProperty("topic");
-            String group = properties.getProperty("group");
-            String host = properties.getProperty("host");
-            String id = properties.getProperty("id");
-
-            String filter = properties.getProperty("filter");
-            if (filter != null) {
-                if (filter.length() > 0) {
-                    try {
-                        filter = URLEncoder.encode(filter, StandardCharsets.UTF_8.name());
-                    } catch (UnsupportedEncodingException e) {
-                        Log.error("Couldn't encode filter string", e);
-                    }
-                } else {
-                    filter = null;
-                }
-            }
-
-            String limitString = properties.getProperty("limit", DEFAULT_LIMIT);
-            Integer limit = null;
-            if (limitString != null && limitString.length() > 0) {
-                limit = Integer.valueOf(limitString);
-            }
-
-            Integer timeoutQueryParamValue =
-                    Integer.valueOf(properties.getProperty("timeout", DEFAULT_TIMEOUT_QUERY_PARAM_VALUE));
-            connectTimeout = Integer.valueOf(properties.getProperty("connectTimeoutSeconds", DEFAULT_CONNECT_TIMEOUT));
-            readTimeout = Integer.valueOf(properties.getProperty("readTimeoutMinutes", DEFAULT_READ_TIMEOUT));
-            if (username != null && password != null && username.length() > 0 && password.length() > 0) {
-                authorizationString = buildAuthorizationString(username, password);
-            }
-            String urlString = buildlUrlString(topic, group, id, host, timeoutQueryParamValue, limit, filter);
-            this.url = new URL(urlString);
-            this.fetchPause = Integer.valueOf(properties.getProperty("fetchPause"));
-            this.isReady = true;
+            processProperties(baseProperties);
         } catch (FileNotFoundException e) {
             Log.error("FileNotFoundException while reading consumer properties", e);
         } catch (IOException e) {
             Log.error("IOException while reading consumer properties", e);
         }
+    }
+
+    protected void processProperties(Properties properties) throws MalformedURLException {
+        this.properties = properties;
+        String username = properties.getProperty("username");
+        String password = properties.getProperty("password");
+        topic = properties.getProperty("topic");
+        String group = properties.getProperty("group");
+        String host = properties.getProperty("host");
+        String id = properties.getProperty("id");
+
+        String filter = properties.getProperty("filter");
+        if (filter != null) {
+            if (filter.length() > 0) {
+                try {
+                    filter = URLEncoder.encode(filter, StandardCharsets.UTF_8.name());
+                } catch (UnsupportedEncodingException e) {
+                    Log.error("Couldn't encode filter string", e);
+                }
+            } else {
+                filter = null;
+            }
+        }
+
+        String limitString = properties.getProperty("limit", DEFAULT_LIMIT);
+        Integer limit = null;
+        if (limitString != null && limitString.length() > 0) {
+            limit = Integer.valueOf(limitString);
+        }
+
+        Integer timeoutQueryParamValue =
+                Integer.valueOf(properties.getProperty("timeout", DEFAULT_TIMEOUT_QUERY_PARAM_VALUE));
+        connectTimeout = Integer.valueOf(properties.getProperty("connectTimeoutSeconds", DEFAULT_CONNECT_TIMEOUT));
+        readTimeout = Integer.valueOf(properties.getProperty("readTimeoutMinutes", DEFAULT_READ_TIMEOUT));
+        if (username != null && password != null && username.length() > 0 && password.length() > 0) {
+            authorizationString = buildAuthorizationString(username, password);
+        }
+        String urlString = buildlUrlString(topic, group, id, host, timeoutQueryParamValue, limit, filter);
+        this.url = new URL(urlString);
+        this.fetchPause = Integer.valueOf(properties.getProperty("fetchPause", DEFAULT_FETCH_PAUSE));
+        this.isReady = true;
     }
 
     public void processMsg(String msg) {
@@ -206,6 +203,19 @@ public class MessageRouterHttpClientJdk implements SdncDmaapConsumer {
     @Override
     public boolean isRunning() {
         return isRunning;
+    }
+
+    protected HttpURLConnection buildHttpURLConnection() throws IOException {
+        HttpURLConnection httpUrlConnection = (HttpURLConnection) url.openConnection();
+        if (authorizationString != null) {
+            httpUrlConnection.setRequestProperty("Authorization", authorizationString);
+        }
+        httpUrlConnection.setRequestMethod("GET");
+        httpUrlConnection.setRequestProperty("Accept", "application/json");
+        httpUrlConnection.setUseCaches(false);
+        httpUrlConnection.setConnectTimeout(connectTimeout);
+        httpUrlConnection.setReadTimeout(readTimeout);
+        return httpUrlConnection;
     }
 
 }
