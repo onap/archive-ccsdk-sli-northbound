@@ -97,6 +97,7 @@ public class MessageRouterHttpClient implements SdncDmaapConsumer {
                         Thread.sleep(fetchPause);
                     } catch (InterruptedException e) {
                         Log.error("Could not sleep thread", e);
+                        Thread.currentThread().interrupt();
                     }
                 }
             }

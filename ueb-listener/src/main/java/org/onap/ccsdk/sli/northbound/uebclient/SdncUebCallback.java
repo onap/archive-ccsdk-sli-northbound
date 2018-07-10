@@ -399,8 +399,7 @@ public class SdncUebCallback implements INotificationCallback {
         // Save zip if TOSCA_CSAR
         if (artifact.getArtifactType().contains("TOSCA_CSAR") || artifact.getArtifactName().contains(".csar")) {
 
-	        try {      	
-			FileOutputStream outFile = new FileOutputStream(incomingDir.getAbsolutePath() + "/" + artifact.getArtifactName());
+	        try(FileOutputStream outFile = new FileOutputStream(incomingDir.getAbsolutePath() + "/" + artifact.getArtifactName())) {
 			outFile.write(payloadBytes, 0, payloadBytes.length);
 			outFile.close();
 	            writeSucceeded = true;
@@ -411,8 +410,7 @@ public class SdncUebCallback implements INotificationCallback {
         } else {
 		String payload = new String(payloadBytes);
 	
-	        try {
-	            FileWriter spoolFileWriter = new FileWriter(spoolFile);
+	        try(FileWriter spoolFileWriter = new FileWriter(spoolFile)) {
 	            spoolFileWriter.write(payload);
 	            spoolFileWriter.close();
 	            writeSucceeded = true;
