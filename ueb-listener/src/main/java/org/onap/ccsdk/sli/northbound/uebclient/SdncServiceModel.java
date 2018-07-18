@@ -30,6 +30,8 @@ import org.slf4j.LoggerFactory;
 public class SdncServiceModel extends SdncBaseModel {
 
 	private String UUID = null;
+	private String resourceVendor = null;
+	private String resourceVendorRelease = null;
 	private String serviceInstanceNamePrefix = null;
 	private String filename = null;
 	
@@ -39,9 +41,17 @@ public class SdncServiceModel extends SdncBaseModel {
 	
 		UUID = extractValue(metadata, SdcPropertyNames.PROPERTY_NAME_UUID);
 		
-		// extract service topology template input data 
-		addParameter("ecomp_naming",extractBooleanInputDefaultValue(SdcPropertyNames.PROPERTY_NAME_SERVICENAMING_DEFAULT_ECOMPGENERATEDNAMING));
-		addParameter("naming_policy",extractInputDefaultValue(SdcPropertyNames.PROPERTY_NAME_SERVICENAMING_DEFAULT_NAMINGPOLICY));
+		// extract ecompGeneratedNaming and namingPolicy from Service Metadata
+		addParameter("ecomp_naming",extractBooleanValue(metadata, "ecompGeneratedNaming"));
+		addParameter("naming_policy",extractValue(metadata, "namingPolicy"));
+
+		// extract service topology template input data - ecompGeneratedNaming and namingPolicy moved to Service Metadata
+		//addParameter("ecomp_naming",extractBooleanInputDefaultValue(SdcPropertyNames.PROPERTY_NAME_SERVICENAMING_DEFAULT_ECOMPGENERATEDNAMING));
+		//addParameter("naming_policy",extractInputDefaultValue(SdcPropertyNames.PROPERTY_NAME_SERVICENAMING_DEFAULT_NAMINGPOLICY));
+
+		// extract resourceVendor and resourceVendorRelease for use in SdncServiceProxy class
+		resourceVendor = extractValue(metadata, SdcPropertyNames.PROPERTY_NAME_RESOURCEVENDOR);
+		resourceVendorRelease = extractValue(metadata, SdcPropertyNames.PROPERTY_NAME_RESOURCEVENDORRELEASE);
 	}
 
 	public String getServiceUUID() {
@@ -49,6 +59,9 @@ public class SdncServiceModel extends SdncBaseModel {
 	}
 	public void setServiceUUID(String serviceUUID) {
 		this.UUID = serviceUUID;
+	}
+	public String getServiceInvariantUUID() {
+		return "\"" + invariantUUID + "\"";
 	}
 	public String getServiceInstanceNamePrefix() {
 		return serviceInstanceNamePrefix;
@@ -90,6 +103,22 @@ public class SdncServiceModel extends SdncBaseModel {
 
 		sb.append(");");
 		return sb.toString();
+	}
+	
+	public String getResourceVendor() {
+		return resourceVendor;
+	}
+
+	public void setResourceVendor(String resourceVendor) {
+		this.resourceVendor = resourceVendor;
+	}
+
+	public String getResourceVendorRelease() {
+		return resourceVendorRelease;
+	}
+
+	public void setResourceVendorRelease(String resourceVendorRelease) {
+		this.resourceVendorRelease = resourceVendorRelease;
 	}
 	
 }

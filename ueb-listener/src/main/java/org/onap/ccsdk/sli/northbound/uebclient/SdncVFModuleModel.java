@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * openECOMP : SDN-C
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights
- * 			reserved.
+ * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights
+ * 						reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,12 +32,14 @@ public class SdncVFModuleModel extends SdncBaseModel {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SdncVFModuleModel.class);
 	
-	public SdncVFModuleModel(ISdcCsarHelper sdcCsarHelper, Group group) {
+	public SdncVFModuleModel(ISdcCsarHelper sdcCsarHelper, Group group, SdncVFModel vfNodeModel) {
 
 		super(sdcCsarHelper, group);
+		//addParameter("vf_customization_uuid", vfNodeModel.getCustomizationUUIDNoQuotes());
 		
 		// extract properties
 		addParameter("vf_module_type", extractValue(group, SdcPropertyNames.PROPERTY_NAME_VFMODULETYPE));
+		//addParameter("vf_module_label", extractValue(group, "vf_module_label"));
 		addIntParameter("availability_zone_count", extractValue(group, SdcPropertyNames.PROPERTY_NAME_AVAILABILITYZONECOUNT));
 		addParameter("ecomp_generated_vm_assignments", extractBooleanValue(group, SdcPropertyNames.PROPERTY_NAME_ECOMPGENERATEDVMASSIGNMENTS));
 	}

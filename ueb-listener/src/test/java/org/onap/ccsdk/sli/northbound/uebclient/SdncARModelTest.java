@@ -6,6 +6,7 @@ package org.onap.ccsdk.sli.northbound.uebclient;
  import org.junit.Test;
  import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
  import org.onap.sdc.toscaparser.api.NodeTemplate;
+ import org.onap.ccsdk.sli.core.dblib.DBResourceManager;
  
  public class SdncARModelTest {
  
@@ -13,7 +14,8 @@ package org.onap.ccsdk.sli.northbound.uebclient;
  	public void testSdncARModelConstructor() {
  		ISdcCsarHelper mockCsarHelper = mock(ISdcCsarHelper.class);
  		NodeTemplate nodeTemplate = mock(NodeTemplate.class);
- 		SdncARModel testSdncARModel = new SdncARModel(mockCsarHelper,nodeTemplate);
+ 		DBResourceManager mockDBResourceManager = mock(DBResourceManager.class);
+ 		SdncARModel testSdncARModel = new SdncARModel(mockCsarHelper,nodeTemplate,mockDBResourceManager);
  		assertNotNull(testSdncARModel);
  	}
  

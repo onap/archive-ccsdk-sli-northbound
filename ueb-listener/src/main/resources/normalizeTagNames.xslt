@@ -11,4 +11,3 @@
     <xsl:template match="vf-license-model/feature-group-list/feature-group/entitlement-pool-list/entitlement-pool/entitlement-metric/value/text()[.='# of software instances']">num of software instances</xsl:template>
     <xsl:template match="vf-license-model/feature-group-list/feature-group/entitlement-pool-list/entitlement-pool/firstClassCitizenId"/>
 </xsl:stylesheet>
-
