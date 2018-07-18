@@ -2,15 +2,15 @@
  * ============LICENSE_START=======================================================
  * openECOMP : SDN-C
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights
- * 			reserved.
+ * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights
+ * 						reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,6 +40,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -57,12 +58,11 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
+import javax.xml.XMLConstants;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.tuple.Pair;
-import org.onap.ccsdk.sli.core.dblib.DBResourceManager;
-import org.onap.ccsdk.sli.northbound.uebclient.SdncArtifactMap.SdncArtifactType;
 import org.onap.sdc.api.IDistributionClient;
+import org.onap.sdc.api.consumer.IComponentDoneStatusMessage;
 import org.onap.sdc.api.consumer.IDistributionStatusMessage;
 import org.onap.sdc.api.consumer.INotificationCallback;
 import org.onap.sdc.api.notification.IArtifactInfo;
@@ -72,27 +72,37 @@ import org.onap.sdc.api.results.IDistributionClientDownloadResult;
 import org.onap.sdc.api.results.IDistributionClientResult;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.exceptions.SdcToscaParserException;
-import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
 import org.onap.sdc.tosca.parser.impl.SdcToscaParserFactory;
-import org.onap.sdc.toscaparser.api.Group;
+import org.onap.sdc.tosca.parser.impl.SdcTypes;
 import org.onap.sdc.toscaparser.api.NodeTemplate;
+import org.onap.sdc.toscaparser.api.Policy;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.onap.sdc.utils.ArtifactTypeEnum;
 import org.onap.sdc.utils.DistributionActionResultEnum;
 import org.onap.sdc.utils.DistributionStatusEnum;
+import org.onap.ccsdk.sli.core.dblib.DBResourceManager;
+import org.onap.ccsdk.sli.northbound.uebclient.SdncArtifactMap.SdncArtifactType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 
 public class SdncUebCallback implements INotificationCallback {
 
     private static final Logger LOG = LoggerFactory
             .getLogger(SdncUebCallback.class);
 
-	private static DBResourceManager jdbcDataSource = null;
+    protected static DBResourceManager jdbcDataSource = null;
 	private static final String SDNC_CONFIG_DIR = "SDNC_CONFIG_DIR";
-
+	private static final String COMPONENT_NAME = "SDNC";
+	private static final int NUM_PASSES = 2;
+		
+	// If any ASDC artifact in a distribution fails to download or deploy send SDC event COMPONENT_DONE_ERROR
+	// once after the entire distribution is processed.  Otherwise, send COMPONENT_DONE_OK.
+	private static boolean COMPONENT_DOWNLOAD_ERROR = false;
+	private static boolean COMPONENT_DEPLOY_ERROR = false;
+	private static boolean CSAR_ARTIFACT_DEPLOY_ERROR = false;
 
     private class SdncAuthenticator extends Authenticator {
 
@@ -188,11 +198,13 @@ public class SdncUebCallback implements INotificationCallback {
 
     private LinkedList<DeployableArtifact> deployList[];
 
+    
 	private static void setJdbcDataSource() throws IOException {
 
-		String propPath;
+		String propPath = null;
 		String propDir = System.getenv(SDNC_CONFIG_DIR);
 		if (propDir == null) {
+
 			propDir = "/opt/sdnc/data/properties";
 		}
 		propPath = propDir + "/dblib.properties";
@@ -209,7 +221,6 @@ public class SdncUebCallback implements INotificationCallback {
 		props.load(new FileInputStream(propFile));
 
 		setJdbcDataSource(new DBResourceManager(props));
-
 	}
 
 	static void setJdbcDataSource(DBResourceManager dbMgr) {
@@ -223,10 +234,19 @@ public class SdncUebCallback implements INotificationCallback {
 		}
 	}
 
+	private static void loadArtifactMap() {
+
+	}
+
     public SdncUebCallback(IDistributionClient client, SdncUebConfiguration config) {
         this.client = client;
         this.config = config;
 
+		this.deployList = new LinkedList[NUM_PASSES];
+		
+		for (int i = 0 ; i < NUM_PASSES ; i++) {
+			this.deployList[i] = new LinkedList<DeployableArtifact>();
+		}
     }
 
     @Override
@@ -234,14 +254,30 @@ public class SdncUebCallback implements INotificationCallback {
 
         LOG.info("Received notification : ("+data.getDistributionID()+","+data.getServiceName()+","+data.getServiceVersion()+
 				","+data.getServiceDescription() +  ")");
+        
+        COMPONENT_DOWNLOAD_ERROR = false;
+        COMPONENT_DEPLOY_ERROR = false;
+        CSAR_ARTIFACT_DEPLOY_ERROR = false;
+        
+    	// TOSCA_TEMPLATE artifact should only be downloaded if TOSCA_CSAR artifact fails due to version non-compliance
+    	IArtifactInfo toscaTemplateArtifact = null;
 
         String incomingDirName = config.getIncomingDir();
         String archiveDirName = config.getArchiveDir();
 
-        File incomingDir = null;
-        File archiveDir = null;
+        File incomingDir = new File(incomingDirName);
+        File archiveDir = new File(archiveDirName);
 
-        LOG.debug("IncomingDirName is {}", incomingDirName);
+	LOG.debug("IncomingDirName is {}", incomingDirName);
+
+        if (!incomingDir.exists()) {
+            incomingDir.mkdirs();
+        }
+
+
+        if (!archiveDir.exists()) {
+            archiveDir.mkdirs();
+        }
 
         // Process service level artifacts
         List<IArtifactInfo> artifactList = data.getServiceArtifacts();
@@ -261,8 +297,20 @@ public class SdncUebCallback implements INotificationCallback {
             {
 
                 LOG.info("Received artifact " + curArtifact.getArtifactName());
+                
+        		// If artifact is TOSCA_TEMPLATE, don't handle it.  We will handle if last TOSCA_CSAR ingestion fails.
+        		if (curArtifact.getArtifactType().contains("TOSCA_TEMPLATE") || curArtifact.getArtifactName().contains(".yml")) {
+        			toscaTemplateArtifact = curArtifact;
+        		} else {
 
-				handleArtifact(data, data.getServiceName(), null, curArtifact, incomingDir, archiveDir);
+        			handleArtifact(data, data.getServiceName(), null, null, curArtifact, incomingDir, archiveDir);
+        		}
+            }
+            
+            // After all artifacts have been processed if CSAR_ARTIFACT_DEPLOY_ERROR is true, download and deploy the TOSCA_TEMPLATE artifact
+            if (CSAR_ARTIFACT_DEPLOY_ERROR == true) {
+            	LOG.info("TOSCA_CSAR artifact deploy error encountered, downloading TOSCA_TEMPLATE artifact: " + toscaTemplateArtifact.getArtifactName());
+            	handleArtifact(data, data.getServiceName(), null, null, toscaTemplateArtifact, incomingDir, archiveDir);
             }
         }
 
@@ -275,14 +323,12 @@ public class SdncUebCallback implements INotificationCallback {
 
             if (artifactList != null) {
 
-                incomingDir = new File(incomingDirName + "/" + escapeFilename(data.getServiceName()) + "/"
-                    + escapeFilename(curResource.getResourceName()));
+                incomingDir = new File(incomingDirName + "/" + escapeFilename(data.getServiceName()) + "/" + escapeFilename(curResource.getResourceName()));
                 if (!incomingDir.exists()) {
                     incomingDir.mkdirs();
                 }
 
-                archiveDir = new File(archiveDirName + "/" + escapeFilename(data.getServiceName()) + "/"
-                    + escapeFilename(curResource.getResourceName()));
+                archiveDir = new File(archiveDirName + "/" + escapeFilename(data.getServiceName()) + "/" + escapeFilename(curResource.getResourceName()));
                 if (!archiveDir.exists()) {
                     archiveDir.mkdirs();
                 }
@@ -291,19 +337,42 @@ public class SdncUebCallback implements INotificationCallback {
 
                     LOG.info("Received artifact " + curArtifact.getArtifactName());
 
-					handleArtifact(data, data.getServiceName(), curResource.getResourceName(), curArtifact, incomingDir, archiveDir);
+					handleArtifact(data, data.getServiceName(), curResource.getResourceName(), curResource.getResourceType(), curArtifact, incomingDir, archiveDir);
                 }
             }
         }
 
         deployDownloadedFiles(incomingDir, archiveDir, data);
+
+        // Send Component Status: COMPONENT_DONE_ERROR or COMPONENT_DONE_OK
+		LOG.info("Sending Component Status for Distribution: ("+data.getDistributionID()+","+data.getServiceName()+","+data.getServiceVersion()+
+			","+data.getServiceDescription() +  ")");
+		IDistributionClientResult result = null;
+		 if (COMPONENT_DOWNLOAD_ERROR == true || COMPONENT_DEPLOY_ERROR == true) {
+
+			 String errorReason = (COMPONENT_DEPLOY_ERROR == true ? "SDN-C encountered an error deploying an artifact in this distribution" : "");
+			 errorReason = (COMPONENT_DOWNLOAD_ERROR == true ? "SDN-C encountered an error downloading an artifact in this distribution" : errorReason);
+			 result = client.sendComponentDoneStatus(buildComponentStatusMessage(
+						client, data, DistributionStatusEnum.COMPONENT_DONE_ERROR), errorReason);
+			 if (result != null) {
+			 	LOG.info("Sending Component Status COMPONENT_DONE_ERROR for Distribution result: " + result.getDistributionMessageResult());
+			 }
+		 } else {
+			 
+			 result = client.sendComponentDoneStatus(buildComponentStatusMessage(
+						client, data, DistributionStatusEnum.COMPONENT_DONE_OK));
+			 if (result != null) {
+			 	LOG.info("Sending Component Status COMPONENT_DONE_OK for Distribution result: " + result.getDistributionMessageResult());
+			 }
+		 }
+		 
     }
 
 
     public void deployDownloadedFiles(File incomingDir, File archiveDir, INotificationData data) {
 
         if (incomingDir == null) {
-        	    LOG.debug("incomingDir is null - using {}", config.getIncomingDir());
+	    LOG.debug("incomingDir is null - using {}", config.getIncomingDir());
             incomingDir = new File(config.getIncomingDir());
 
             if (!incomingDir.exists()) {
@@ -311,8 +380,8 @@ public class SdncUebCallback implements INotificationCallback {
             }
 
         } else {
-        		LOG.debug("incomingDir is not null - it is {}", incomingDir.getPath());
-        }
+	    LOG.debug("incomingDir is not null - it is {}", incomingDir.getPath());
+	}
 
         if (archiveDir == null) {
             archiveDir = new File(config.getArchiveDir());
@@ -321,27 +390,40 @@ public class SdncUebCallback implements INotificationCallback {
                 archiveDir.mkdirs();
             }
         }
-        
+
+        String curFileName = "";
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(incomingDir.toPath())) {
+            for (Path file: stream) {
+                curFileName = file.toString();
+            	// Skip TOSCA files (csar and yml) if we are deploying files that were downloaded from ASDC (data is not NULL), 
+            	// they have already been deployed.  If they are still in the incoming directory there was an error during ingestion.
+            	if (data != null && (curFileName.contains(".csar") || curFileName.contains(".yml"))) {
+            		LOG.info("Skipping deploy of file TOSCA file:  "+ curFileName + " it has already been handled");
+            		continue;
+            	}
+            		
+                try {
+                       handleSuccessfulDownload(null,null, null, null, file.toFile(), archiveDir);
+                } catch (Exception x) {
+                	COMPONENT_DEPLOY_ERROR = true;
+                    LOG.error("Exception in handleSuccessfulDownload: Cannot process spool file "+ curFileName, x);
+                }
+
+            }
+        } catch (Exception x) {
+            // IOException can never be thrown by the iteration.
+            // In this snippet, it can only be thrown by newDirectoryStream.
+            LOG.warn("Cannot process spool file "+ curFileName, x);
+        }
+
         // Deploy scheduled deployments
-        int numPasses = config.getMaxPasses();
+        /*int numPasses = config.getMaxPasses();
 
         deployList = new LinkedList[numPasses];
 
         for (int i = 0 ; i < numPasses ; i++) {
-			deployList[i] = new LinkedList<>();
-        }
-
-        LOG.debug("Scanning {} - {} for downloaded files", incomingDir.getPath(), incomingDir.toPath());
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(incomingDir.toPath())) {
-            for (Path file: stream) {
-                handleSuccessfulDownload(null,null, null, null, file.toFile(), archiveDir);
-            }
-        } catch (IOException x) {
-            // IOException can never be thrown by the iteration.
-            // In this snippet, it can only be thrown by newDirectoryStream.
-            LOG.warn("Cannot process spool file", x);
-        }
-
+			deployList[i] = new LinkedList<DeployableArtifact>();
+        }*/
         for (int pass = 0 ; pass < config.getMaxPasses() ; pass++) {
 
             if (deployList[pass] != null) {
@@ -362,9 +444,13 @@ public class SdncUebCallback implements INotificationCallback {
                     IArtifactInfo artifactInfo = artifact.getArtifactInfo();
 
 					if ((artifactInfo != null) && (data != null)) {
-                        client.sendDeploymentStatus(buildStatusMessage(
+                        IDistributionClientResult deploymentStatus;
+                            deploymentStatus = client.sendDeploymentStatus(buildStatusMessage(
                                     client, data, artifactInfo,
                                     deployResult));
+                            if (deployResult == DistributionStatusEnum.DEPLOY_ERROR) {
+                            	COMPONENT_DEPLOY_ERROR = true;
+                            }
                     }
 
                 }
@@ -372,9 +458,8 @@ public class SdncUebCallback implements INotificationCallback {
         }
     }
 
-	private void handleArtifact(INotificationData data, String svcName, String resourceName,
-        IArtifactInfo artifact, File incomingDir, File archiveDir) {
-
+	private void handleArtifact(INotificationData data, String svcName, String resourceName, String resourceType, IArtifactInfo artifact, File incomingDir, File archiveDir) {
+		
         // Download Artifact
         IDistributionClientDownloadResult downloadResult = client.download(artifact);
 
@@ -391,26 +476,28 @@ public class SdncUebCallback implements INotificationCallback {
 			return;
 		}
 
-
-        File spoolFile = new File(incomingDir.getAbsolutePath() + "/" + artifact.getArtifactName());
-
         boolean writeSucceeded = false;
-
+        File spoolFile = new File(incomingDir.getAbsolutePath() + "/" + artifact.getArtifactName());
+        
         // Save zip if TOSCA_CSAR
         if (artifact.getArtifactType().contains("TOSCA_CSAR") || artifact.getArtifactName().contains(".csar")) {
 
-	        try(FileOutputStream outFile = new FileOutputStream(incomingDir.getAbsolutePath() + "/" + artifact.getArtifactName())) {
-			outFile.write(payloadBytes, 0, payloadBytes.length);
-			outFile.close();
+	        try {
+	        	
+				FileOutputStream outFile = new FileOutputStream(incomingDir.getAbsolutePath() + "/" + artifact.getArtifactName());
+				outFile.write(payloadBytes, 0, payloadBytes.length);
+				outFile.close();
 	            writeSucceeded = true;
 	        } catch (Exception e) {
 	            LOG.error("Unable to save downloaded zip file to spool directory ("+ incomingDir.getAbsolutePath() +")", e);
 	        }
 
         } else {
-		String payload = new String(payloadBytes);
+
+			String payload = new String(payloadBytes);
 	
-	        try(FileWriter spoolFileWriter = new FileWriter(spoolFile)) {
+	        try {
+	            FileWriter spoolFileWriter = new FileWriter(spoolFile);
 	            spoolFileWriter.write(payload);
 	            spoolFileWriter.close();
 	            writeSucceeded = true;
@@ -419,8 +506,11 @@ public class SdncUebCallback implements INotificationCallback {
 	        }
         }
 
+
 		if (writeSucceeded && (downloadResult.getDistributionActionResult() == DistributionActionResultEnum.SUCCESS)) {
             handleSuccessfulDownload(data, svcName, resourceName, artifact, spoolFile, archiveDir);
+
+
         } else {
             handleFailedDownload(data, artifact);
         }
@@ -430,33 +520,22 @@ public class SdncUebCallback implements INotificationCallback {
     private void handleFailedDownload(INotificationData data,
             IArtifactInfo relevantArtifact) {
         // Send Download Status
-        client.sendDownloadStatus(buildStatusMessage(client, data,
-                        relevantArtifact, DistributionStatusEnum.DOWNLOAD_ERROR));
+        client.sendDownloadStatus(buildStatusMessage(client, data, relevantArtifact, DistributionStatusEnum.DOWNLOAD_ERROR));
+        COMPONENT_DOWNLOAD_ERROR = true;
     }
 
     private void handleSuccessfulDownload(INotificationData data, String svcName, String resourceName,
-            IArtifactInfo artifact, File inpSpoolFile, File archiveDir) {
+            IArtifactInfo artifact, File spoolFile, File archiveDir) {
 
 		if ((data != null) && (artifact != null)) {
             // Send Download Status
-            client.sendDownloadStatus(buildStatusMessage(client, data, artifact, DistributionStatusEnum.DOWNLOAD_OK));
+            IDistributionClientResult sendDownloadStatus = client
+                    .sendDownloadStatus(buildStatusMessage(client, data, artifact, DistributionStatusEnum.DOWNLOAD_OK));
         }
 
         // If an override file exists, read that instead of the file we just downloaded
         ArtifactTypeEnum artifactEnum = ArtifactTypeEnum.YANG_XML;
-        File spoolFile = inpSpoolFile;
 
-		boolean toscaCsarType = false;
-        if (artifact != null) {
-			String artifactTypeString = artifact.getArtifactType();
-			if (artifactTypeString.contains("TOSCA_CSAR")) {
-				toscaCsarType = true;
-			}
-		} else {
-			if (spoolFile.toString().contains(".csar")) {
-				toscaCsarType = true;
-			}
-        }
         String overrideFileName = config.getOverrideFile();
 		if ((overrideFileName != null) && (overrideFileName.length() > 0)) {
             File overrideFile = new File(overrideFileName);
@@ -468,21 +547,20 @@ public class SdncUebCallback implements INotificationCallback {
 
         }
 
-		if (toscaCsarType) {
-			processToscaCsar (data, artifact, spoolFile, archiveDir);
-
-			try {
-				Path source = spoolFile.toPath();
-				Path targetDir = archiveDir.toPath();
-
-				Files.move(source, targetDir.resolve(source.getFileName()), StandardCopyOption.REPLACE_EXISTING);
-			} catch (IOException e) {
-				LOG.warn("Could not move "+spoolFile.getAbsolutePath()+" to "+archiveDir.getAbsolutePath(), e);
-			}
-
+		// If the artifact is a TOSCA artifact, don't schedule a deployment to SDN-C REST intfc, process it in ueb-listener
+		if (artifactIsTosca(artifact, spoolFile) == true)
+		{
+			handleToscaArtifact (data, svcName, resourceName, artifact, spoolFile, archiveDir);
 			return;
 		}
+		
+		processSpoolFile (data, svcName, resourceName, artifact, spoolFile, archiveDir);
 
+    }
+
+    protected void processSpoolFile(INotificationData data, String svcName, String resourceName,
+            IArtifactInfo artifact, File spoolFile, File archiveDir) {
+    	
         // Process spool file
         Document spoolDoc = null;
         File transformedFile = null;
@@ -498,20 +576,33 @@ public class SdncUebCallback implements INotificationCallback {
 
         if (transformedFile != null) {
             try {
-                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-                DocumentBuilder db = dbf.newDocumentBuilder();
 
-                spoolDoc = db.parse(transformedFile);
+                try {
+
+                    DocumentBuilderFactory dbf = DocumentBuilderFactory
+                            .newInstance();
+                    dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+                    dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+                    dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+                    DocumentBuilder db = dbf.newDocumentBuilder();
+
+                    spoolDoc = db.parse(transformedFile);
+                } catch (Exception e) {
+                    LOG.error(
+                            "Caught exception trying to parse transformed XML file "
+                                    + transformedFile.getAbsolutePath(), e);
+                }
+
             } catch (Exception e) {
-                LOG.error("Caught exception trying to parse transformed XML file {}",
-                          transformedFile.getAbsolutePath(), e);
+                LOG.error("Caught exception trying to deploy file", e);
             }
         }
 
-
+        ArtifactTypeEnum artifactEnum = ArtifactTypeEnum.YANG_XML;
         if (spoolDoc != null) {
             // Analyze file type
-            SdncArtifactType artifactType = analyzeFileType(artifactEnum, spoolFile, spoolDoc);
+            SdncArtifactType artifactType = analyzeFileType(artifactEnum,
+                    spoolFile, spoolDoc);
 
             if (artifactType != null) {
 
@@ -530,79 +621,115 @@ public class SdncUebCallback implements INotificationCallback {
                 LOG.warn("Could not move "+spoolFile.getAbsolutePath()+" to "+archiveDir.getAbsolutePath(), e);
             }
         }
-
-
+    	
     }
 
+    private void handleToscaArtifact (INotificationData data, String svcName, String resourceName, IArtifactInfo artifact, 
+    		File spoolFile, File archiveDir) {
+    
+    	DistributionStatusEnum deployStatus = DistributionStatusEnum.DEPLOY_ERROR;
+		if ((artifact != null && artifact.getArtifactType().contains("TOSCA_TEMPLATE")) || spoolFile.toString().contains(".yml")) {
+			deployStatus = processToscaYaml (spoolFile);
+		} else if ((artifact != null && artifact.getArtifactType().contains("TOSCA_CSAR")) || spoolFile.toString().contains(".csar")) {
+			deployStatus = processToscaCsar (data, svcName, resourceName, artifact, spoolFile, archiveDir);
+			// if parser error on CSAR, process the TOSCA_TEMPLATE artifact last
+			if (deployStatus.equals(DistributionStatusEnum.DEPLOY_ERROR)) {
+				CSAR_ARTIFACT_DEPLOY_ERROR = true;
+			}
+			
+		} else {
+			LOG.error("handleToscaArtifact: Encountered unknown TOSCA artifact");
+		}
+		
+		if (deployStatus.equals(DistributionStatusEnum.DEPLOY_OK)) {
+			LOG.info("Update to SDN-C succeeded");
+			
+			try {
+				Path source = spoolFile.toPath();
+				Path targetDir = archiveDir.toPath();
 
-	private void processToscaCsar(INotificationData data,
-			IArtifactInfo artifact, File spoolFile, File archiveDir) {
+				Files.move(source, targetDir.resolve(source.getFileName()), StandardCopyOption.REPLACE_EXISTING);
+			} catch (IOException e) {
+				LOG.warn("Could not move "+spoolFile.getAbsolutePath()+" to "+archiveDir.getAbsolutePath(), e);
+			}
+			
+		} else {
+			LOG.info("Update to SDN-C failed");
+			COMPONENT_DEPLOY_ERROR = true; 
+		}
+		
+		// Send deployment status for ingestion 
+		if ((artifact != null) && (data != null)) {
+			client.sendDeploymentStatus(buildStatusMessage(client, data, artifact,deployStatus));
+		}
+    }
+    
+	protected DistributionStatusEnum processToscaYaml(File spoolFile) {
 
+		return DistributionStatusEnum.DEPLOY_OK;
+	}
+
+
+	private DistributionStatusEnum processToscaCsar(INotificationData data, String svcName, String resourceName, IArtifactInfo artifact, 
+    		File spoolFile, File archiveDir) {	
+		
 		// Use ASDC Dist Client 1.1.5 with TOSCA parsing APIs to extract relevant TOSCA model data
 
 		// TOSCA data extraction flow 1707:
 		// Use ASDC dist-client to get yaml string - not yet available
 		String model_yaml = null;
 		LOG.info("Process TOSCA CSAR file: "+spoolFile.toString());
-
-		SdcToscaParserFactory factory = SdcToscaParserFactory.getInstance();
 		ISdcCsarHelper sdcCsarHelper = null;
+		DistributionStatusEnum deployStatus = DistributionStatusEnum.DEPLOY_OK;
+
 		try {
+			SdcToscaParserFactory factory = SdcToscaParserFactory.getInstance();
 			sdcCsarHelper = factory.getSdcCsarHelper(spoolFile.getAbsolutePath());
 		} catch (SdcToscaParserException e) {
 			LOG.error("Could not create SDC TOSCA Parser ", e);
-			return;
-		}
+			return DistributionStatusEnum.DEPLOY_ERROR;
+		} 
 
 		// Ingest Service Data - 1707
 		Metadata serviceMetadata = sdcCsarHelper.getServiceMetadata();
 		SdncServiceModel serviceModel = new SdncServiceModel(sdcCsarHelper, serviceMetadata);
-		serviceModel.setFilename(spoolFile.toString().substring(spoolFile
-                                                                        .toString().lastIndexOf('/')+1));  // will be csar file name
+		serviceModel.setFilename(spoolFile.toString().substring(spoolFile.toString().lastIndexOf("/")+1));  // will be csar file name
 		serviceModel.setServiceInstanceNamePrefix(SdncBaseModel.extractSubstitutionMappingTypeName(sdcCsarHelper).substring(SdncBaseModel.extractSubstitutionMappingTypeName(sdcCsarHelper).lastIndexOf(".")+1));
 
 		try {
 			cleanUpExistingToscaServiceData(serviceModel.getServiceUUID());
-			LOG.info("Call insertToscaData for SERVICE_MODEL serviceUUID = " + serviceModel.getServiceUUID());
-			insertToscaData(serviceModel.getSql(model_yaml));
+			LOG.info("Call insertToscaData for SERVICE_MODEL where service_uuid = " + serviceModel.getServiceUUID());
+			insertToscaData(serviceModel.getSql(model_yaml), null);
 		} catch (IOException e) {
-			LOG.error("Could not insert Tosca YAML data into the SERVICE_MODEL table ", e);
-    
+			LOG.error("Could not insert Tosca CSAR data into the SERVICE_MODEL table ", e);
+			return DistributionStatusEnum.DEPLOY_ERROR;
+			
 		}
-
+		
 		// Ingest Network (VL) Data - 1707
 		List<NodeTemplate> vlNodeTemplatesList = sdcCsarHelper.getServiceVlList();
 
 		for (NodeTemplate nodeTemplate :  vlNodeTemplatesList) {
-			SdncNodeModel nodeModel = new SdncNodeModel (sdcCsarHelper, nodeTemplate);
+			SdncNodeModel nodeModel = new SdncNodeModel (sdcCsarHelper, nodeTemplate, jdbcDataSource);
 			nodeModel.setServiceUUID(serviceModel.getServiceUUID());
-			nodeModel.setEcompGeneratedNaming(SdncBaseModel.extractBooleanInputDefaultValue(sdcCsarHelper, SdcPropertyNames.PROPERTY_NAME_SERVICENAMING_DEFAULT_ECOMPGENERATEDNAMING));//service_naming#default#ecomp_generated_naming
 
 			try {
-				cleanUpExistingToscaData("NETWORK_MODEL", "customization_uuid", nodeModel.getCustomizationUUID());
-				cleanUpExistingToscaData("VPN_BINDINGS", "network_customization_uuid", nodeModel.getCustomizationUUID());
-				LOG.info("Call insertToscaData for NETWORK_MODEL customizationUUID = " + nodeModel.getCustomizationUUID());
-				// using ASDC dist-client use method for get yaml string
-				insertToscaData(nodeModel.getSql(model_yaml));
-				insertToscaData(nodeModel.getVpnBindingsSql());
+				nodeModel.insertNetworkModelData();
 			} catch (IOException e) {
-				LOG.error("Could not insert Tosca YAML data into the NETWORK_MODEL table ", e);
+				deployStatus = DistributionStatusEnum.DEPLOY_ERROR;
 			}
 		}
-
+		
 		// Ingest Allotted Resource Data - 1707
 		List<NodeTemplate> arNodeTemplatesList = sdcCsarHelper.getAllottedResources();
 
 		for (NodeTemplate nodeTemplate :  arNodeTemplatesList) {
-			SdncARModel nodeModel = new SdncARModel (sdcCsarHelper, nodeTemplate);
-
+			
 			try {
-				cleanUpExistingToscaData("ALLOTTED_RESOURCE_MODEL", "customization_uuid", nodeModel.getCustomizationUUID());
-				LOG.info("Call insertToscaData for ALLOTTED_RESOURCE_MODEL customizationUUID = " + nodeModel.getCustomizationUUID());
-				// using ASDC dist-client use method for get yaml string
-				insertToscaData(nodeModel.getSql("ALLOTTED_RESOURCE_MODEL", model_yaml));
+				SdncARModel nodeModel = new SdncARModel (sdcCsarHelper, nodeTemplate, jdbcDataSource);
+				nodeModel.insertAllottedResourceModelData ();
 			} catch (IOException e) {
-				LOG.error("Could not insert Tosca YAML data into the NETWORK_MODEL table ", e);
+				deployStatus = DistributionStatusEnum.DEPLOY_ERROR;
 			}
 		}
 
@@ -610,133 +737,47 @@ public class SdncUebCallback implements INotificationCallback {
 		List<NodeTemplate> vfNodeTemplatesList = sdcCsarHelper.getServiceVfList();
 
 		for (NodeTemplate nodeTemplate :  vfNodeTemplatesList) {
-			SdncVFModel vfNodeModel = new SdncVFModel (sdcCsarHelper, nodeTemplate);
-
+			
+			SdncVFModel vfNodeModel = null;
 			try {
-				cleanUpExistingToscaData("VF_MODEL", "customization_uuid", vfNodeModel.getCustomizationUUID()) ;
-				LOG.info("Call insertToscaData for VF_MODEL customizationUUID = " + vfNodeModel.getCustomizationUUID());
-				insertToscaData(vfNodeModel.getSql("VF_MODEL", model_yaml));
+				vfNodeModel = new SdncVFModel (sdcCsarHelper, nodeTemplate, jdbcDataSource, config);
+				vfNodeModel.setServiceUUID(serviceModel.getServiceUUID());
+				vfNodeModel.setServiceInvariantUUID(serviceModel.getServiceInvariantUUID());
+				vfNodeModel.insertData();
+
 			} catch (IOException e) {
-				LOG.error("Could not insert Tosca YAML data into the VF_MODEL table ", e);
+				deployStatus = DistributionStatusEnum.DEPLOY_ERROR;
+			}			
+			
+			// For each VF, insert VNF Configuration data
+			DistributionStatusEnum vnfConfigDeployStatus = customProcessVnfConfig(sdcCsarHelper, vfNodeModel, jdbcDataSource);
+			if (vnfConfigDeployStatus == DistributionStatusEnum.DEPLOY_ERROR) {
+				deployStatus = DistributionStatusEnum.DEPLOY_ERROR;
 			}
-
-			// For each VF, insert VF_MODULE_MODEL data
-			List<Group> vfModules = sdcCsarHelper.getVfModulesByVf(vfNodeModel.getCustomizationUUIDNoQuotes());
-			for (Group group : vfModules){
-				SdncVFModuleModel vfModuleModel = new SdncVFModuleModel(sdcCsarHelper, group);
-
-				try {
-					cleanUpExistingToscaData("VF_MODULE_MODEL", "customization_uuid", vfModuleModel.getCustomizationUUID());
-					LOG.info("Call insertToscaData for VF_MODULE_MODEL customizationUUID = " + vfModuleModel.getCustomizationUUID());
-					insertToscaData(vfModuleModel.getSql("VF_MODULE_MODEL", model_yaml));
-				} catch (IOException e) {
-					LOG.error("Could not insert Tosca YAML data into the VF_MODULE_MODEL table ", e);
-				}
-
-				// For each VF Module, get the VFC list, insert VF_MODULE_TO_VFC_MAPPING data
-				// For each vfcNode (group member) in the groupMembers list, extract vm_type and vm_count.
-				// Insert vf_module.customizationUUID, vfcNode.customizationUUID and vm_type and vm_count into VF_MODULE_TO_VFC_MAPPING
-				List<NodeTemplate> groupMembers = sdcCsarHelper.getMembersOfVfModule(nodeTemplate, group); // not yet available
-				for (NodeTemplate vfcNode : groupMembers){
-					SdncVFCModel vfcModel = new SdncVFCModel(sdcCsarHelper, vfcNode);
-
-					try {
-						cleanUpExistingToscaData("VF_MODULE_TO_VFC_MAPPING", "vf_module_customization_uuid", vfModuleModel.getCustomizationUUID());
-						LOG.info("Call insertToscaData for VF_MODULE_TO_VFC_MAPPING customizationUUID = " + vfModuleModel.getCustomizationUUID());
-						insertToscaData("insert into VF_MODULE_TO_VFC_MAPPING (vf_module_customization_uuid, vfc_customization_uuid, vm_type, vm_count) values (" +
-								vfModuleModel.getCustomizationUUID() + ", " + vfcModel.getCustomizationUUID() + ", \"" + vfcModel.getVmType() + "\", \"" + vfcModel.getVmCount() + "\")");
-					} catch (IOException e) {
-						LOG.error("Could not insert Tosca YAML data into the VF_MODULE_TO_VFC_MAPPING table ", e);
-					}
-
-				}
-
-			}
-
-			// For each VF, insert VFC_MODEL data
-			List<NodeTemplate> vfcNodes = sdcCsarHelper.getVfcListByVf(vfNodeModel.getCustomizationUUIDNoQuotes());
-			for (NodeTemplate vfcNode : vfcNodes){
-				SdncVFCModel vfcModel = new SdncVFCModel(sdcCsarHelper, vfcNode);
-
-				try {
-					cleanUpExistingToscaData("VFC_MODEL", "customization_uuid", vfcModel.getCustomizationUUID());
-					LOG.info("Call insertToscaData for VFC_MODEL customizationUUID = " + vfcModel.getCustomizationUUID());
-					insertToscaData(vfcModel.getSql("VFC_MODEL", model_yaml));
-				} catch (IOException e) {
-					LOG.error("Could not insert Tosca YAML data into the VFC_MODEL table ", e);
-				}
-
-			}
-
-			// For each VF, insert VF_TO_NETWORK_ROLE_MAPPING data
-			List<NodeTemplate> cpNodes = sdcCsarHelper.getCpListByVf(vfNodeModel.getCustomizationUUIDNoQuotes());
-			for (NodeTemplate cpNode : cpNodes){
-
-				// Insert into VF_TO_NETWORK_ROLE_MAPPING vf_customization_uuid and network_role
-				String cpNetworkRole = sdcCsarHelper.getNodeTemplatePropertyLeafValue(cpNode, "network_role_tag");
-
-				try {
-					cleanUpExistingToscaData("VF_TO_NETWORK_ROLE_MAPPING", "vf_customization_uuid", vfNodeModel.getCustomizationUUID());
-					LOG.info("Call insertToscaData for VF_TO_NETWORK_ROLE_MAPPING vfCustomizationUUID = " + vfNodeModel.getCustomizationUUID());
-					insertToscaData("insert into VF_TO_NETWORK_ROLE_MAPPING (vf_customization_uuid, network_role) values (" +
-					vfNodeModel.getCustomizationUUID() + ", \"" + cpNetworkRole + "\")");
-				} catch (IOException e) {
-					LOG.error("Could not insert Tosca YAML data into the VF_TO_NETWORK_ROLE_MAPPING table ", e);
-				}
-
-				// Insert VFC_TO_NETWORK_ROLE_MAPPING data
-				Map<String, String> mappingParams = new HashMap<>();
-				//String cpNetworkRoleTag = "\"" + sdcCsarHelper.getNodeTemplatePropertyLeafValue(cpNode, SdcPropertyNames.PROPERTY_NAME_NETWORKROLETAG) + "\"";
-				// extract network_role, network_role_tag and virtual_binding from this cpNode
-				SdncBaseModel.addParameter("network_role", SdncBaseModel.extractValue(sdcCsarHelper, cpNode, "network_role"), mappingParams);
-				SdncBaseModel.addParameter("network_role_tag", SdncBaseModel.extractValue(sdcCsarHelper, cpNode, "network_role_tag"), mappingParams);
-				String virtualBinding = "\"" + SdncBaseModel.extractValue(sdcCsarHelper, cpNode, "requirements#virtualBinding") + "\"";
-
-				// get list of cpNodes and vfcNodes with matching virtualBinding
-				List<Pair<NodeTemplate, NodeTemplate>> matchList = sdcCsarHelper.getNodeTemplatePairsByReqName(sdcCsarHelper.getCpListByVf(vfNodeModel.getCustomizationUUIDNoQuotes()), sdcCsarHelper.getVfcListByVf(vfNodeModel.getCustomizationUUIDNoQuotes()), virtualBinding);
-				for (Pair<NodeTemplate, NodeTemplate> match : matchList) {  // should be 1 match?
-
-					// extract values from the left "CP" Node
-					SdncBaseModel.addParameter("ipv4_use_dhcp", SdncBaseModel.extractBooleanValue(sdcCsarHelper, match.getLeft(), SdcPropertyNames.PROPERTY_NAME_NETWORKASSIGNMENTS_IPV4SUBNETDEFAULTASSIGNMENTS_DHCPENABLED), mappingParams);
-
-					SdncBaseModel.addParameter("ipv4_ip_version", "dummy_ipv4_vers", mappingParams);
-					SdncBaseModel.addParameter("ipv6_use_dhcp", SdncBaseModel.extractBooleanValue(sdcCsarHelper, match.getLeft(), SdcPropertyNames.PROPERTY_NAME_NETWORKASSIGNMENTS_IPV6SUBNETDEFAULTASSIGNMENTS_DHCPENABLED), mappingParams);
-
-					SdncBaseModel.addParameter("ipv6_ip_version", "dummy_ipv6_vers", mappingParams);
-
-					// extract values from the right "VFC" Node
-					String vfcCustomizationUuid = "\"" + SdncBaseModel.extractValue(sdcCsarHelper, match.getRight().getMetaData(), "customization_uuid") + "\"";
-					SdncBaseModel.addParameter("vm_type", SdncBaseModel.extractValue(sdcCsarHelper, match.getRight(), SdcPropertyNames.PROPERTY_NAME_VMTYPE), mappingParams);
-					SdncBaseModel.addIntParameter("ipv4_count", SdncBaseModel.extractValue(sdcCsarHelper, match.getRight(), SdcPropertyNames.PROPERTY_NAME_NETWORKASSIGNMENTS_IPV4SUBNETDEFAULTASSIGNMENTS_MINSUBNETSCOUNT), mappingParams);
-					SdncBaseModel.addIntParameter("ipv6_count", SdncBaseModel.extractValue(sdcCsarHelper, match.getRight(), SdcPropertyNames.PROPERTY_NAME_NETWORKASSIGNMENTS_IPV6SUBNETDEFAULTASSIGNMENTS_MINSUBNETSCOUNT), mappingParams);
-
-					try {
-						cleanUpExistingToscaData("VFC_TO_NETWORK_ROLE_MAPPING", "vfc_customization_uuid", vfcCustomizationUuid);
-						LOG.info("Call insertToscaData for VFC_TO_NETWORK_ROLE_MAPPING vfcCustomizationUUID = " + vfcCustomizationUuid);
-						insertToscaData(SdncBaseModel.getSql("VFC_TO_NETWORK_ROLE_MAPPING", "vfc_customization_uuid", vfcCustomizationUuid, "", mappingParams));
-					} catch (IOException e) {
-						LOG.error("Could not insert Tosca YAML data into the VFC_TO_NETWORK_ROLE_MAPPING table ", e);
-					}
-
-				}
-
-			} // CP loop
 
 		} // VF loop
-
-
-
-		if ((artifact != null) && (data != null)) {
-			LOG.info("Update to SDN-C succeeded");
-			IDistributionClientResult deploymentStatus;
-				deploymentStatus = client.sendDeploymentStatus(buildStatusMessage(
-						client, data, artifact,
-						DistributionStatusEnum.DEPLOY_OK));
+		
+		DistributionStatusEnum complexToscaDeployStatus = customProcessComplexTosca(sdcCsarHelper, config, jdbcDataSource, serviceModel,
+				data, svcName, resourceName, artifact, archiveDir);
+		if (complexToscaDeployStatus == DistributionStatusEnum.DEPLOY_ERROR) {
+			deployStatus = DistributionStatusEnum.DEPLOY_ERROR;
 		}
-
+				
+		return deployStatus;
 	}
 
-	 private void cleanUpExistingToscaData(String tableName, String keyName, String keyValue) throws IOException
+	 protected DistributionStatusEnum customProcessVnfConfig(ISdcCsarHelper sdcCsarHelper,
+			SdncVFModel vfNodeModel, DBResourceManager jdbcDataSource2) {
+		return DistributionStatusEnum.DEPLOY_OK;
+	}
+	 
+	 protected DistributionStatusEnum customProcessComplexTosca(ISdcCsarHelper sdcCsarHelper,
+			 SdncUebConfiguration config, DBResourceManager jdbcDataSource2, SdncServiceModel serviceModelINotification,
+			 INotificationData data, String svcName, String resourceName, IArtifactInfo artifact, File archiveDir) {
+			return DistributionStatusEnum.DEPLOY_OK;
+	}	 
+
+	protected void cleanUpExistingToscaData(String tableName, String keyName, String keyValue) throws IOException
      {
 
             if (jdbcDataSource == null) {
@@ -760,7 +801,7 @@ public class SdncUebCallback implements INotificationCallback {
      }
 
 
-	 private void cleanUpExistingToscaServiceData(String serviceUUID) throws IOException
+	 protected void cleanUpExistingToscaServiceData(String serviceUUID) throws IOException
      {
 
             if (jdbcDataSource == null) {
@@ -785,7 +826,7 @@ public class SdncUebCallback implements INotificationCallback {
      }
 
 
-	 private void insertToscaData(String toscaDataString) throws IOException
+	 protected void insertToscaData(String toscaDataString, ArrayList<String> arguments) throws IOException
      {
             LOG.debug("insertToscaData: " + toscaDataString);
 
@@ -794,10 +835,11 @@ public class SdncUebCallback implements INotificationCallback {
             }
              try {
 
- 				jdbcDataSource.writeData(toscaDataString, null, null);
+ 				jdbcDataSource.writeData(toscaDataString, arguments, null);
 
 			} catch (SQLException e) {
-				LOG.error("Could not insert Tosca YAML data into the database ", e);
+				LOG.error("Could not insert Tosca YAML data into the database ");
+				throw new IOException (e);
 			}
 
      }
@@ -845,37 +887,39 @@ public class SdncUebCallback implements INotificationCallback {
     }
 
     private void scheduleDeployment(SdncArtifactType type, String svcName, String resourceName, IArtifactInfo artifactInfo, String spoolFileName, File spoolFile) {
+
         if (type.getPass() < deployList.length) {
 
             if (artifactInfo != null) {
-                LOG.debug("Scheduling " + artifactInfo.getArtifactName() + " version " + artifactInfo.getArtifactVersion() + " for deployment");
+                LOG.debug("Scheduling "+artifactInfo.getArtifactName()+" version "+artifactInfo.getArtifactVersion()+" for deployment");
 
-                deployList[type.getPass()].add(new org.onap.ccsdk.sli.northbound.uebclient.SdncUebCallback.DeployableArtifact(type, svcName, resourceName, artifactInfo, spoolFile));
+                deployList[type.getPass()].add(new DeployableArtifact(type, svcName, resourceName, artifactInfo, spoolFile));
             } else {
                 SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss.SSS");//dd/MM/yyyy
                 Date now = new Date();
                 String artifactVersion = sdfDate.format(now);
-                LOG.debug("Scheduling " + spoolFileName + " version " + artifactVersion + " for deployment");
-                deployList[type.getPass()].add(new org.onap.ccsdk.sli.northbound.uebclient.SdncUebCallback.DeployableArtifact(type, svcName, resourceName, spoolFileName,
-                        artifactVersion, spoolFile));
+                LOG.debug("Scheduling "+spoolFileName+" version "+artifactVersion+" for deployment");
+                String artifactName = spoolFileName;
+                if (artifactInfo != null) {
+                    artifactName = artifactInfo.getArtifactName();
+                }
+                deployList[type.getPass()].add(new DeployableArtifact(type, svcName, resourceName, artifactName, artifactVersion, spoolFile));
             }
         } else {
-            LOG.info("Pass for type " + type.getTag() + " is " + type.getPass() + " which is not <= " + deployList.length);
+            LOG.info("Pass for type "+type.getTag()+" is "+type.getPass()+" which is not <= "+deployList.length);
         }
     }
 
 
     private DistributionStatusEnum deploySpoolFile(DeployableArtifact artifact) {
 
-        DistributionStatusEnum deployResult;
+        DistributionStatusEnum deployResult = DistributionStatusEnum.DEPLOY_OK;
 
-        StringBuilder msgBuffer = new StringBuilder();
+        StringBuffer msgBuffer = new StringBuffer();
 
 
         String namespace = config.getAsdcApiNamespace();
-		if ((namespace == null) || (namespace.length() == 0)) {
-            namespace="com:att:sdnctl:asdcapi";
-        }
+        //String namespace = artifact.getType().getNamespace();
 
         msgBuffer.append("<input xmlns='");
         msgBuffer.append(namespace);
@@ -893,22 +937,40 @@ public class SdncUebCallback implements INotificationCallback {
             }
         }
 
-        msgBuffer.append("<artifact-name>"+artifactName+"</artifact-name>\n");
-        msgBuffer.append("<artifact-version>"+artifact.getArtifactVersion()+"</artifact-version>\n");
+        // don't add artifact name/version for get-path-segments
+        if (!artifactName.contains("get-path-segments")) {
+            msgBuffer.append("<artifact-name>"+artifactName+"</artifact-name>\n");
+            msgBuffer.append("<artifact-version>"+artifact.getArtifactVersion()+"</artifact-version>\n");        	
+        } 
+        
+        try {
+            BufferedReader rdr = new BufferedReader(new FileReader(artifact.getFile()));
 
-
-        try (BufferedReader rdr = new BufferedReader(new FileReader(artifact.getFile()))){
             String curLine = rdr.readLine();
-            while (curLine != null) {
 
+            while (curLine != null) {
+            	
                 if (!curLine.startsWith("<?")) {
-                    msgBuffer.append(curLine+"\n");
+                	
+                	// skip get-path-segments tags
+                	boolean skipThisLine = false;
+                	if (artifactName.contains("get-path-segments")) {
+                		if (curLine.contains("<get-path-segments>") || curLine.contains("</get-path-segments>")) {
+                			skipThisLine = true;
+                		}
+                	}
+
+                	if (!skipThisLine) {
+                		msgBuffer.append(curLine+"\n");
+                	}
                 }
                 curLine = rdr.readLine();
             }
+            rdr.close();
+
         } catch (Exception e) {
             LOG.error("Could not process spool file "+artifact.getFile().getName(), e);
-			return DistributionStatusEnum.DEPLOY_ERROR;
+			return(DistributionStatusEnum.DEPLOY_ERROR);
         }
 
         msgBuffer.append("</input>\n");
@@ -963,11 +1025,12 @@ public class SdncUebCallback implements INotificationCallback {
             final IDistributionClient client, final INotificationData data,
             final IArtifactInfo relevantArtifact,
             final DistributionStatusEnum status) {
-            IDistributionStatusMessage statusMessage = new IDistributionStatusMessage() {
+        IDistributionStatusMessage statusMessage = new IDistributionStatusMessage() {
 
             @Override
 			public long getTimestamp() {
-                return System.currentTimeMillis();
+                long currentTimeMillis = System.currentTimeMillis();
+                return currentTimeMillis;
             }
 
             @Override
@@ -989,6 +1052,42 @@ public class SdncUebCallback implements INotificationCallback {
 			public String getArtifactURL() {
                 return relevantArtifact.getArtifactURL();
             }
+        };
+        return statusMessage;
+
+    }
+
+    public static IComponentDoneStatusMessage buildComponentStatusMessage(
+            final IDistributionClient client, final INotificationData data,
+            final DistributionStatusEnum status) {
+        IComponentDoneStatusMessage statusMessage = new IComponentDoneStatusMessage() {
+
+            @Override
+			public long getTimestamp() {
+                long currentTimeMillis = System.currentTimeMillis();
+                return currentTimeMillis;
+            }
+
+            @Override
+			public DistributionStatusEnum getStatus() {
+                return status;
+            }
+
+            @Override
+			public String getDistributionID() {
+                return data.getDistributionID();
+            }
+
+            @Override
+			public String getConsumerID() {
+                return client.getConfiguration().getConsumerID();
+            }
+
+			@Override
+			public String getComponentName() {
+				// TODO Auto-generated method stub
+				return COMPONENT_NAME;
+			}
         };
         return statusMessage;
 
@@ -1027,19 +1126,26 @@ public class SdncUebCallback implements INotificationCallback {
 			String sdncResp = odlConn.send("POST", "application/xml", new String(msgBytes));
 
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            
+            dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            
             DocumentBuilder db = dbf.newDocumentBuilder();
-
 
 			response = db.parse(new ByteArrayInputStream(sdncResp.getBytes()));
         } catch (Exception e) {
 			LOG.error("Caught exception posting to ODL tier", e);
         }
 
-		return response;
+		return(response);
 
     }
 
     private File applyXslts(File srcFile) {
+
+        Document doc = null;
+
 
         File inFile = srcFile;
         File outFile = null;
@@ -1057,6 +1163,9 @@ public class SdncUebCallback implements INotificationCallback {
 
                     outFile = File.createTempFile("tmp", "xml");
                     TransformerFactory factory = TransformerFactory.newInstance();
+                    factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);  
+                    //factory.setFeature("http://xml.org/sax/features/external-general-entities", false); -- breaks transform
+                    //factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);                   
                     Source xslt = new StreamSource(new File(xsltPath));
                     Transformer transformer = factory.newTransformer(xslt);
                     Source text = new StreamSource(inFile);
@@ -1081,12 +1190,12 @@ public class SdncUebCallback implements INotificationCallback {
     }
 
     private String escapeFilename(String str) {
+	if (str == null) {
+		str = "";
+	}
 
-    		if (str == null) {
-    			str = "";
-    		}
-        StringBuilder retval = new StringBuilder();
-
+        StringBuffer retval = new StringBuffer();
+	
         for (int i = 0 ; i < str.length() ; i++) {
             char curchar = str.charAt(i);
             if (Character.isJavaIdentifierPart(curchar)) {
@@ -1096,6 +1205,28 @@ public class SdncUebCallback implements INotificationCallback {
 
 		return retval.toString();
 
+    }
+
+    private boolean artifactIsTosca(IArtifactInfo artifact, File spoolFile) {
+        
+		boolean toscaYamlType = false;
+		boolean toscaCsarType = false;
+        if (artifact != null) {
+			String artifactTypeString = artifact.getArtifactType();
+			if (artifactTypeString.contains("TOSCA_TEMPLATE")) {
+				toscaYamlType = true;
+			} else if (artifactTypeString.contains("TOSCA_CSAR")) {
+				toscaCsarType = true;
+			}
+		} else {
+			if (spoolFile.toString().contains(".yml")) {
+				toscaYamlType = true;
+			} else if (spoolFile.toString().contains(".csar")) {
+				toscaCsarType = true;
+			}
+        }
+        
+        return (toscaYamlType||toscaCsarType ? true : false);
     }
 
 }

@@ -2,8 +2,8 @@
  * ============LICENSE_START=======================================================
  * openECOMP : SDN-C
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights
- * 			reserved.
+ * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights
+ * 						reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,22 +21,28 @@
 
 package org.onap.ccsdk.sli.northbound.uebclient;
 
+import java.io.IOException;
+
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
 import org.onap.sdc.toscaparser.api.NodeTemplate;
+import org.onap.ccsdk.sli.core.dblib.DBResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SdncNodeModel extends SdncBaseModel {
-
+	
+	private static final Logger LOG = LoggerFactory
+			.getLogger(SdncNodeModel.class);
+	
 	private String serviceUUID = null;
 	private String ecompGeneratedNaming = null;
 	private String [] bindingUuids = null; 
 	
 	// Using ASDC TOSCA Parser 17.07
-	public SdncNodeModel(ISdcCsarHelper sdcCsarHelper, NodeTemplate nodeTemplate) {
+	public SdncNodeModel(ISdcCsarHelper sdcCsarHelper, NodeTemplate nodeTemplate, DBResourceManager jdbcDataSource) {
 		
-		super(sdcCsarHelper, nodeTemplate);
+		super(sdcCsarHelper, nodeTemplate, jdbcDataSource);
 
 		// extract inpuecompGeneratedNamingts
 		String ecompGeneratedNaming = extractBooleanInputDefaultValue(SdcPropertyNames.PROPERTY_NAME_SERVICENAMING_DEFAULT_ECOMPGENERATEDNAMING);
@@ -103,6 +109,20 @@ public class SdncNodeModel extends SdncBaseModel {
 		}
 	}
 
+	public void insertNetworkModelData () throws IOException {
+		try {
+			// Clean up NETWORK_MODEL data for this customization_uuid and service_uuid? 
+			cleanUpExistingToscaData("NETWORK_MODEL", "customization_uuid", getCustomizationUUID());
+			cleanUpExistingToscaData("VPN_BINDINGS", "network_customization_uuid", getCustomizationUUID());
+			LOG.info("Call insertToscaData for NETWORK_MODEL customizationUUID = " + getCustomizationUUID());
+			insertToscaData(getSql(model_yaml), null);
+			insertToscaData(getVpnBindingsSql(), null);
+		} catch (IOException e) {
+			LOG.error("Could not insert Tosca CSAR data into the NETWORK_MODEL table");
+			throw new IOException (e);
+		}
+	}
+	
 	public String getSql(String model_yaml) {
 		
 		StringBuilder sb = new StringBuilder();

@@ -214,18 +214,18 @@ public class TestSdncUebCallback {
 		when(mockProcessArtifact1.getArtifactTimeout()).thenReturn(110);
 		
 		mockProcessArtifact2 = mock(IArtifactInfo.class);
-		when(mockProcessArtifact1.getArtifactName()).thenReturn("mockProcessArtifact2");
-		when(mockProcessArtifact1.getArtifactType()).thenReturn("DG_XML");
-		when(mockProcessArtifact1.getArtifactURL()).thenReturn("https://asdc.sdc.com/v1/catalog/services/srv1/2.0/resources/aaa/1.0/artifacts/aaa.yml");
-		when(mockProcessArtifact1.getArtifactChecksum()).thenReturn("456jhgt 1234ftg");
-		when(mockProcessArtifact1.getArtifactTimeout()).thenReturn(110);
+		when(mockProcessArtifact2.getArtifactName()).thenReturn("mockProcessArtifact2");
+		when(mockProcessArtifact2.getArtifactType()).thenReturn("DG_XML");
+		when(mockProcessArtifact2.getArtifactURL()).thenReturn("https://asdc.sdc.com/v1/catalog/services/srv1/2.0/resources/aaa/1.0/artifacts/aaa.yml");
+		when(mockProcessArtifact2.getArtifactChecksum()).thenReturn("456jhgt 1234ftg");
+		when(mockProcessArtifact2.getArtifactTimeout()).thenReturn(110);
 		
 		mockProcessArtifact3 = mock(IArtifactInfo.class);
-		when(mockProcessArtifact1.getArtifactName()).thenReturn("mockProcessArtifact3");
-		when(mockProcessArtifact1.getArtifactType()).thenReturn("HEAT");
-		when(mockProcessArtifact1.getArtifactURL()).thenReturn("https://asdc.sdc.com/v1/catalog/services/srv1/2.0/resources/aaa/1.0/artifacts/aaa.yml");
-		when(mockProcessArtifact1.getArtifactChecksum()).thenReturn("123tfg123 543gtd");
-		when(mockProcessArtifact1.getArtifactTimeout()).thenReturn(110);
+		when(mockProcessArtifact3.getArtifactName()).thenReturn("mockProcessArtifact3");
+		when(mockProcessArtifact3.getArtifactType()).thenReturn("HEAT");
+		when(mockProcessArtifact3.getArtifactURL()).thenReturn("https://asdc.sdc.com/v1/catalog/services/srv1/2.0/resources/aaa/1.0/artifacts/aaa.yml");
+		when(mockProcessArtifact3.getArtifactChecksum()).thenReturn("123tfg123 543gtd");
+		when(mockProcessArtifact3.getArtifactTimeout()).thenReturn(110);
 		
 		
 		mockServiceArtifact1 = mock(IArtifactInfo.class);
@@ -267,7 +267,16 @@ public class TestSdncUebCallback {
 		cb.setJdbcDataSource(dblibSvc);
 
 		INotificationData iData = mock(INotificationData.class);
+		/*IArtifactInfo iArtifactInfo = mock(IArtifactInfo.class);
+		when(iArtifactInfo.getArtifactName()).thenReturn("testArtifact1");
+		when(iArtifactInfo.getArtifactType()).thenReturn("TOSCA_CSAR");
+		List artifactInfoList = new ArrayList();
+		artifactInfoList.add(iArtifactInfo);*/
+		
+		when(iData.getServiceName()).thenReturn("testServiceName");
+		//when(iData.getServiceArtifacts()).thenReturn(artifactInfoList);
 		cb.activateCallback(iData);
+
 	}
 	
 	
@@ -291,6 +300,16 @@ public class TestSdncUebCallback {
 		when(mockData.getResources()).thenReturn(resourceList);
 		when(mockData.getServiceName()).thenReturn("Test_service_name");
 		when(mockData.getServiceArtifacts()).thenReturn(processLevelArtifactList);
+		
+		/*IArtifactInfo iArtifactInfo = mock(IArtifactInfo.class);
+		when(iArtifactInfo.getArtifactName()).thenReturn("testArtifact1");
+		when(iArtifactInfo.getArtifactType()).thenReturn("TOSCA_CSAR");
+		List artifactInfoList = new ArrayList();
+		artifactInfoList.add(iArtifactInfo);
+		
+		//when(mockData.getServiceName()).thenReturn("testServiceName");
+		when(mockData.getServiceArtifacts()).thenReturn(artifactInfoList);*/
+
 		
 		SdncUebCallback cb1 = new SdncUebCallback(iDistClient1, config);
 		cb1.activateCallback(mockData);

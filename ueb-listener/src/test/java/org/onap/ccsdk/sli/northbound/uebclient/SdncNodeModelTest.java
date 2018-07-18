@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test; 
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper; 
 import org.onap.sdc.toscaparser.api.NodeTemplate; 
+import org.onap.ccsdk.sli.core.dblib.DBResourceManager;
  
 public class SdncNodeModelTest { 
  
@@ -17,7 +18,8 @@ public class SdncNodeModelTest {
 	public void setUp() throws Exception { 
 		ISdcCsarHelper isdcCsarHelper = mock(ISdcCsarHelper.class); 
 		NodeTemplate nodeTemplate = mock(NodeTemplate.class); 
-		sdncNodeModel = new SdncNodeModel(isdcCsarHelper, nodeTemplate); 
+		DBResourceManager mockDBResourceManager = mock(DBResourceManager.class); 
+		sdncNodeModel = new SdncNodeModel(isdcCsarHelper, nodeTemplate, mockDBResourceManager); 
 		sdncNodeModel.setServiceUUID("0e8d757f-1c80-40af-85de-31d64f1f5af8"); 
 		sdncNodeModel.setEcompGeneratedNaming("hello-world"); 
 	} 
