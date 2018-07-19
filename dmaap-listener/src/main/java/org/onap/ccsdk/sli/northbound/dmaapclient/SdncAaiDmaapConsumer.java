@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Properties;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,9 +47,15 @@ public class SdncAaiDmaapConsumer extends SdncDmaapConsumerImpl {
     private static final String TEMPLATE = "SDNC.template";
     private static final String DMAAPLISTENERROOT = "DMAAPLISTENERROOT";
 
+    private static final String ESR_SYSTEM_INFO = "esr-system-info";
+    private static final String RELATIONSHIP_LIST = "relationship-list";
+    private static final String ESR_SYSTEM_INFO_LIST = "esr-system-info-list";
+    private static final String DATA_CHANGE_NAME = "DataChange:key-name";
+    private static final String DATA_CHANGE_VALUE = "DataChange:key-value";
     private static final String AAI_EVENT = "AAI-EVENT";
     
     private static final String EVENT_TYPE = "event-type";
+    private static final String ENTITY = "entity";
     private static final String ENTITY_TYPE = "entity-type";
     private static final String EVENT_HEADER = "event-header";
     
@@ -81,29 +88,85 @@ public class SdncAaiDmaapConsumer extends SdncDmaapConsumerImpl {
     }
     
     protected String publish(String templatePath, String jsonString) throws IOException
-    {                                                                                                                                            
-      JSONObject jsonObj = new JSONObject(jsonString);
-      VelocityContext context = new VelocityContext();
-      for(Object key : jsonObj.keySet())
-      {
-        context.put((String)key, jsonObj.get((String)key));
-      }
-      
-      String id = jsonObj.getJSONObject(EVENT_HEADER).get("id").toString();
-      context.put("req_id", id);
+    {
+        if (templatePath.contains("esr-thirdparty-sdnc")){
+            return publishEsrThirdPartySdnc(templatePath, jsonString);
+        } else {
+            return publishFullMessage(templatePath, jsonString);
+        }
+    }
 
-      context.put("curr_time", Instant.now());
-      
-      ObjectMapper oMapper = new ObjectMapper();
-      
-      String rpcMsgbody = oMapper.writeValueAsString(jsonString);
-      context.put("full_message", rpcMsgbody);
-      
-      Writer writer = new StringWriter();
-      velocityEngine.mergeTemplate(templatePath, "UTF-8", context, writer);
-      writer.flush();
+    protected String publishFullMessage(String templatePath, String jsonString) throws IOException
+    {
+        JSONObject jsonObj = new JSONObject(jsonString);
+        VelocityContext context = new VelocityContext();
+        for(Object key : jsonObj.keySet())
+        {
+            context.put((String)key, jsonObj.get((String)key));
+        }
 
-      return writer.toString();
+        String id = jsonObj.getJSONObject(EVENT_HEADER).get("id").toString();
+        context.put("req_id", id);
+
+        context.put("curr_time", Instant.now());
+
+        ObjectMapper oMapper = new ObjectMapper();
+
+        String rpcMsgbody = oMapper.writeValueAsString(jsonString);
+        context.put("full_message", rpcMsgbody);
+
+        Writer writer = new StringWriter();
+        velocityEngine.mergeTemplate(templatePath, "UTF-8", context, writer);
+        writer.flush();
+
+        return writer.toString();
+    }
+    
+    protected String publishEsrThirdPartySdnc(String templatePath, String jsonString) throws IOException
+    {
+        JSONObject jsonObj = new JSONObject(jsonString);
+        VelocityContext context = new VelocityContext();
+
+        JSONObject eventHeader = jsonObj.getJSONObject(EVENT_HEADER);
+        for(Object key : eventHeader.keySet())
+        {
+            context.put(((String)key).replaceAll("-", ""), eventHeader.get((String)key));
+        }
+
+        JSONObject entityObj = jsonObj.getJSONObject(ENTITY);
+        for(Object key : entityObj.keySet())
+        {
+            switch((String)key)
+            {
+                case ESR_SYSTEM_INFO_LIST :
+                    JSONArray esrSystemInfo = entityObj.getJSONObject((String)key).getJSONArray(ESR_SYSTEM_INFO);
+
+                    for (int i = 0; i < esrSystemInfo.length(); i++) {
+                        JSONObject objects = esrSystemInfo.getJSONObject(i);
+
+                        for (Object name : objects.keySet()) {
+                            context.put(((String)name).replaceAll("-", ""),
+                                                                             objects.get((String)name).toString());
+                        }
+                    }
+                    break;
+
+                case RELATIONSHIP_LIST :
+                    //convertion not required for relationship
+                    break;
+
+                default :
+                    context.put(((String)key).replaceAll("-", ""),
+                                                                             entityObj.get((String)key).toString());
+                    break;
+            }
+        }
+
+        Writer writer = new StringWriter();
+        velocityEngine.mergeTemplate(templatePath, "UTF-8", context, writer);
+        writer.flush();
+
+        return writer.toString();
     }
     
     @Override
