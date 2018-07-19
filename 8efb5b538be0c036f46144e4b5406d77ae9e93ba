@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da7095c5_bcc40d60",
+        "filename": "dmaap-listener/src/main/java/org/onap/ccsdk/sli/northbound/dmaapclient/SdncAaiDmaapConsumer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1443
+      },
+      "writtenOn": "2018-07-19T11:25:23Z",
+      "side": 1,
+      "message": "use the string constant defined above in this file.",
+      "range": {
+        "startLine": 92,
+        "startChar": 35,
+        "endLine": 92,
+        "endChar": 54
+      },
+      "revId": "8efb5b538be0c036f46144e4b5406d77ae9e93ba",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_9cc7c964",
+        "filename": "dmaap-listener/src/test/java/org/onap/ccsdk/sli/northbound/dmaapclient/TestSdncEsrDmaapReceiver.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1443
+      },
+      "writtenOn": "2018-07-19T11:25:23Z",
+      "side": 1,
+      "message": "kindly use the license as defined in onap wiki.",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 3
+      },
+      "revId": "8efb5b538be0c036f46144e4b5406d77ae9e93ba",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
