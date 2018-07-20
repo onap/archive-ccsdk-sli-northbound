@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da7095c5_e8f87bc6",
+        "filename": "dmaap-listener/src/main/java/org/onap/ccsdk/sli/northbound/dmaapclient/SdncAaiDmaapConsumer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 1443
+      },
+      "writtenOn": "2018-07-20T10:17:30Z",
+      "side": 1,
+      "message": "this is ok, but maybe later we can consider changing it in DataChange.yang itself to align with AAI event.",
+      "range": {
+        "startLine": 133,
+        "startChar": 14,
+        "endLine": 137,
+        "endChar": 13
+      },
+      "revId": "be74be10e66d9a5d127c6280f802ef173dbf17de",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
