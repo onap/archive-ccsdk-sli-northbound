@@ -887,13 +887,15 @@ public class SdncBaseModel {
              try {
             	int rowCount = 0;
             	CachedRowSet data = jdbcDataSource.getData("SELECT * from " + tableName + " where " + keyName + " = " + keyValue + ";", null, "");
-            	while(data.next()) {
+            	if (data != null) {
+            		while(data.next()) {
      				rowCount ++;
-            	}
-            	if (rowCount != 0) {
-                    LOG.debug("cleanUpExistingToscaData from: " + tableName + " for " + keyValue);
-               		jdbcDataSource.writeData("DELETE from " + tableName + " where " + keyName + " = " + keyValue + ";", null, null);
-            	}
+            		}
+            		if (rowCount != 0) {
+                    	LOG.debug("cleanUpExistingToscaData from: " + tableName + " for " + keyValue);
+               			jdbcDataSource.writeData("DELETE from " + tableName + " where " + keyName + " = " + keyValue + ";", null, null);
+            		}
+		}
 
 			} catch (SQLException e) {
 				LOG.error("Could not clean up existing " + tableName  + " for " + keyValue, e);
@@ -907,13 +909,15 @@ public class SdncBaseModel {
             try {
            	int rowCount = 0;
            	CachedRowSet data = jdbcDataSource.getData("SELECT * from " + tableName + " where " + key1Name + " = " + key1Value + " AND " + key2Name + " = " + key2Value + ";", null, "");
-           	while(data.next()) {
+           	if (data != null) {
+           		while(data.next()) {
     				rowCount ++;
-           	}
-           	if (rowCount != 0) {
-                   LOG.debug("cleanUpExistingToscaData from : " + tableName + " for " + key1Value + " and " + key2Value);
-              		jdbcDataSource.writeData("DELETE from " + tableName + " where " + key1Name + " = " + key1Value + " AND " + key2Name + " = " + key2Value + ";", null, null);
-           	}
+           		}
+           		if (rowCount != 0) {
+                   	LOG.debug("cleanUpExistingToscaData from : " + tableName + " for " + key1Value + " and " + key2Value);
+              			jdbcDataSource.writeData("DELETE from " + tableName + " where " + key1Name + " = " + key1Value + " AND " + key2Name + " = " + key2Value + ";", null, null);
+           		}
+		}
 
 			} catch (SQLException e) {
 				LOG.error("Could not clean up existing " + tableName  + " for " + key1Value  + " and " + key2Value, e);

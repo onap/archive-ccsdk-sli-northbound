@@ -260,20 +260,6 @@ public class SdncVFCModel extends SdncBaseModel {
 		return subnetRoleFound;
 	}
 	
-	private Map<String, String> getIpPropMapWithMatchingSubnetRole (ArrayList<Map<String, String>> ipPropParamsList, String subnetRole) {
-		
-		Map<String, String> ipPropMapMatch = new HashMap<String, String>();
-		
-		if (subnetRole != null) { 
-			for (Map<String, String> ipPropMap :  ipPropParamsList) {
-				if (nullCheck(ipPropMap.get("subnet_role")) == subnetRole) {
-					return ipPropMap;
-				}
-			}
-		}
-		return ipPropMapMatch;
-	}
-	
 	private void addRequiredParameters (Map<String, String> mappingParams) {
 		
 		// Add parameters which can not be null if they have not already been added - network_role, ipv4_count, ipv6_count
