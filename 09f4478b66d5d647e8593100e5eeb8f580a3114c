@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da7095c5_e71661f1",
+        "filename": "ueb-listener/src/main/java/org/onap/ccsdk/sli/northbound/uebclient/SdncUebCallback.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 486,
+      "author": {
+        "id": 3201
+      },
+      "writtenOn": "2018-07-24T23:12:56Z",
+      "side": 1,
+      "message": "This can be formatted properly.",
+      "revId": "09f4478b66d5d647e8593100e5eeb8f580a3114c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_87d3e537",
+        "filename": "ueb-listener/src/main/java/org/onap/ccsdk/sli/northbound/uebclient/SdncUebCallback.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 487,
+      "author": {
+        "id": 3201
+      },
+      "writtenOn": "2018-07-24T23:12:56Z",
+      "side": 1,
+      "message": "outFile.close(); where it this now?",
+      "revId": "09f4478b66d5d647e8593100e5eeb8f580a3114c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_a7d86954",
+        "filename": "ueb-listener/src/main/java/org/onap/ccsdk/sli/northbound/uebclient/SdncUebCallback.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 499,
+      "author": {
+        "id": 3201
+      },
+      "writtenOn": "2018-07-24T23:12:56Z",
+      "side": 1,
+      "message": "what about spoolFileWriter.close(); ??",
+      "revId": "09f4478b66d5d647e8593100e5eeb8f580a3114c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_47ddcd41",
+        "filename": "ueb-listener/src/main/java/org/onap/ccsdk/sli/northbound/uebclient/SdncUebCallback.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 963,
+      "author": {
+        "id": 3201
+      },
+      "writtenOn": "2018-07-24T23:12:56Z",
+      "side": 1,
+      "message": "why is this not closed rdr.close();?",
+      "revId": "09f4478b66d5d647e8593100e5eeb8f580a3114c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
