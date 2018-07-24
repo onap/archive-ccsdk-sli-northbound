@@ -482,11 +482,8 @@ public class SdncUebCallback implements INotificationCallback {
         // Save zip if TOSCA_CSAR
         if (artifact.getArtifactType().contains("TOSCA_CSAR") || artifact.getArtifactName().contains(".csar")) {
 
-	        try {
-	        	
-				FileOutputStream outFile = new FileOutputStream(incomingDir.getAbsolutePath() + "/" + artifact.getArtifactName());
+	        try(FileOutputStream outFile = new FileOutputStream(incomingDir.getAbsolutePath() + "/" + artifact.getArtifactName())) {
 				outFile.write(payloadBytes, 0, payloadBytes.length);
-				outFile.close();
 	            writeSucceeded = true;
 	        } catch (Exception e) {
 	            LOG.error("Unable to save downloaded zip file to spool directory ("+ incomingDir.getAbsolutePath() +")", e);
@@ -496,10 +493,8 @@ public class SdncUebCallback implements INotificationCallback {
 
 			String payload = new String(payloadBytes);
 	
-	        try {
-	            FileWriter spoolFileWriter = new FileWriter(spoolFile);
+	        try(FileWriter spoolFileWriter = new FileWriter(spoolFile)) {
 	            spoolFileWriter.write(payload);
-	            spoolFileWriter.close();
 	            writeSucceeded = true;
 	        } catch (Exception e) {
 	            LOG.error("Unable to save downloaded file to spool directory ("+ incomingDir.getAbsolutePath() +")", e);
@@ -943,9 +938,8 @@ public class SdncUebCallback implements INotificationCallback {
             msgBuffer.append("<artifact-version>"+artifact.getArtifactVersion()+"</artifact-version>\n");        	
         } 
         
-        try {
-            BufferedReader rdr = new BufferedReader(new FileReader(artifact.getFile()));
-
+        try(BufferedReader rdr = new BufferedReader(new FileReader(artifact.getFile()))) {
+            
             String curLine = rdr.readLine();
 
             while (curLine != null) {
@@ -966,8 +960,6 @@ public class SdncUebCallback implements INotificationCallback {
                 }
                 curLine = rdr.readLine();
             }
-            rdr.close();
-
         } catch (Exception e) {
             LOG.error("Could not process spool file "+artifact.getFile().getName(), e);
 			return(DistributionStatusEnum.DEPLOY_ERROR);
