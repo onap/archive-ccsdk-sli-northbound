@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "da7095c5_67bb3173",
+        "filename": "ueb-listener/src/main/java/org/onap/ccsdk/sli/northbound/uebclient/SdncUebCallback.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 487,
+      "author": {
+        "id": 2493
+      },
+      "writtenOn": "2018-07-25T01:18:18Z",
+      "side": 1,
+      "message": "FileOutputStream implements Autoclosable interface so when we declare it in try-with-resources statement, we need not to close explicitly.",
+      "parentUuid": "da7095c5_87d3e537",
+      "revId": "09f4478b66d5d647e8593100e5eeb8f580a3114c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da7095c5_a7d86954",
         "filename": "ueb-listener/src/main/java/org/onap/ccsdk/sli/northbound/uebclient/SdncUebCallback.java",
         "patchSetId": 1
@@ -53,6 +71,24 @@
     },
     {
       "key": {
+        "uuid": "da7095c5_07b0358a",
+        "filename": "ueb-listener/src/main/java/org/onap/ccsdk/sli/northbound/uebclient/SdncUebCallback.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 499,
+      "author": {
+        "id": 2493
+      },
+      "writtenOn": "2018-07-25T01:18:18Z",
+      "side": 1,
+      "message": "FileWriter also implements AutoCloseable interface so when we declare it in try-with-resources statement, we need not to close explicitly.",
+      "parentUuid": "da7095c5_a7d86954",
+      "revId": "09f4478b66d5d647e8593100e5eeb8f580a3114c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da7095c5_47ddcd41",
         "filename": "ueb-listener/src/main/java/org/onap/ccsdk/sli/northbound/uebclient/SdncUebCallback.java",
         "patchSetId": 1
@@ -64,6 +100,24 @@
       "writtenOn": "2018-07-24T23:12:56Z",
       "side": 1,
       "message": "why is this not closed rdr.close();?",
+      "revId": "09f4478b66d5d647e8593100e5eeb8f580a3114c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da7095c5_27ad3932",
+        "filename": "ueb-listener/src/main/java/org/onap/ccsdk/sli/northbound/uebclient/SdncUebCallback.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 963,
+      "author": {
+        "id": 2493
+      },
+      "writtenOn": "2018-07-25T01:18:18Z",
+      "side": 1,
+      "message": "BufferedReader also implements AutoCloseable interface so when we declare it in try-with-resources statement, we need not to close explicitly.",
+      "parentUuid": "da7095c5_47ddcd41",
       "revId": "09f4478b66d5d647e8593100e5eeb8f580a3114c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
