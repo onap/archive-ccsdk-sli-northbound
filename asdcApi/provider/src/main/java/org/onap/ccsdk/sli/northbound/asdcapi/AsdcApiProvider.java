@@ -179,14 +179,12 @@ public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
         InstanceIdentifier artifactInstanceId =
                 InstanceIdentifier.<Artifacts>builder(Artifacts.class)
                 .child(Artifact.class, new ArtifactKey(aName, aVersion)).build();
-        ReadOnlyTransaction readTx = dataBroker.newReadOnlyTransaction();
         Optional<Artifact> data = null;
-        try {
+        try(ReadOnlyTransaction readTx = dataBroker.newReadOnlyTransaction()) {
             data = (Optional<Artifact>) readTx.read(LogicalDatastoreType.CONFIGURATION, artifactInstanceId).get();
         } catch (InterruptedException | ExecutionException e) {
             LOG.error("Caught Exception reading MD-SAL for ["+aName+","+ aVersion+"] " ,e);
             return false;
-
         }
 
         return data.isPresent();
