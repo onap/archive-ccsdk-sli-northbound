@@ -94,7 +94,7 @@ public class SdncVFModel extends SdncBaseModel {
 		insertVFtoNetworkRoleMappingData();
 		insertVFCData();
 		insertVFCInstanceGroupData();
-		//insertVFPolicyData(); - insert Policy data for VF?
+		insertVFPolicyData();
 	}
 	
 	private void insertVFModelData () throws IOException {
@@ -261,13 +261,8 @@ public class SdncVFModel extends SdncBaseModel {
 
 	private void insertVFPolicyData() throws IOException {
 		
-		// For each VF node, get Policy data (is VFC the origin or target?)
-		List<Policy> policyList = sdcCsarHelper.getPoliciesOfOriginOfNodeTemplateByToscaPolicyType(nodeTemplate, "org.openecomp.policies.External");
-		for (Policy policy : policyList){
-		
-			policy.getmetadata();
-			Map<String, Object> propMap = policy.getPolicyProperties();
-		}
+		// For each VF node, ingest External Policy data
+		insertPolicyData (nodeTemplate, jdbcDataSource, serviceUUID, "org.openecomp.policies.External");
 	}	
 
 	public String getVendor() {

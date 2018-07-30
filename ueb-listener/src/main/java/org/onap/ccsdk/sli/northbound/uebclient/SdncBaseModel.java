@@ -264,35 +264,29 @@ public class SdncBaseModel {
 		List<Policy> policyList = sdcCsarHelper.getPoliciesOfOriginOfNodeTemplateByToscaPolicyType(nodeTemplate, policyType);
 		//List<Policy> policyList2 = sdcCsarHelper.getPoliciesOfTopologyTemplateByToscaPolicyType(policyType); // returns nothing
 		//List<Policy> policyList3 = sdcCsarHelper.getPoliciesOfTargetByToscaPolicyType(nodeTemplate, policyType); // returns nothing
-		
+
+		String resourceUuid = getUUID();
+
 		for (Policy policy : policyList) {
 			
-			String resourceUuid = getUUID();
-			// extract metadata
-			//policy.getmetadata(); - NPE
-			//Metadata metadata = policy.getMetadata();
-			
-			//String policyUuid = extractValue(metadata, "UUID");
+			// extract policy metadata
 			String policyUuid = policy.getMetaData().getOrDefault("UUID", "").toString(); 
-			//String policyInvariantUuid = extractValue(metadata, "invariantUUID");
 			String policyInvariantUuid = policy.getMetaData().getOrDefault("invariantUUID", "").toString();
-			//String policyCustomizationUuid = extractValue(metadata, "customizationUUID");
 			String policyCustomizationUuid = policy.getMetaData().getOrDefault("customizationUUID", "").toString();
 			
+			// cleanup existing RESOURCE_POLICY data
 			Map<String, String> cleanupParams = new HashMap<String, String>();
 			addParameter("resource_uuid", resourceUuid, cleanupParams); 
 			addParameter("policy_uuid", policyUuid, cleanupParams);
 			addParameter("policy_invariant_uuid", policyInvariantUuid, cleanupParams);
 			
+			// insert into RESOURCE_POLICY
 			Map<String, String> policyParams = new HashMap<String, String>();
 			addParameter("policy_uuid", policyUuid, policyParams);
 			addParameter("policy_customization_uuid", policyCustomizationUuid, policyParams);
 			addParameter("policy_invariant_uuid", policyInvariantUuid, policyParams);
-			//addParameter("policy_name", extractValue(metadata, "name"), policyParams);
 			addParameter("policy_name", policy.getMetaData().getOrDefault("name", "").toString(), policyParams);
-			//addParameter("version", extractValue(metadata, "version"), policyParams);
 			addParameter("version", policy.getMetaData().getOrDefault("version", "").toString(), policyParams);
-			//addParameter("policy_type", extractValue(metadata, "type"), policyParams);
 			addParameter("policy_type", policy.getMetaData().getOrDefault("type", "").toString(), policyParams);
 			
 			// extract properties
@@ -351,22 +345,24 @@ public class SdncBaseModel {
 			String policyUuid = policy.getMetaData().getOrDefault("UUID", "").toString();
 			String policyInvariantUuid = policy.getMetaData().getOrDefault("invariantUUID", "").toString();
 			
-			// insert into RESOURCE_POLICY
+			// cleanup existing RESOURCE_POLICY data
 			Map<String, String> cleanupParams = new HashMap<String, String>();
-			SdncBaseModel.addParameter("resource_uuid", resourceUuid, cleanupParams); 
-			SdncBaseModel.addParameter("policy_uuid", policyUuid, cleanupParams);
-			SdncBaseModel.addParameter("policy_invariant_uuid", policyInvariantUuid, cleanupParams);
+			addParameter("resource_uuid", resourceUuid, cleanupParams); 
+			addParameter("policy_uuid", policyUuid, cleanupParams);
+			addParameter("policy_invariant_uuid", policyInvariantUuid, cleanupParams);
 			
+			// insert into RESOURCE_POLICY
 			Map<String, String> policyParams = new HashMap<String, String>();
-			SdncBaseModel.addParameter("policy_uuid", policyUuid, policyParams);
-			SdncBaseModel.addParameter("policy_invariant_uuid", policyInvariantUuid, policyParams);
-			SdncBaseModel.addParameter("policy_name", policy.getMetaData().getOrDefault("name", "").toString(), policyParams);
-			SdncBaseModel.addParameter("version", policy.getMetaData().getOrDefault("version", "").toString(), policyParams);
-			SdncBaseModel.addParameter("policy_type", policy.getType(), policyParams);
+			addParameter("policy_uuid", policyUuid, policyParams);
+			addParameter("policy_invariant_uuid", policyInvariantUuid, policyParams);
+			addParameter("policy_name", policy.getMetaData().getOrDefault("name", "").toString(), policyParams);
+			addParameter("version", policy.getMetaData().getOrDefault("version", "").toString(), policyParams);
+			addParameter("policy_type", policy.getType(), policyParams);
 			
-			SdncBaseModel.addParameter("property_type", extractValueStatic(policy, "type"), policyParams);
-			SdncBaseModel.addParameter("property_source", extractValueStatic(policy, "source"), policyParams);
-			SdncBaseModel.addParameter("property_name", extractValueStatic(policy, "name"), policyParams);	
+			// extract properties
+			addParameter("property_type", extractValueStatic(policy, "type"), policyParams);
+			addParameter("property_source", extractValueStatic(policy, "source"), policyParams);
+			addParameter("property_name", extractValueStatic(policy, "name"), policyParams);	
 			
 			try {
 				
@@ -384,8 +380,6 @@ public class SdncBaseModel {
 			List<String> policyTargetNameList = policy.getTargets();
 			for (String targetName : policyTargetNameList) {
 				NodeTemplate targetNode = sdcCsarHelper.getNodeTemplateByName(targetName);
-				
-				// extract targetNode metadata UUID and customizationUUID
 				
 				// insert into RESOURCE_POLICY_TO_TARGET_NODE_MAPPING
 				try {
@@ -405,6 +399,84 @@ public class SdncBaseModel {
 
 				} catch (IOException e) {
 					LOG.error("Could not insert Tosca CSAR data into the RESOURCE_POLICY_TO_TARGET_NODE_MAPPING");
+					throw new IOException (e);
+				}			
+			
+			}
+		}
+	}
+	
+	protected void insertPolicyData (NodeTemplate nodeTemplate, DBResourceManager jdbcDataSource, String parentUuid, String policyType) throws IOException {
+		
+		// Get External policies of the node	
+		List<Policy> policyList = sdcCsarHelper.getPoliciesOfOriginOfNodeTemplateByToscaPolicyType(nodeTemplate, policyType);
+		String resourceUuid = "\"" + extractValue (nodeTemplate.getMetaData(), SdcPropertyNames.PROPERTY_NAME_UUID) + "\"";
+		
+		for (Policy policy : policyList) {
+			
+			// extract policy metadata
+			String policyUuid = policy.getMetaData().getOrDefault("UUID", "").toString();
+			String policyInvariantUuid = policy.getMetaData().getOrDefault("invariantUUID", "").toString();
+			
+			// cleanup existing RESOURCE_POLICY data
+			Map<String, String> cleanupParams = new HashMap<String, String>();
+			addParameter("resource_uuid", resourceUuid, cleanupParams); 
+			addParameter("policy_uuid", policyUuid, cleanupParams);
+			addParameter("policy_invariant_uuid", policyInvariantUuid, cleanupParams);
+			
+			// insert into RESOURCE_POLICY
+			Map<String, String> policyParams = new HashMap<String, String>();
+			addParameter("policy_uuid", policyUuid, policyParams);
+			addParameter("policy_invariant_uuid", policyInvariantUuid, policyParams);
+			String policyName = policy.getMetaData().getOrDefault("name", "").toString();
+			addParameter("policy_name", policyName, policyParams);
+			addParameter("version", policy.getMetaData().getOrDefault("version", "").toString(), policyParams);
+			addParameter("policy_type", policy.getType(), policyParams);
+			
+			// extract properties
+			addParameter("property_type", extractValue(policy, "type"), policyParams);
+			addParameter("property_source", extractValue(policy, "source"), policyParams);
+			addParameter("property_name", extractValue(policy, "name"), policyParams);	
+			
+			try {
+				
+				// insert into RESOURCE_POLICY
+				cleanupExistingToscaData(jdbcDataSource, "RESOURCE_POLICY", cleanupParams);
+				LOG.info("Call insertToscaData for RESOURCE_POLICY where resource_uuid = " + resourceUuid);
+				insertToscaData(jdbcDataSource, getSql("RESOURCE_POLICY", "resource_uuid", resourceUuid, "", policyParams), null);
+
+			} catch (IOException e) {
+				LOG.error("Could not insert Tosca CSAR data into the RESOURCE_POLICY table");
+				throw new IOException (e);
+			}
+			
+			// insert into RESOURCE_POLICY_TO_TARGET_NODE_MAPPING
+			List<NodeTemplate> targetNodeList = sdcCsarHelper.getPolicyTargetsFromOrigin(nodeTemplate, policyName);
+			for (NodeTemplate targetNode : targetNodeList) {
+				//NodeTemplate targetNode = sdcCsarHelper.getNodeTemplateByName(targetName);
+				if (targetNode == null) {					
+					LOG.error("Target node for policy " + policyName + " is NULL.  Can't insert into RESOURCE_POLICY_TO_TARGET_NODE_MAPPING");
+					continue;
+				}
+				
+				// insert into RESOURCE_POLICY_TO_TARGET_NODE_MAPPING
+				try {
+					Map<String, String> mappingCleanupParams = new HashMap<String, String>();
+					addParameter("policy_uuid", policyUuid, mappingCleanupParams); 
+					addParameter("parent_uuid", parentUuid, mappingCleanupParams);
+					addParameter("target_node_uuid", targetNode.getMetaData().getValue("UUID"), mappingCleanupParams);
+					SdncBaseModel.cleanupExistingToscaData(jdbcDataSource, "RESOURCE_POLICY_TO_TARGET_NODE_MAPPING", mappingCleanupParams);
+					
+					Map<String, String> mappingParams = new HashMap<String, String>();
+					addParameter("parent_uuid", parentUuid, mappingParams);
+					addParameter("target_node_uuid", targetNode.getMetaData().getValue("UUID"), mappingParams);
+					addParameter("target_node_customization_uuid", targetNode.getMetaData().getValue("customizationUUID"), mappingParams);
+					addParameter("target_type", targetNode.getMetaData().getValue("type"), mappingParams);  // type of the target node
+					LOG.info("Call insertToscaData for RESOURCE_POLICY_TO_TARGET_NODE_MAPPING where policy_uuid = " + policyUuid + " and target_node_uuid = " + targetNode.getMetaData().getValue("UUID"));
+					SdncBaseModel.insertToscaData(jdbcDataSource, getSql("RESOURCE_POLICY_TO_TARGET_NODE_MAPPING", "policy_uuid", "\"" + policyUuid + "\"", "", mappingParams), null);
+
+				} catch (IOException e) {
+					LOG.error("Could not insert Tosca CSAR data into the RESOURCE_POLICY_TO_TARGET_NODE_MAPPING table");
 					throw new IOException (e);
 				}			
 			
