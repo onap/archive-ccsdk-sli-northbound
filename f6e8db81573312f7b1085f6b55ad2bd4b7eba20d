@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a6a9dd7_ab6b6184",
+        "filename": "ueb-listener/src/main/java/org/onap/ccsdk/sli/northbound/uebclient/SdncBaseModel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 350,
+      "author": {
+        "id": 3201
+      },
+      "writtenOn": "2018-07-31T00:05:50Z",
+      "side": 1,
+      "message": "wont it be a good idea to define them as final string constants on top for instance \"resource_uuid\" is used repeatedly in more than 1 place.",
+      "revId": "f6e8db81573312f7b1085f6b55ad2bd4b7eba20d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a6a9dd7_4b5de5e8",
+        "filename": "ueb-listener/src/main/java/org/onap/ccsdk/sli/northbound/uebclient/SdncVFModel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 3201
+      },
+      "writtenOn": "2018-07-31T00:05:50Z",
+      "side": 1,
+      "message": "This can be defined as final String variable: \"org.openecomp.policies.External\"",
+      "revId": "f6e8db81573312f7b1085f6b55ad2bd4b7eba20d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
