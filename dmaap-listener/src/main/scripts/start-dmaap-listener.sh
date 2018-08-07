@@ -21,15 +21,15 @@
 # ============LICENSE_END=========================================================
 ###
 
-PROPERTY_DIR=${PROPERTY_DIR:-/opt/sdnc/data/properties}
+PROPERTY_DIR=${PROPERTY_DIR:-/opt/onap/ccsdk/data/properties}
 
 LISTENER=dmaap-listener
 
 
 
 PIDFILE=/tmp/.${LISTENER}-pid
-UEBLISTENERROOT=${UEBLISTENERROOT:-/opt/app/dmaap-listener}
-JAVA_HOME=${JAVA_HOME:-/usr/lib/jvm/java-7-oracle}
+UEBLISTENERROOT=${UEBLISTENERROOT:-/opt/onap/dmaap-listener}
+JAVA_HOME=${JAVA_HOME:-/usr/lib/jvm/java-8-oracle}
 JAVA_OPTS=${JAVA_OPTS:--Dhttps.protocols=TLSv1.1,TLSv1.2}
 JAVA=${JAVA:-${JAVA_HOME}/bin/java}
 

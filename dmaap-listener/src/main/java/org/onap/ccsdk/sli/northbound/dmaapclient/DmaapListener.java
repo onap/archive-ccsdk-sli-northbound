@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 public class DmaapListener {
 
     private static final String DMAAP_LISTENER_PROPERTIES = "dmaap-listener.properties";
-    private static final String DMAAP_LISTENER_PROPERTIES_DIR = "/opt/sdnc/data/properties";
+    private static final String DMAAP_LISTENER_PROPERTIES_DIR = "/opt/onap/ccsdk/data/properties";
     private static final String SDNC_CONFIG_DIR = "SDNC_CONFIG_DIR";
     private static final Logger LOG = LoggerFactory.getLogger(DmaapListener.class);
 

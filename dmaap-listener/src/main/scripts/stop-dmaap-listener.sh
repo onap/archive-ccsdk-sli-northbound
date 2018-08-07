@@ -21,13 +21,13 @@
 # ============LICENSE_END=========================================================
 ###
 
-PROPERTY_DIR=${PROPERTY_DIR:-/opt/sdnc/data/properties}
+PROPERTY_DIR=${PROPERTY_DIR:-/opt/onap/ccsdk/data/properties}
 
 LISTENER=dmaap-listener
 
 
 PIDFILE=/tmp/.${LISTENER}-pid
-UEBLISTENERROOT=${UEBLISTENERROOT:-/opt/app/dmaap-listener}
+UEBLISTENERROOT=${UEBLISTENERROOT:-/opt/onap/dmaap-listener}
 
 if [ -f $PIDFILE ]
 then
