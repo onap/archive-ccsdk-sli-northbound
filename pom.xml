@@ -110,6 +110,7 @@
 		<module>dmaap-listener</module>
 		<module>ueb-listener</module>
 		<module>features</module>
+		<module>vlantag-api</module>
 	</modules>
 	<organization>
 		<name>ONAP</name>
