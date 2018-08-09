@@ -1,0 +1,8 @@
+Code-Review+1: Brian Freeman <bf1936@att.com>
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+2: Dan Timoney <dt5972@att.com>
+Submitted-by: Dan Timoney <dt5972@att.com>
+Submitted-at: Thu, 09 Aug 2018 20:38:04 +0000
+Reviewed-on: https://gerrit.onap.org/r/59905
+Project: ccsdk/sli/northbound
+Branch: refs/heads/master
