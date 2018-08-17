@@ -54,7 +54,15 @@ public class SdncBaseModel {
 	protected String UUID = null;
 	protected String model_yaml = null;	
 	protected String version = null;	
-	protected String name = null;	
+	protected String name = null;
+
+	protected String PARAM_INVARIANT_UUID_KEY = "invariant_uuid";
+	protected String PARAM_UUID_KEY = "uuid";
+	protected String PARAM_VERSION_KEY = "version";
+	protected String PARAM_NAME_KEY = "name";
+	protected String PARAM_DESCRIPTION_KEY = "description";
+	protected String PARAM_TYPE_KEY = "type";
+	protected String PARAM_CATEGORY_KEY = "category";
 
 	protected Map<String, String> params = null;
 	protected Map<String, String> attributeValueParams = null;
@@ -89,13 +97,13 @@ public class SdncBaseModel {
 
 		// extract service metadata
 		invariantUUID = extractValue(metadata, SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID);
-		addParameter("invariant_uuid",invariantUUID);
-		addParameter("version",extractValue(metadata, SdcPropertyNames.PROPERTY_NAME_VERSION));
+		addParameter(PARAM_INVARIANT_UUID_KEY,invariantUUID);
+		addParameter(PARAM_VERSION_KEY,extractValue(metadata, SdcPropertyNames.PROPERTY_NAME_VERSION));
 		name = extractValue(metadata, SdcPropertyNames.PROPERTY_NAME_NAME);
-		addParameter("name",name);
-		addParameter("description",extractValue(metadata, SdcPropertyNames.PROPERTY_NAME_DESCRIPTION));
-		addParameter("type",extractValue(metadata, SdcPropertyNames.PROPERTY_NAME_TYPE));
-		addParameter("category",extractValue(metadata, SdcPropertyNames.PROPERTY_NAME_CATEGORY));
+		addParameter(PARAM_NAME_KEY,name);
+		addParameter(PARAM_DESCRIPTION_KEY,extractValue(metadata, SdcPropertyNames.PROPERTY_NAME_DESCRIPTION));
+		addParameter(PARAM_TYPE_KEY,extractValue(metadata, SdcPropertyNames.PROPERTY_NAME_TYPE));
+		addParameter(PARAM_CATEGORY_KEY,extractValue(metadata, SdcPropertyNames.PROPERTY_NAME_CATEGORY));
 	}
 
 	public SdncBaseModel(ISdcCsarHelper sdcCsarHelper, NodeTemplate nodeTemplate) {
@@ -109,10 +117,10 @@ public class SdncBaseModel {
 		Metadata metadata = nodeTemplate.getMetaData();
 		customizationUUID = extractValue (metadata, SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
 		invariantUUID = extractValue (metadata, SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID);
-		addParameter("invariant_uuid", invariantUUID);
+		addParameter(PARAM_INVARIANT_UUID_KEY, invariantUUID);
 		UUID = extractValue (metadata, SdcPropertyNames.PROPERTY_NAME_UUID);
-		addParameter("uuid", UUID);
-		addParameter("version", extractValue (metadata, SdcPropertyNames.PROPERTY_NAME_VERSION)); 
+		addParameter(PARAM_UUID_KEY, UUID);
+		addParameter(PARAM_VERSION_KEY, extractValue (metadata, SdcPropertyNames.PROPERTY_NAME_VERSION));
 		
 		// extract common nodeTemplate properties
 		//addParameter("ecomp_generated_naming", extractValue (nodeTemplate, "naming#ecompnaming")); // should be extractBooleanValue?
@@ -137,9 +145,9 @@ public class SdncBaseModel {
 		Metadata metadata = group.getMetadata();
 		//customizationUUID = extractValue (metadata, SdcPropertyNames.PROPERTY_NAME_VFMODULECUSTOMIZATIONUUID); - returning null
 		customizationUUID = extractValue (metadata, "vfModuleModelCustomizationUUID");
-		addParameter("invariant_uuid", extractValue (metadata, SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELINVARIANTUUID));			
-		addParameter("uuid", extractValue (metadata, SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELUUID));			
-		addParameter("version", extractValue (metadata, SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELVERSION));			
+		addParameter(PARAM_INVARIANT_UUID_KEY, extractValue (metadata, SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELINVARIANTUUID));
+		addParameter(PARAM_UUID_KEY, extractValue (metadata, SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELUUID));
+		addParameter(PARAM_VERSION_KEY, extractValue (metadata, SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELVERSION));
 	}
 	
 /*	This is the generic approach Shoujit attempted for 18.06 but can't be implemented without parser API to 
@@ -178,7 +186,7 @@ public class SdncBaseModel {
 		if (!type.isEmpty()) metadataType = type;
 		else {
 			Metadata metadata = nodeTemplate.getMetaData();
-			metadataType = sdcCsarHelper.getMetadataPropertyValue(metadata, "type");				
+			metadataType = sdcCsarHelper.getMetadataPropertyValue(metadata, PARAM_TYPE_KEY);
 		}
 		
 		// Clean up all attributes for this resource
@@ -236,7 +244,7 @@ public class SdncBaseModel {
 				Map<String, String> mappingParams = new HashMap<String, String>();
 				addParameter("parent_uuid", extractValue(nodeTemplate.getMetaData(), "UUID"), mappingParams);
 				addParameter("target_node_uuid", extractValue(targetNode.getMetaData(), "UUID"), mappingParams);
-				String targetType = extractValue(targetNode.getMetaData(), "type");
+				String targetType = extractValue(targetNode.getMetaData(), PARAM_TYPE_KEY);
 				addParameter("target_type", targetType, mappingParams);
 				String tableName = "";
 				switch (targetType) {
@@ -285,14 +293,14 @@ public class SdncBaseModel {
 			addParameter("policy_uuid", policyUuid, policyParams);
 			addParameter("policy_customization_uuid", policyCustomizationUuid, policyParams);
 			addParameter("policy_invariant_uuid", policyInvariantUuid, policyParams);
-			addParameter("policy_name", policy.getMetaData().getOrDefault("name", "").toString(), policyParams);
-			addParameter("version", policy.getMetaData().getOrDefault("version", "").toString(), policyParams);
-			addParameter("policy_type", policy.getMetaData().getOrDefault("type", "").toString(), policyParams);
+			addParameter("policy_name", policy.getMetaData().getOrDefault(PARAM_NAME_KEY, "").toString(), policyParams);
+			addParameter(PARAM_VERSION_KEY, policy.getMetaData().getOrDefault(PARAM_VERSION_KEY, "").toString(), policyParams);
+			addParameter("policy_type", policy.getMetaData().getOrDefault(PARAM_TYPE_KEY, "").toString(), policyParams);
 			
 			// extract properties
-			addParameter("property_type", extractValue(policy, "type"), policyParams);
+			addParameter("property_type", extractValue(policy, PARAM_TYPE_KEY), policyParams);
 			addParameter("property_source", extractValue(policy, "source"), policyParams);
-			addParameter("property_name", extractValue(policy, "name"), policyParams);			
+			addParameter("property_name", extractValue(policy, PARAM_NAME_KEY), policyParams);
 
 			// Insert into RESOURCE_POLICY and RESOURCE_POLICY_TO_TARGET_NODE_MAPPING
 			// RESOURCE_POLICY: resource_uuid (CR node UUID), uuid, customization_uuid, invariant_uuid, name, version, policy_type, 
@@ -323,7 +331,7 @@ public class SdncBaseModel {
 				addParameter("target_node_uuid", targetNode.getMetaData().getValue("UUID"), mappingParams);
 				addParameter("target_node_customization_uuid", targetNode.getMetaData().getValue("customizationUUID"), mappingParams);
 				addParameter("policy_customization_uuid", policyCustomizationUuid, mappingParams);
-				addParameter("target_type", targetNode.getMetaData().getValue("type"), mappingParams);  
+				addParameter("target_type", targetNode.getMetaData().getValue(PARAM_TYPE_KEY), mappingParams);
 				LOG.info("Call insertToscaData for RESOURCE_POLICY_TO_TARGET_NODE_MAPPING where policy_uuid = " + policyUuid);
 				insertToscaData(buildSql("RESOURCE_POLICY_TO_TARGET_NODE_MAPPING", "policy_uuid", "\"" + policyUuid + "\"", model_yaml, mappingParams), null);
 
@@ -362,7 +370,7 @@ public class SdncBaseModel {
 			// extract properties
 			addParameter("property_type", extractValueStatic(policy, "type"), policyParams);
 			addParameter("property_source", extractValueStatic(policy, "source"), policyParams);
-			addParameter("property_name", extractValueStatic(policy, "name"), policyParams);	
+			addParameter("property_name", extractValueStatic(policy, "name"), policyParams);
 			
 			try {
 				
@@ -428,15 +436,15 @@ public class SdncBaseModel {
 			Map<String, String> policyParams = new HashMap<String, String>();
 			addParameter("policy_uuid", policyUuid, policyParams);
 			addParameter("policy_invariant_uuid", policyInvariantUuid, policyParams);
-			String policyName = policy.getMetaData().getOrDefault("name", "").toString();
+			String policyName = policy.getMetaData().getOrDefault(PARAM_NAME_KEY, "").toString();
 			addParameter("policy_name", policyName, policyParams);
-			addParameter("version", policy.getMetaData().getOrDefault("version", "").toString(), policyParams);
+			addParameter(PARAM_VERSION_KEY, policy.getMetaData().getOrDefault(PARAM_VERSION_KEY, "").toString(), policyParams);
 			addParameter("policy_type", policy.getType(), policyParams);
 			
 			// extract properties
-			addParameter("property_type", extractValue(policy, "type"), policyParams);
+			addParameter("property_type", extractValue(policy, PARAM_TYPE_KEY), policyParams);
 			addParameter("property_source", extractValue(policy, "source"), policyParams);
-			addParameter("property_name", extractValue(policy, "name"), policyParams);	
+			addParameter("property_name", extractValue(policy, PARAM_NAME_KEY), policyParams);
 			
 			try {
 				
@@ -471,7 +479,7 @@ public class SdncBaseModel {
 					addParameter("parent_uuid", parentUuid, mappingParams);
 					addParameter("target_node_uuid", targetNode.getMetaData().getValue("UUID"), mappingParams);
 					addParameter("target_node_customization_uuid", targetNode.getMetaData().getValue("customizationUUID"), mappingParams);
-					addParameter("target_type", targetNode.getMetaData().getValue("type"), mappingParams);  // type of the target node
+					addParameter("target_type", targetNode.getMetaData().getValue(PARAM_TYPE_KEY), mappingParams);  // type of the target node
 					LOG.info("Call insertToscaData for RESOURCE_POLICY_TO_TARGET_NODE_MAPPING where policy_uuid = " + policyUuid + " and target_node_uuid = " + targetNode.getMetaData().getValue("UUID"));
 					SdncBaseModel.insertToscaData(jdbcDataSource, getSql("RESOURCE_POLICY_TO_TARGET_NODE_MAPPING", "policy_uuid", "\"" + policyUuid + "\"", "", mappingParams), null);
 
@@ -523,7 +531,7 @@ public class SdncBaseModel {
 			Map<String, String> nodeCapabilityParams = new HashMap<String, String>();
 			addParameter("capability_provider_customization_uuid", getCustomizationUUIDNoQuotes(), nodeCapabilityParams);  // node customization UUID
 			addParameter("capability_name", capability.getName(), nodeCapabilityParams);
-			addParameter("capability_type", extractValue(capability, "type"), nodeCapabilityParams);
+			addParameter("capability_type", extractValue(capability, PARAM_TYPE_KEY), nodeCapabilityParams);
 			
 			// Insert NODE_CAPABILITY data for each capability
 			String capabilityId = "";
