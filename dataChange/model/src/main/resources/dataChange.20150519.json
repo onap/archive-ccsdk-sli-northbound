@@ -44,10 +44,10 @@
     "(config)key-dataPOST": {
       "properties": {
         "key-name": {
-          "$ref": "#/definitions/Some key-name"
+          "$ref": "#/definitions/Optional.empty"
         },
         "key-value": {
-          "$ref": "#/definitions/Some key-value"
+          "$ref": "#/definitions/Optional.empty"
         }
       },
       "type": "object"
@@ -55,17 +55,13 @@
     "(data-change-notification)input": {
       "properties": {
         "DataChange:aai-event-id": {
-          "$ref": "#/definitions/Some aai-event-id"
+          "$ref": "#/definitions/Optional.empty"
         },
         "DataChange:aai-event-trigger": {
-          "$ref": "#/definitions/Update",
-          "enum": [
-            "Update",
-            "Delete"
-          ]
+          "$ref": "#/definitions/Optional.empty"
         },
         "DataChange:aai-node-type": {
-          "$ref": "#/definitions/Some aai-node-type"
+          "$ref": "#/definitions/Optional.empty"
         },
         "DataChange:key-data": {
           "items": {
@@ -74,7 +70,7 @@
           "type": "array"
         },
         "DataChange:selflink": {
-          "$ref": "#/definitions/Some selflink"
+          "$ref": "#/definitions/Optional.empty"
         }
       },
       "type": "object"
@@ -93,7 +89,7 @@
     "(data-change-notification)output": {
       "properties": {
         "DataChange:data-change-response-code": {
-          "$ref": "#/definitions/Some data-change-response-code"
+          "$ref": "#/definitions/Optional.empty"
         }
       },
       "type": "object"
@@ -112,10 +108,10 @@
     "DataChange(config)key-data": {
       "properties": {
         "DataChange:key-name": {
-          "$ref": "#/definitions/Some key-name"
+          "$ref": "#/definitions/Optional.empty"
         },
         "DataChange:key-value": {
-          "$ref": "#/definitions/Some key-value"
+          "$ref": "#/definitions/Optional.empty"
         }
       },
       "type": "object"

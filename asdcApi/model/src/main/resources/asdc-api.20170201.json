@@ -1009,6 +1009,14 @@
           },
           {
             "in": "body",
+            "name": "**(config)threshold-value",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/ASDC-API/vf-license-model-versions/vf-license-model-version/vf-license-model/feature-group-list/feature-group/entitlement-pool-list/entitlement-pool(config)threshold-value-TOP"
+            }
+          },
+          {
+            "in": "body",
             "name": "**(config)time",
             "required": false,
             "schema": {
@@ -1021,14 +1029,6 @@
             "required": false,
             "schema": {
               "$ref": "#/definitions/ASDC-API/vf-license-model-versions/vf-license-model-version/vf-license-model/feature-group-list/feature-group/entitlement-pool-list/entitlement-pool(config)operational-scope-TOP"
-            }
-          },
-          {
-            "in": "body",
-            "name": "**(config)threshold-value",
-            "required": false,
-            "schema": {
-              "$ref": "#/definitions/ASDC-API/vf-license-model-versions/vf-license-model-version/vf-license-model/feature-group-list/feature-group/entitlement-pool-list/entitlement-pool(config)threshold-value-TOP"
             }
           },
           {
@@ -1946,17 +1946,12 @@
     "(config)aggregation-functionPOST": {
       "properties": {
         "other": {
-          "$ref": "#/definitions/Some other",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "value": {
-          "$ref": "#/definitions/Peak",
-          "description": "xxxx",
-          "enum": [
-            "Peak",
-            "Average",
-            "Other"
-          ]
+          "$ref": "#/definitions/Optional.empty",
+          "description": "xxxx"
         }
       },
       "type": "object"
@@ -1964,11 +1959,11 @@
     "(config)artifactPOST": {
       "properties": {
         "artifact-name": {
-          "$ref": "#/definitions/Some artifact-name",
+          "$ref": "#/definitions/Optional.empty",
           "description": "Name of artifact"
         },
         "artifact-version": {
-          "$ref": "#/definitions/Some artifact-version",
+          "$ref": "#/definitions/Optional.empty",
           "description": "Version of artifact"
         }
       },
@@ -1988,27 +1983,12 @@
     "(config)entitlement-metricPOST": {
       "properties": {
         "other": {
-          "$ref": "#/definitions/Some other",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "value": {
-          "$ref": "#/definitions/Software_Instances_Count",
-          "description": "xxxx",
-          "enum": [
-            "Software_Instances_Count",
-            "CPU",
-            "Core",
-            "Trunks",
-            "User",
-            "Subscribers",
-            "Tenants",
-            "Tokens",
-            "Seats",
-            "Units_TB",
-            "Units_GB",
-            "Units_MB",
-            "Other"
-          ]
+          "$ref": "#/definitions/Optional.empty",
+          "description": "xxxx"
         }
       },
       "type": "object"
@@ -2033,7 +2013,7 @@
           "type": "object"
         },
         "description": {
-          "$ref": "#/definitions/Some description",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "entitlement-metric": {
@@ -2043,19 +2023,19 @@
           "type": "object"
         },
         "entitlement-pool-uuid": {
-          "$ref": "#/definitions/Some entitlement-pool-uuid",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "increments": {
-          "$ref": "#/definitions/Some increments",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "manufacturer-reference-number": {
-          "$ref": "#/definitions/Some manufacturer-reference-number",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "name": {
-          "$ref": "#/definitions/Some name",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "operational-scope": {
@@ -2093,11 +2073,11 @@
     "(config)feature-groupPOST": {
       "properties": {
         "att-part-number": {
-          "$ref": "#/definitions/Some att-part-number",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "description": {
-          "$ref": "#/definitions/Some description",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "entitlement-pool-list": {
@@ -2107,7 +2087,7 @@
           "type": "object"
         },
         "feature-group-uuid": {
-          "$ref": "#/definitions/Some feature-group-uuid",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "license-key-group-list": {
@@ -2117,7 +2097,7 @@
           "type": "object"
         },
         "name": {
-          "$ref": "#/definitions/Some name",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         }
       },
@@ -2132,7 +2112,7 @@
           "type": "array"
         },
         "name": {
-          "$ref": "#/definitions/Some name",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         }
       },
@@ -2141,15 +2121,15 @@
     "(config)license-key-groupPOST": {
       "properties": {
         "description": {
-          "$ref": "#/definitions/Some description",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "license-key-group-uuid": {
-          "$ref": "#/definitions/Some license-key-group-uuid",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "name": {
-          "$ref": "#/definitions/Some name",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "operational-scope": {
@@ -2159,13 +2139,8 @@
           "type": "object"
         },
         "type": {
-          "$ref": "#/definitions/Universal",
-          "description": "xxxx",
-          "enum": [
-            "Universal",
-            "Unique",
-            "One_Time"
-          ]
+          "$ref": "#/definitions/Optional.empty",
+          "description": "xxxx"
         }
       },
       "type": "object"
@@ -2173,22 +2148,12 @@
     "(config)operational-scopePOST": {
       "properties": {
         "other": {
-          "$ref": "#/definitions/Some other",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "value": {
-          "$ref": "#/definitions/Network_Wide",
-          "description": "xxxx",
-          "enum": [
-            "Network_Wide",
-            "Availability_Zone",
-            "Data_Center",
-            "Tenant",
-            "VM",
-            "CPU",
-            "Core",
-            "Other"
-          ]
+          "$ref": "#/definitions/Optional.empty",
+          "description": "xxxx"
         }
       },
       "type": "object"
@@ -2196,15 +2161,11 @@
     "(config)threshold-valuePOST": {
       "properties": {
         "unit": {
-          "$ref": "#/definitions/Absolute",
-          "description": "xxxx",
-          "enum": [
-            "Absolute",
-            "Percentage"
-          ]
+          "$ref": "#/definitions/Optional.empty",
+          "description": "xxxx"
         },
         "value": {
-          "$ref": "#/definitions/0",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         }
       },
@@ -2213,20 +2174,12 @@
     "(config)timePOST": {
       "properties": {
         "other": {
-          "$ref": "#/definitions/Some other",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "value": {
-          "$ref": "#/definitions/Hour",
-          "description": "xxxx",
-          "enum": [
-            "Hour",
-            "Day",
-            "Month",
-            "Quarter",
-            "Year",
-            "Other"
-          ]
+          "$ref": "#/definitions/Optional.empty",
+          "description": "xxxx"
         }
       },
       "type": "object"
@@ -2234,11 +2187,11 @@
     "(config)vf-license-model-versionPOST": {
       "properties": {
         "artifact-name": {
-          "$ref": "#/definitions/Some artifact-name",
+          "$ref": "#/definitions/Optional.empty",
           "description": "Name of artifact"
         },
         "artifact-version": {
-          "$ref": "#/definitions/Some artifact-version",
+          "$ref": "#/definitions/Optional.empty",
           "description": "Version of artifact"
         },
         "vf-license-model": {
@@ -2270,11 +2223,11 @@
           "type": "object"
         },
         "vendor-name": {
-          "$ref": "#/definitions/Some vendor-name",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "vf-id": {
-          "$ref": "#/definitions/Some vf-id",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         }
       },
@@ -2283,11 +2236,11 @@
     "(vf-license-model-update)input": {
       "properties": {
         "ASDC-API:artifact-name": {
-          "$ref": "#/definitions/Some artifact-name",
+          "$ref": "#/definitions/Optional.empty",
           "description": "Name of artifact"
         },
         "ASDC-API:artifact-version": {
-          "$ref": "#/definitions/Some artifact-version",
+          "$ref": "#/definitions/Optional.empty",
           "description": "Version of artifact"
         },
         "ASDC-API:vf-license-model": {
@@ -2314,11 +2267,11 @@
     "(vf-license-model-update)output": {
       "properties": {
         "ASDC-API:asdc-api-response-code": {
-          "$ref": "#/definitions/Some asdc-api-response-code",
+          "$ref": "#/definitions/Optional.empty",
           "description": "Code indicating success/failure"
         },
         "ASDC-API:asdc-api-response-text": {
-          "$ref": "#/definitions/Some asdc-api-response-text",
+          "$ref": "#/definitions/Optional.empty",
           "description": "Text indicating reason for failure"
         }
       },
@@ -2367,11 +2320,11 @@
           "type": "object"
         },
         "ASDC-API:vendor-name": {
-          "$ref": "#/definitions/Some vendor-name",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:vf-id": {
-          "$ref": "#/definitions/Some vf-id",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         }
       },
@@ -2442,11 +2395,11 @@
     "ASDC-API/artifacts(config)artifact": {
       "properties": {
         "ASDC-API:artifact-name": {
-          "$ref": "#/definitions/Some artifact-name",
+          "$ref": "#/definitions/Optional.empty",
           "description": "Name of artifact"
         },
         "ASDC-API:artifact-version": {
-          "$ref": "#/definitions/Some artifact-version",
+          "$ref": "#/definitions/Optional.empty",
           "description": "Version of artifact"
         }
       },
@@ -2490,11 +2443,11 @@
     "ASDC-API/vf-license-model-versions(config)vf-license-model-version": {
       "properties": {
         "ASDC-API:artifact-name": {
-          "$ref": "#/definitions/Some artifact-name",
+          "$ref": "#/definitions/Optional.empty",
           "description": "Name of artifact"
         },
         "ASDC-API:artifact-version": {
-          "$ref": "#/definitions/Some artifact-version",
+          "$ref": "#/definitions/Optional.empty",
           "description": "Version of artifact"
         },
         "ASDC-API:vf-license-model": {
@@ -2528,11 +2481,11 @@
           "type": "object"
         },
         "ASDC-API:vendor-name": {
-          "$ref": "#/definitions/Some vendor-name",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:vf-id": {
-          "$ref": "#/definitions/Some vf-id",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         }
       },
@@ -2577,11 +2530,11 @@
     "ASDC-API/vf-license-model-versions/vf-license-model-version/vf-license-model/feature-group-list(config)feature-group": {
       "properties": {
         "ASDC-API:att-part-number": {
-          "$ref": "#/definitions/Some att-part-number",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:description": {
-          "$ref": "#/definitions/Some description",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:entitlement-pool-list": {
@@ -2592,7 +2545,7 @@
           "type": "object"
         },
         "ASDC-API:feature-group-uuid": {
-          "$ref": "#/definitions/Some feature-group-uuid",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:license-key-group-list": {
@@ -2603,7 +2556,7 @@
           "type": "object"
         },
         "ASDC-API:name": {
-          "$ref": "#/definitions/Some name",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         }
       },
@@ -2655,7 +2608,7 @@
           "type": "array"
         },
         "ASDC-API:name": {
-          "$ref": "#/definitions/Some name",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         }
       },
@@ -2683,7 +2636,7 @@
           "type": "object"
         },
         "ASDC-API:description": {
-          "$ref": "#/definitions/Some description",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:entitlement-metric": {
@@ -2694,19 +2647,19 @@
           "type": "object"
         },
         "ASDC-API:entitlement-pool-uuid": {
-          "$ref": "#/definitions/Some entitlement-pool-uuid",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:increments": {
-          "$ref": "#/definitions/Some increments",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:manufacturer-reference-number": {
-          "$ref": "#/definitions/Some manufacturer-reference-number",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:name": {
-          "$ref": "#/definitions/Some name",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:operational-scope": {
@@ -2748,17 +2701,12 @@
     "ASDC-API/vf-license-model-versions/vf-license-model-version/vf-license-model/feature-group-list/feature-group/entitlement-pool-list/entitlement-pool(config)aggregation-function": {
       "properties": {
         "ASDC-API:other": {
-          "$ref": "#/definitions/Some other",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:value": {
-          "$ref": "#/definitions/Peak",
-          "description": "xxxx",
-          "enum": [
-            "Peak",
-            "Average",
-            "Other"
-          ]
+          "$ref": "#/definitions/Optional.empty",
+          "description": "xxxx"
         }
       },
       "type": "object"
@@ -2778,27 +2726,12 @@
     "ASDC-API/vf-license-model-versions/vf-license-model-version/vf-license-model/feature-group-list/feature-group/entitlement-pool-list/entitlement-pool(config)entitlement-metric": {
       "properties": {
         "ASDC-API:other": {
-          "$ref": "#/definitions/Some other",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:value": {
-          "$ref": "#/definitions/Software_Instances_Count",
-          "description": "xxxx",
-          "enum": [
-            "Software_Instances_Count",
-            "CPU",
-            "Core",
-            "Trunks",
-            "User",
-            "Subscribers",
-            "Tenants",
-            "Tokens",
-            "Seats",
-            "Units_TB",
-            "Units_GB",
-            "Units_MB",
-            "Other"
-          ]
+          "$ref": "#/definitions/Optional.empty",
+          "description": "xxxx"
         }
       },
       "type": "object"
@@ -2818,22 +2751,12 @@
     "ASDC-API/vf-license-model-versions/vf-license-model-version/vf-license-model/feature-group-list/feature-group/entitlement-pool-list/entitlement-pool(config)operational-scope": {
       "properties": {
         "ASDC-API:other": {
-          "$ref": "#/definitions/Some other",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:value": {
-          "$ref": "#/definitions/Network_Wide",
-          "description": "xxxx",
-          "enum": [
-            "Network_Wide",
-            "Availability_Zone",
-            "Data_Center",
-            "Tenant",
-            "VM",
-            "CPU",
-            "Core",
-            "Other"
-          ]
+          "$ref": "#/definitions/Optional.empty",
+          "description": "xxxx"
         }
       },
       "type": "object"
@@ -2853,15 +2776,11 @@
     "ASDC-API/vf-license-model-versions/vf-license-model-version/vf-license-model/feature-group-list/feature-group/entitlement-pool-list/entitlement-pool(config)threshold-value": {
       "properties": {
         "ASDC-API:unit": {
-          "$ref": "#/definitions/Absolute",
-          "description": "xxxx",
-          "enum": [
-            "Absolute",
-            "Percentage"
-          ]
+          "$ref": "#/definitions/Optional.empty",
+          "description": "xxxx"
         },
         "ASDC-API:value": {
-          "$ref": "#/definitions/0",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         }
       },
@@ -2882,20 +2801,12 @@
     "ASDC-API/vf-license-model-versions/vf-license-model-version/vf-license-model/feature-group-list/feature-group/entitlement-pool-list/entitlement-pool(config)time": {
       "properties": {
         "ASDC-API:other": {
-          "$ref": "#/definitions/Some other",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:value": {
-          "$ref": "#/definitions/Hour",
-          "description": "xxxx",
-          "enum": [
-            "Hour",
-            "Day",
-            "Month",
-            "Quarter",
-            "Year",
-            "Other"
-          ]
+          "$ref": "#/definitions/Optional.empty",
+          "description": "xxxx"
         }
       },
       "type": "object"
@@ -2915,15 +2826,15 @@
     "ASDC-API/vf-license-model-versions/vf-license-model-version/vf-license-model/feature-group-list/feature-group/license-key-group-list(config)license-key-group": {
       "properties": {
         "ASDC-API:description": {
-          "$ref": "#/definitions/Some description",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:license-key-group-uuid": {
-          "$ref": "#/definitions/Some license-key-group-uuid",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:name": {
-          "$ref": "#/definitions/Some name",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:operational-scope": {
@@ -2934,13 +2845,8 @@
           "type": "object"
         },
         "ASDC-API:type": {
-          "$ref": "#/definitions/Universal",
-          "description": "xxxx",
-          "enum": [
-            "Universal",
-            "Unique",
-            "One_Time"
-          ]
+          "$ref": "#/definitions/Optional.empty",
+          "description": "xxxx"
         }
       },
       "type": "object"
@@ -2960,22 +2866,12 @@
     "ASDC-API/vf-license-model-versions/vf-license-model-version/vf-license-model/feature-group-list/feature-group/license-key-group-list/license-key-group(config)operational-scope": {
       "properties": {
         "ASDC-API:other": {
-          "$ref": "#/definitions/Some other",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:value": {
-          "$ref": "#/definitions/Network_Wide",
-          "description": "xxxx",
-          "enum": [
-            "Network_Wide",
-            "Availability_Zone",
-            "Data_Center",
-            "Tenant",
-            "VM",
-            "CPU",
-            "Core",
-            "Other"
-          ]
+          "$ref": "#/definitions/Optional.empty",
+          "description": "xxxx"
         }
       },
       "type": "object"
@@ -2995,11 +2891,11 @@
     "ASDC-API/vf-license-model/feature-group-list(config)feature-group": {
       "properties": {
         "ASDC-API:att-part-number": {
-          "$ref": "#/definitions/Some att-part-number",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:description": {
-          "$ref": "#/definitions/Some description",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:entitlement-pool-list": {
@@ -3010,7 +2906,7 @@
           "type": "object"
         },
         "ASDC-API:feature-group-uuid": {
-          "$ref": "#/definitions/Some feature-group-uuid",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:license-key-group-list": {
@@ -3021,7 +2917,7 @@
           "type": "object"
         },
         "ASDC-API:name": {
-          "$ref": "#/definitions/Some name",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         }
       },
@@ -3073,7 +2969,7 @@
           "type": "array"
         },
         "ASDC-API:name": {
-          "$ref": "#/definitions/Some name",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         }
       },
@@ -3101,7 +2997,7 @@
           "type": "object"
         },
         "ASDC-API:description": {
-          "$ref": "#/definitions/Some description",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:entitlement-metric": {
@@ -3112,19 +3008,19 @@
           "type": "object"
         },
         "ASDC-API:entitlement-pool-uuid": {
-          "$ref": "#/definitions/Some entitlement-pool-uuid",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:increments": {
-          "$ref": "#/definitions/Some increments",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:manufacturer-reference-number": {
-          "$ref": "#/definitions/Some manufacturer-reference-number",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:name": {
-          "$ref": "#/definitions/Some name",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:operational-scope": {
@@ -3166,17 +3062,12 @@
     "ASDC-API/vf-license-model/feature-group-list/feature-group/entitlement-pool-list/entitlement-pool(config)aggregation-function": {
       "properties": {
         "ASDC-API:other": {
-          "$ref": "#/definitions/Some other",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:value": {
-          "$ref": "#/definitions/Peak",
-          "description": "xxxx",
-          "enum": [
-            "Peak",
-            "Average",
-            "Other"
-          ]
+          "$ref": "#/definitions/Optional.empty",
+          "description": "xxxx"
         }
       },
       "type": "object"
@@ -3196,27 +3087,12 @@
     "ASDC-API/vf-license-model/feature-group-list/feature-group/entitlement-pool-list/entitlement-pool(config)entitlement-metric": {
       "properties": {
         "ASDC-API:other": {
-          "$ref": "#/definitions/Some other",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:value": {
-          "$ref": "#/definitions/Software_Instances_Count",
-          "description": "xxxx",
-          "enum": [
-            "Software_Instances_Count",
-            "CPU",
-            "Core",
-            "Trunks",
-            "User",
-            "Subscribers",
-            "Tenants",
-            "Tokens",
-            "Seats",
-            "Units_TB",
-            "Units_GB",
-            "Units_MB",
-            "Other"
-          ]
+          "$ref": "#/definitions/Optional.empty",
+          "description": "xxxx"
         }
       },
       "type": "object"
@@ -3236,22 +3112,12 @@
     "ASDC-API/vf-license-model/feature-group-list/feature-group/entitlement-pool-list/entitlement-pool(config)operational-scope": {
       "properties": {
         "ASDC-API:other": {
-          "$ref": "#/definitions/Some other",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:value": {
-          "$ref": "#/definitions/Network_Wide",
-          "description": "xxxx",
-          "enum": [
-            "Network_Wide",
-            "Availability_Zone",
-            "Data_Center",
-            "Tenant",
-            "VM",
-            "CPU",
-            "Core",
-            "Other"
-          ]
+          "$ref": "#/definitions/Optional.empty",
+          "description": "xxxx"
         }
       },
       "type": "object"
@@ -3271,15 +3137,11 @@
     "ASDC-API/vf-license-model/feature-group-list/feature-group/entitlement-pool-list/entitlement-pool(config)threshold-value": {
       "properties": {
         "ASDC-API:unit": {
-          "$ref": "#/definitions/Absolute",
-          "description": "xxxx",
-          "enum": [
-            "Absolute",
-            "Percentage"
-          ]
+          "$ref": "#/definitions/Optional.empty",
+          "description": "xxxx"
         },
         "ASDC-API:value": {
-          "$ref": "#/definitions/0",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         }
       },
@@ -3300,20 +3162,12 @@
     "ASDC-API/vf-license-model/feature-group-list/feature-group/entitlement-pool-list/entitlement-pool(config)time": {
       "properties": {
         "ASDC-API:other": {
-          "$ref": "#/definitions/Some other",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:value": {
-          "$ref": "#/definitions/Hour",
-          "description": "xxxx",
-          "enum": [
-            "Hour",
-            "Day",
-            "Month",
-            "Quarter",
-            "Year",
-            "Other"
-          ]
+          "$ref": "#/definitions/Optional.empty",
+          "description": "xxxx"
         }
       },
       "type": "object"
@@ -3333,15 +3187,15 @@
     "ASDC-API/vf-license-model/feature-group-list/feature-group/license-key-group-list(config)license-key-group": {
       "properties": {
         "ASDC-API:description": {
-          "$ref": "#/definitions/Some description",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:license-key-group-uuid": {
-          "$ref": "#/definitions/Some license-key-group-uuid",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:name": {
-          "$ref": "#/definitions/Some name",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:operational-scope": {
@@ -3352,13 +3206,8 @@
           "type": "object"
         },
         "ASDC-API:type": {
-          "$ref": "#/definitions/Universal",
-          "description": "xxxx",
-          "enum": [
-            "Universal",
-            "Unique",
-            "One_Time"
-          ]
+          "$ref": "#/definitions/Optional.empty",
+          "description": "xxxx"
         }
       },
       "type": "object"
@@ -3378,22 +3227,12 @@
     "ASDC-API/vf-license-model/feature-group-list/feature-group/license-key-group-list/license-key-group(config)operational-scope": {
       "properties": {
         "ASDC-API:other": {
-          "$ref": "#/definitions/Some other",
+          "$ref": "#/definitions/Optional.empty",
           "description": "xxxx"
         },
         "ASDC-API:value": {
-          "$ref": "#/definitions/Network_Wide",
-          "description": "xxxx",
-          "enum": [
-            "Network_Wide",
-            "Availability_Zone",
-            "Data_Center",
-            "Tenant",
-            "VM",
-            "CPU",
-            "Core",
-            "Other"
-          ]
+          "$ref": "#/definitions/Optional.empty",
+          "description": "xxxx"
         }
       },
       "type": "object"
