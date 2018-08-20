@@ -111,6 +111,7 @@ module LCM {
             enum "StartApplication";
             enum "QuiesceTraffic";
             enum "ResumeTraffic";
+            enum "DistributeTraffic";
             enum "UpgradePreCheck";
             enum "UpgradeSoftware";
             enum "UpgradePostCheck";
@@ -498,6 +499,30 @@ module LCM {
     rpc resume-traffic {
         description "An operation to resume traffic gracefully on the VF.
                      It resumes traffic gracefully without stopping the application";
+        input {
+            uses common-header;
+            leaf action {
+                type action;
+                mandatory true;
+            }
+            uses action-identifiers;
+            leaf payload {
+                type payload;
+                mandatory true;
+           }
+    }
+        output {
+            uses common-header;
+            uses status;
+        }
+    }
+
+    /**********************************************************************************
+     * Define the VNF distribute traffic service
+     **********************************************************************************/
+    rpc distribute-traffic {
+        description "An operation to distribute traffic gracefully on the VF.
+                     It distributes traffic gracefully without stopping the application";
         input {
             uses common-header;
             leaf action {
