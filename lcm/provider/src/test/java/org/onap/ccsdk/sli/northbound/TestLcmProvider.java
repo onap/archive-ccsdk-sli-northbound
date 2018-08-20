@@ -73,6 +73,8 @@ import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.lcm.rev180329.
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.lcm.rev180329.ConfigureOutput;
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.lcm.rev180329.DetachVolumeInputBuilder;
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.lcm.rev180329.DetachVolumeOutput;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.lcm.rev180329.DistributeTrafficInputBuilder;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.lcm.rev180329.DistributeTrafficOutput;
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.lcm.rev180329.EvacuateInputBuilder;
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.lcm.rev180329.EvacuateOutput;
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.lcm.rev180329.HealthCheckInputBuilder;
@@ -523,6 +525,40 @@ public class TestLcmProvider {
 		} catch (InterruptedException | ExecutionException e) {
 			LOG.error("Caught exception", e);
 			fail("ResumeTraffic threw exception");
+		}
+	}
+
+	@Test
+	public void testDistributeTraffic() {
+		DistributeTrafficInputBuilder builder = new DistributeTrafficInputBuilder();
+
+		CommonHeaderBuilder hdrBuilder = new CommonHeaderBuilder();
+		hdrBuilder.setApiVer("1");
+		hdrBuilder.setFlags(null);
+		hdrBuilder.setOriginatorId("jUnit");
+		hdrBuilder.setRequestId("123");
+		hdrBuilder.setTimestamp(new ZULU(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(new Date())));
+		builder.setCommonHeader(hdrBuilder.build());
+
+		ActionIdentifiersBuilder aBuilder = new ActionIdentifiersBuilder();
+		aBuilder.setServiceInstanceId("SVCID-123");
+		aBuilder.setVfModuleId("vf-module-1");
+		aBuilder.setVnfcName("my-vnfc");
+		aBuilder.setVnfId("123");
+		aBuilder.setVserverId("123");
+		builder.setActionIdentifiers(aBuilder.build());
+
+		builder.setAction(Action.DistributeTraffic);
+		builder.setPayload(mock(Payload.class));
+
+
+		try {
+			DistributeTrafficOutput results = provider.distributeTraffic(builder.build()).get().getResult();
+			LOG.info("DistributeTraffic returned status {} : {}", results.getStatus().getCode(), results.getStatus().getMessage());
+			assert(results.getStatus().getCode() == 400);
+		} catch (InterruptedException | ExecutionException e) {
+			LOG.error("Caught exception", e);
+			fail("DistributeTraffic threw exception");
 		}
 	}
 

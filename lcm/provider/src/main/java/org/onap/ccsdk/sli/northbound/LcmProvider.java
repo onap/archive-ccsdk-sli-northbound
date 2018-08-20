@@ -351,6 +351,27 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
+	public Future<RpcResult<DistributeTrafficOutput>> distributeTraffic(DistributeTrafficInput input) {
+		DistributeTrafficInputBuilder iBuilder = new DistributeTrafficInputBuilder(input);
+		DistributeTrafficOutputBuilder oBuilder = new DistributeTrafficOutputBuilder();
+
+		try {
+			CommonLcmFields retval = callDG("distribute-traffic", iBuilder.build());
+			oBuilder.setStatus(retval.getStatusBuilder().build());
+			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
+		} catch (LcmRpcInvocationException e) {
+			LOG.debug("Caught exception", e);
+			oBuilder.setCommonHeader(e.getCommonHeader());
+			oBuilder.setStatus(e.getStatus());
+		}
+
+		RpcResult<DistributeTrafficOutput> rpcResult =
+				RpcResultBuilder.<DistributeTrafficOutput> status(true).withResult(oBuilder.build()).build();
+		// return error
+		return Futures.immediateFuture(rpcResult);
+	}
+
+	@Override
 	public Future<RpcResult<ConfigureOutput>> configure(ConfigureInput input) {
 		ConfigureInputBuilder iBuilder = new ConfigureInputBuilder(input);
 		ConfigureOutputBuilder oBuilder = new ConfigureOutputBuilder();

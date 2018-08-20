@@ -27,6 +27,7 @@ LCM stop-application 1.0.0 sync
 LCM start-application 1.0.0 sync
 LCM quiesce-traffic 1.0.0 sync
 LCM resume-traffic 1.0.0 sync
+LCM distribute-traffic 1.0.0 sync
 LCM upgrade-pre-check 1.0.0 sync
 LCM upgrade-software 1.0.0 sync
 LCM upgrade-post-check 1.0.0 sync
