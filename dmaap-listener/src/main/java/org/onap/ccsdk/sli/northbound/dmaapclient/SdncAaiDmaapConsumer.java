@@ -132,8 +132,11 @@ public class SdncAaiDmaapConsumer extends SdncDmaapConsumerImpl {
                 context.put(((String)key).replaceAll("-", ""), eventHeader.get((String)key));
             } else {
                 String action = (String) eventHeader.get((String) key);
-                context.put((String)key, action.substring(0,1).toUpperCase()
-                                         + action.substring(1).toLowerCase());
+                if (action.equalsIgnoreCase("delete")) {
+                    context.put((String) key, "Delete");
+                } else {
+                    context.put((String) key, "Update");
+                }
             }
         }
 
@@ -208,11 +211,11 @@ public class SdncAaiDmaapConsumer extends SdncDmaapConsumerImpl {
         String mapFilename = rootDir + entityType + ".map";
         Map<String, String> fieldMap = loadMap(mapFilename);
         if (fieldMap == null) {
-            throw new InvalidMessageException("Unable to process message - cannot load mapping file");
+            return;
         }
 
         if (!fieldMap.containsKey(SDNC_ENDPOINT)) {
-            throw new InvalidMessageException("No SDNC endpoint known for message " + entityType);
+            return;
         }
         String sdncEndpoint = fieldMap.get(SDNC_ENDPOINT);        
    
