@@ -132,8 +132,11 @@ public class SdncAaiDmaapConsumer extends SdncDmaapConsumerImpl {
                 context.put(((String)key).replaceAll("-", ""), eventHeader.get((String)key));
             } else {
                 String action = (String) eventHeader.get((String) key);
-                context.put((String)key, action.substring(0,1).toUpperCase()
-                                         + action.substring(1).toLowerCase());
+                if (action.equalsIgnoreCase("delete")) {
+                    context.put((String) key, "Delete");
+                } else {
+                    context.put((String) key, "Update");
+                }
             }
         }
 
@@ -187,8 +190,8 @@ public class SdncAaiDmaapConsumer extends SdncDmaapConsumerImpl {
             aaiRootNode = oMapper.readTree(msg);
         } catch (Exception e) {
             throw new InvalidMessageException("Cannot parse json object", e);
-        }        
-       
+        }
+
         JsonNode eventHeaderNode = aaiRootNode.get(EVENT_HEADER);
         if(eventHeaderNode == null) {
             LOG.info("Missing Event Header node.");
@@ -196,31 +199,31 @@ public class SdncAaiDmaapConsumer extends SdncDmaapConsumerImpl {
         }
         JsonNode eventTypeNode = eventHeaderNode.get(EVENT_TYPE);
         String eventType = eventTypeNode.textValue();
-        
+
         if(AAI_EVENT.equals(eventType) == false) {
             LOG.info("Unknown Event Type {}", eventType);
             return;
         }
-        
+
         JsonNode entityTypeNode = eventHeaderNode.get(ENTITY_TYPE);
         String entityType = entityTypeNode.textValue();
-        
+
         String mapFilename = rootDir + entityType + ".map";
         Map<String, String> fieldMap = loadMap(mapFilename);
         if (fieldMap == null) {
-            throw new InvalidMessageException("Unable to process message - cannot load mapping file");
+            return;
         }
 
         if (!fieldMap.containsKey(SDNC_ENDPOINT)) {
-            throw new InvalidMessageException("No SDNC endpoint known for message " + entityType);
+            return;
         }
-        String sdncEndpoint = fieldMap.get(SDNC_ENDPOINT);        
-   
+        String sdncEndpoint = fieldMap.get(SDNC_ENDPOINT);
+
         if (!fieldMap.containsKey(TEMPLATE)) {
             throw new InvalidMessageException("No SDNC template known for message " + entityType);
         }
-        String templateName = fieldMap.get(TEMPLATE); 
-        
+        String templateName = fieldMap.get(TEMPLATE);
+
         try {
             String rpcMsgbody = publish(templateName, msg);
             String odlUrlBase = getProperty("sdnc.odl.url-base");
