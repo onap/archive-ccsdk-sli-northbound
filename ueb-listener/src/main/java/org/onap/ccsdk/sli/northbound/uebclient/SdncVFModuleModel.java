@@ -35,11 +35,11 @@ public class SdncVFModuleModel extends SdncBaseModel {
 	public SdncVFModuleModel(ISdcCsarHelper sdcCsarHelper, Group group, SdncVFModel vfNodeModel) {
 
 		super(sdcCsarHelper, group);
-		//addParameter("vf_customization_uuid", vfNodeModel.getCustomizationUUIDNoQuotes());
+		addParameter("vf_customization_uuid", vfNodeModel.getCustomizationUUIDNoQuotes());
 		
 		// extract properties
 		addParameter("vf_module_type", extractValue(group, SdcPropertyNames.PROPERTY_NAME_VFMODULETYPE));
-		//addParameter("vf_module_label", extractValue(group, "vf_module_label"));
+		addParameter("vf_module_label", extractValue(group, "vf_module_label"));
 		addIntParameter("availability_zone_count", extractValue(group, SdcPropertyNames.PROPERTY_NAME_AVAILABILITYZONECOUNT));
 		addParameter("ecomp_generated_vm_assignments", extractBooleanValue(group, SdcPropertyNames.PROPERTY_NAME_ECOMPGENERATEDVMASSIGNMENTS));
 	}
