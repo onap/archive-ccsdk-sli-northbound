@@ -132,10 +132,12 @@ public class SdncAaiDmaapConsumer extends SdncDmaapConsumerImpl {
                 context.put(((String)key).replaceAll("-", ""), eventHeader.get((String)key));
             } else {
                 String action = (String) eventHeader.get((String) key);
-                if (action.equalsIgnoreCase("delete")) {
+                if (action.equalsIgnoreCase("create")) {
+                    context.put((String)key,"Update");
+                } else if (action.equalsIgnoreCase("delete")) {
                     context.put((String) key, "Delete");
                 } else {
-                    context.put((String) key, "Update");
+                    throw new IOException("Action type not supported " + action);
                 }
             }
         }
