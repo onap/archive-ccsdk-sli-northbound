@@ -27,6 +27,7 @@ import org.onap.sdc.impl.DistributionClientFactory;
 import org.onap.sdc.utils.DistributionActionResultEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.onap.sdc.utils.DistributionActionResultEnum;
 
 public class SdncUebClient {
 
@@ -61,7 +62,12 @@ public class SdncUebClient {
 				try {
 					IDistributionClientResult start = client.start();
 					LOG.info("Client startup result = {}", start.getDistributionMessageResult());
-					keepWaiting = false;
+	
+					// Only stop waiting if the result is success
+					if (start.getDistributionActionResult() == DistributionActionResultEnum.SUCCESS) {
+		
+						keepWaiting = false;
+					}
 				} catch(Exception e) {
 					LOG.info("Client startup failure", e);
 				}
