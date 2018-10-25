@@ -41,7 +41,11 @@ public class DmaapListener {
         Properties properties = new Properties();
         String propFileName = DMAAP_LISTENER_PROPERTIES;
         String propPath = null;
-        String propDir = System.getenv(SDNC_CONFIG_DIR);
+        String propDir = System.getProperty(SDNC_CONFIG_DIR);
+        if(propDir == null) {
+        	propDir = System.getenv(SDNC_CONFIG_DIR);
+        	LOG.debug(SDNC_CONFIG_DIR + " read from environment variable with value " + propDir);
+        }
         List<SdncDmaapConsumer> consumers = new LinkedList<>();
 
         if (args.length > 0) {
