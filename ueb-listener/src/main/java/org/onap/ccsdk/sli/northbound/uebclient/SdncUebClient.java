@@ -34,12 +34,11 @@ public class SdncUebClient {
 	private static final Logger LOG = LoggerFactory.getLogger(SdncUebConfiguration.class);
 
 	public static void main(String[] args) {
-		IDistributionClient client = DistributionClientFactory.createDistributionClient();
 
 		SdncUebConfiguration config = new SdncUebConfiguration();
 
+		IDistributionClient client = DistributionClientFactory.createDistributionClient();
 		SdncUebCallback cb = new SdncUebCallback(client, config);
-
 
 		LOG.info("Scanning for local distribution artifacts before starting client");
 		cb.deployDownloadedFiles(null, null, null);
@@ -67,6 +66,21 @@ public class SdncUebClient {
 					if (start.getDistributionActionResult() == DistributionActionResultEnum.SUCCESS) {
 		
 						keepWaiting = false;
+					} else {
+						LOG.info("SDC returned "+start.getDistributionActionResult().toString()+" - will retry");
+						try {
+							client.stop();
+						} catch(Exception e1) {
+							// Ignore exception on stop
+						}
+						client = DistributionClientFactory.createDistributionClient();
+						cb = new SdncUebCallback(client, config);
+						LOG.info("Initializing ASDC distribution client");
+
+						result = client.init(config, cb);
+
+						LOG.info("Initialized ASDC distribution client - results = {}", result.getDistributionMessageResult());
+						
 					}
 				} catch(Exception e) {
 					LOG.info("Client startup failure", e);
