@@ -54,6 +54,7 @@ public class SdncUebClient {
 		long maxWaitTm = config.getClientStartupTimeout() * 1000L;
 
 		boolean keepWaiting = true;
+		boolean listenerStarted = false;
 
 		while (keepWaiting) {
 			if (result.getDistributionActionResult() == DistributionActionResultEnum.SUCCESS) {
@@ -66,8 +67,9 @@ public class SdncUebClient {
 					if (start.getDistributionActionResult() == DistributionActionResultEnum.SUCCESS) {
 		
 						keepWaiting = false;
+						listenerStarted = true;
 					} else {
-						LOG.info("SDC returned "+start.getDistributionActionResult().toString()+" - will retry");
+						LOG.info("SDC returned {} - exitting",start.getDistributionActionResult().toString());
 						try {
 							client.stop();
 						} catch(Exception e1) {
@@ -99,8 +101,13 @@ public class SdncUebClient {
 			}
 
 		}
-
-
+		
+		if (!listenerStarted) {
+			LOG.info("Timed out waiting to connect to SDC");
+			System.exit(0);
+		}
+		
+		
 
 	}
 
