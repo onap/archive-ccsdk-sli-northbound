@@ -37,66 +37,59 @@ public class SdncUebClient {
 
 		SdncUebConfiguration config = new SdncUebConfiguration();
 
-		IDistributionClient client = DistributionClientFactory.createDistributionClient();
-		SdncUebCallback cb = new SdncUebCallback(client, config);
-
-		LOG.info("Scanning for local distribution artifacts before starting client");
-		cb.deployDownloadedFiles(null, null, null);
-
-		LOG.info("Initializing ASDC distribution client");
-
-		IDistributionClientResult result = client.init(config, cb);
-
-		LOG.info("Initialized ASDC distribution client - results = {}", result.getDistributionMessageResult());
-
 		long startTm = System.currentTimeMillis();
 		int sleepTm = config.getPollingInterval() * 1000;
 		long maxWaitTm = config.getClientStartupTimeout() * 1000L;
 
 		boolean keepWaiting = true;
 		boolean listenerStarted = false;
+		boolean processDownloads = true;
 
 		while (keepWaiting) {
+			LOG.info("Initializing ASDC distribution client");
+
+			IDistributionClient client = DistributionClientFactory.createDistributionClient();
+			SdncUebCallback cb = new SdncUebCallback(client, config);
+			IDistributionClientResult result = client.init(config, cb);
+			LOG.info("Initialized ASDC distribution client - results = {}", result.getDistributionMessageResult());
+
 			if (result.getDistributionActionResult() == DistributionActionResultEnum.SUCCESS) {
+				if (processDownloads) {
+					LOG.info("Scanning for local distribution artifacts before starting client");
+					cb.deployDownloadedFiles(null, null, null);
+					processDownloads = false;
+				}
 				LOG.info("Starting client...");
 				try {
 					IDistributionClientResult start = client.start();
 					LOG.info("Client startup result = {}", start.getDistributionMessageResult());
-	
+
 					// Only stop waiting if the result is success
 					if (start.getDistributionActionResult() == DistributionActionResultEnum.SUCCESS) {
-		
+
 						keepWaiting = false;
 						listenerStarted = true;
 					} else {
-						LOG.info("SDC returned {} - exitting",start.getDistributionActionResult().toString());
+						LOG.info("SDC returned {} - exitting", start.getDistributionActionResult().toString());
 						try {
 							client.stop();
-						} catch(Exception e1) {
+						} catch (Exception e1) {
 							// Ignore exception on stop
 						}
-						client = DistributionClientFactory.createDistributionClient();
-						cb = new SdncUebCallback(client, config);
-						LOG.info("Initializing ASDC distribution client");
-
-						result = client.init(config, cb);
-
-						LOG.info("Initialized ASDC distribution client - results = {}", result.getDistributionMessageResult());
-						
 					}
-				} catch(Exception e) {
+				} catch (Exception e) {
 					LOG.info("Client startup failure", e);
 				}
+			}
 
-				if (System.currentTimeMillis() - startTm < maxWaitTm) {
-					keepWaiting = false;
-				} else {
+			if (System.currentTimeMillis() - startTm < maxWaitTm) {
+				keepWaiting = false;
+			} else {
 
-					try {
-						Thread.sleep(sleepTm);
-					} catch (InterruptedException e) {
-						// Ignore
-					}
+				try {
+					Thread.sleep(sleepTm);
+				} catch (InterruptedException e) {
+					// Ignore
 				}
 			}
 
