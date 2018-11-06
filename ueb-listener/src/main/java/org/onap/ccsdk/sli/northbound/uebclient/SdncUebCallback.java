@@ -710,6 +710,7 @@ public class SdncUebCallback implements INotificationCallback {
 
 			try {
 				nodeModel.insertNetworkModelData();
+				nodeModel.insertRelatedNetworkRoleData();
 			} catch (IOException e) {
 				deployStatus = DistributionStatusEnum.DEPLOY_ERROR;
 			}

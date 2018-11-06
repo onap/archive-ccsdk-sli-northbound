@@ -24,6 +24,7 @@ package org.onap.ccsdk.sli.northbound.uebclient;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
@@ -272,6 +273,72 @@ public class SdncVFCModel extends SdncBaseModel {
 		}
 	}
 	
+	public void insertVFCRelatedNetworkRoleData (String vfCustomizationUUID, NodeTemplate vfcNode) throws IOException {
+		
+		// Get the CPs on this VFC - ASDC suggests getNodeTemplateChildren
+		List<NodeTemplate> cpNodesList = sdcCsarHelper.getNodeTemplateChildren(vfcNode);
+		
+		String vfcCustomizationUuid = getCustomizationUUID();
+		
+		try {
+			cleanUpExistingToscaData("VFC_RELATED_NETWORK_ROLE", "vfc_customization_uuid", vfcCustomizationUuid);
+		} catch (IOException e) {
+			LOG.error("Could not clean up Tosca CSAR data in the VFC_RELATED_NETWORK_ROLE table");
+			throw new IOException (e);
+		}
+
+		for (NodeTemplate cpNode : cpNodesList){
+			String networkRole = extractValue(cpNode, "network_role");
+			Map<String, String> relatedNetworkRoleParams = new HashMap<String, String>();
+			addParameter("vfc_customization_uuid", vfcCustomizationUuid, relatedNetworkRoleParams);
+			addParameter("vm_type", vmType, relatedNetworkRoleParams);
+			addParameter("network_role", networkRole, relatedNetworkRoleParams);
+			
+			final Object relatedNetworksPropertyValue = cpNode.getPropertyValue("related_networks");
+			
+			ArrayList<Map<String, String>> relatedNetworkList = (ArrayList)relatedNetworksPropertyValue;
+			if (relatedNetworkList != null) {
+				for (Map<String, String> relatedNetworkValue : relatedNetworkList) {
+                			LOG.debug("CP [" + cpNode.getName() + "], property [" + "related_network_role" + "] property value: " + relatedNetworkValue.get("related_network_role"));               
+    					String relatedNetworkRoleValue = relatedNetworkValue.get("related_network_role");
+   			
+    					try {
+    						// Table cleanup for VFC_RELATED_NETWORK_ROLE occurs per vfc
+    						// If cp related_network_role, cp network_role and vm_type for this vfc already exist in VFC_RELATED_NETWORK_ROLE,
+    						// don't attempt insertion
+    						Map<String, String> relatedNetworkRoleParamsCheck = new HashMap<String, String>();
+    						addParamsToMap(relatedNetworkRoleParams, relatedNetworkRoleParamsCheck);
+    						addParameter("related_network_role", relatedNetworkRoleValue, relatedNetworkRoleParamsCheck);
+    						if (checkForExistingToscaData("VFC_RELATED_NETWORK_ROLE", relatedNetworkRoleParamsCheck) == false) {    					
+        						LOG.info("Call insertToscaData for VFC_RELATED_NETWORK_ROLE where vfc_customization_uuid = " + vfcCustomizationUuid);
+        						insertToscaData(buildSql("VFC_RELATED_NETWORK_ROLE", "related_network_role", "\"" + relatedNetworkRoleValue + "\"", model_yaml, relatedNetworkRoleParams), null);
+    						}
+    					
+    						// Table cleanup for VNF_RELATED_NETWORK_ROLE occurs per vf (up one level)
+    						// Insert same related_network_role data into VNF_RELATED_NETWORK_ROLE
+    						Map<String, String> vfRelatedNetworkRoleParamsCheck = new HashMap<String, String>();
+    						addParameter("vnf_customization_uuid", vfCustomizationUUID, vfRelatedNetworkRoleParamsCheck);
+    						addParameter("network_role", networkRole, vfRelatedNetworkRoleParamsCheck);
+    						addParameter("related_network_role", relatedNetworkRoleValue, vfRelatedNetworkRoleParamsCheck);
+    						if (checkForExistingToscaData("VNF_RELATED_NETWORK_ROLE", vfRelatedNetworkRoleParamsCheck) == false) {
+    							vfRelatedNetworkRoleParamsCheck.remove("related_network_role");
+        						LOG.info("Call insertToscaData for VNF_RELATED_NETWORK_ROLE where vnf_customization_uuid = " + vfCustomizationUUID);
+        						insertToscaData(buildSql("VNF_RELATED_NETWORK_ROLE", "related_network_role", "\"" + relatedNetworkRoleValue + "\"", model_yaml, vfRelatedNetworkRoleParamsCheck), null);
+    						}    					
+
+    					} catch (IOException e) {
+    						LOG.error("Could not insert Tosca CSAR data into the VFC_RELATED_NETWORK_ROLE table");
+    						throw new IOException (e);
+    					}
+				}
+			} 
+			else {
+				LOG.debug("CP [" + cpNode.getName() + "], property [" + "related_networks" + "] property value: " + null);
+			}	
+		}
+		
+	}
+
 	public String getVmType() {
 		return vmType;
 	}
