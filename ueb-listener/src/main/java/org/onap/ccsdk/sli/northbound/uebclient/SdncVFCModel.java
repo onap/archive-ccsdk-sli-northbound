@@ -24,6 +24,7 @@ package org.onap.ccsdk.sli.northbound.uebclient;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
@@ -113,9 +114,17 @@ public class SdncVFCModel extends SdncBaseModel {
 			SdncBaseModel.addParameter("network_role", networkRole, commonParams); // can not be null
 			SdncBaseModel.addParameter("network_role_tag", nullCheck(propsMap.get("network_role_tag")), commonParams);
 			SdncBaseModel.addParameter("extcp_subnetpool_id", nullCheck(propsMap.get("subnetpoolid")), commonParams);
-			String subinterfaceIndicator = nullCheck(propsMap.get("subinterface_indicator"));
-			if (!subinterfaceIndicator.isEmpty()) { 
-				SdncBaseModel.addParameter("subinterface_indicator", subinterfaceIndicator.contains("true") ? "Y" : "N", commonParams); // boolean Y|N
+
+			// Loop thru all CPs using getNodeTemplateChildren and match the network_role on the CP with network_role from 
+			// getCpPropertiesFromVfcAsObject output, then get subinterface_indicator for this CP
+			List<NodeTemplate> cpNodesList = sdcCsarHelper.getNodeTemplateChildren(vfcNode);
+			for (NodeTemplate cpNode : cpNodesList){
+				String cpNetworkRole = extractValue(cpNode, "network_role");
+				
+				if (cpNetworkRole == networkRole) {
+					String subinterfaceIndicator = extractBooleanValue (cpNode, "subinterface_indicator");
+					addParameter("subinterface_indicator", subinterfaceIndicator, commonParams);
+				}									
 			}
 
 			// Extract IP Version specific parameters
