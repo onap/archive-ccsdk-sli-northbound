@@ -22,6 +22,9 @@
 package org.onap.ccsdk.sli.northbound.uebclient;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
@@ -58,6 +61,8 @@ public class SdncNodeModel extends SdncBaseModel {
 		// extract properties - network_assignments
 		addParameter("is_shared_network", extractBooleanValue (nodeTemplate, SdcPropertyNames.PROPERTY_NAME_NETWORKASSIGNMENTS_ISSHAREDNETWORK));
 		addParameter("is_external_network", extractBooleanValue (nodeTemplate, SdcPropertyNames.PROPERTY_NAME_NETWORKASSIGNMENTS_ISEXTERNALNETWORK));
+		String trunkNetworkIndicator = extractBooleanValue(nodeTemplate, "network_assignments#is_trunked");
+		addParameter("trunk_network_indicator", trunkNetworkIndicator);
 
 		// extract properties - network_assignments - ipv4_subnet_default_assignment
 		String useIpv4 = extractBooleanValue(nodeTemplate, "network_assignments#ipv4_subnet_default_assignment#use_ipv4");
@@ -121,6 +126,50 @@ public class SdncNodeModel extends SdncBaseModel {
 			LOG.error("Could not insert Tosca CSAR data into the NETWORK_MODEL table");
 			throw new IOException (e);
 		}
+	}
+
+	public void insertRelatedNetworkRoleData () throws IOException {
+		
+		Object propertyValue = sdcCsarHelper.getNodeTemplatePropertyAsObject(nodeTemplate, "network_assignments#related_networks");
+		ArrayList<Map<String, String>> relatedNetworkList = (ArrayList)propertyValue;
+
+		String networkModelCustomizationUUID = getCustomizationUUID();
+		
+        	if (relatedNetworkList != null) {
+        	
+    			try {
+    				cleanUpExistingToscaData("RELATED_NETWORK_ROLE", "network_model_customization_uuid", networkModelCustomizationUUID);
+    			} catch (IOException e) {
+    				LOG.error("Could not clean up Tosca CSAR data in the RELATED_NETWORK_ROLE table");
+    				throw new IOException (e);
+    			}
+
+			for (Map<String, String> relatedNetworkValue : relatedNetworkList) {
+				LOG.debug("Node Template [" + nodeTemplate.getName() + "], property [" + "related_network_role" + "] property value: " + relatedNetworkValue.get("related_network_role"));
+                
+				String relatedNetworkRoleValue = relatedNetworkValue.get("related_network_role");
+	   			
+				try {
+					// Table cleanup RELATED_NETWORK_ROLE occurs per network
+					// If related_network_role for this service already exist in RELATED_NETWORK_ROLE, don't attempt insertion
+					Map<String, String> relatedNetworkRoleParamsCheck = new HashMap<String, String>();
+					addParameter("related_network_role", relatedNetworkRoleValue, relatedNetworkRoleParamsCheck);
+					addParameter("network_model_customization_uuid", networkModelCustomizationUUID, relatedNetworkRoleParamsCheck);
+					if (checkForExistingToscaData("RELATED_NETWORK_ROLE", relatedNetworkRoleParamsCheck) == false) { 
+						relatedNetworkRoleParamsCheck.remove("related_network_role");
+    					LOG.info("Call insertToscaData for RELATED_NETWORK_ROLE where network_model_customization_uuid = " + networkModelCustomizationUUID);
+    					insertToscaData(buildSql("RELATED_NETWORK_ROLE", "related_network_role", "\"" + relatedNetworkRoleValue + "\"", model_yaml, relatedNetworkRoleParamsCheck), null);
+					}
+				} catch (IOException e) {
+					LOG.debug("Could not insert Tosca CSAR data into the RELATED_NETWORK_ROLE table");
+					throw new IOException (e);
+				}
+            		}	
+        	}	
+        		else {
+        		LOG.debug("Node Template [" + nodeTemplate.getName() + "], property [" + "related_networks" + "] property value: " + null);
+        	}
+		
 	}
 	
 	public String getSql(String model_yaml) {

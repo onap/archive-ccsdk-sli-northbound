@@ -79,11 +79,11 @@ public class SdncVFModel extends SdncBaseModel {
 		for (Group group : vfcInstanceGroupListForVf){
 
 			String vfcInstanceGroupFunction = extractGetInputValue(group, nodeTemplate, "vfc_instance_group_function");
-			addParameter(extractGetInputName (group, "vfc_instance_group_function"), vfcInstanceGroupFunction, attributeValueParams);
+			addParameter("vfc_instance_group_function", vfcInstanceGroupFunction, attributeValueParams);
 			String networkCollectionFunction = extractGetInputValue(group, nodeTemplate, "network_collection_function");
-			addParameter(extractGetInputName (group, "network_collection_function"), networkCollectionFunction, attributeValueParams);
+			addParameter("network_collection_function", networkCollectionFunction, attributeValueParams);
 			String initSubinterfaceQuantity = extractGetInputValue(group, nodeTemplate, "init_subinterface_quantity");
-			addParameter(extractGetInputName (group, "init_subinterface_quantity"), initSubinterfaceQuantity, attributeValueParams);
+			addParameter("init_subinterface_quantity", initSubinterfaceQuantity, attributeValueParams);
 		}
 	}
 	
@@ -185,6 +185,15 @@ public class SdncVFModel extends SdncBaseModel {
 	
 	private void insertVFCData() throws IOException {
 		
+		/* For each VF, insert VFC_MODEL, VFC_TO_NETWORK_ROLE_MAPPING, VNF_RELATED_NETWORK_ROLE and VFC_RELATED_NETWORK_ROLE data
+		
+		try {
+			cleanUpExistingToscaData("VNF_RELATED_NETWORK_ROLE", "vnf_customization_uuid", getCustomizationUUID());
+		} catch (IOException e) {
+			LOG.error("Could not clean up Tosca CSAR data in the VNF_RELATED_NETWORK_ROLE table");
+			throw new IOException (e);
+		}*/
+
 		// For each VF, insert VFC_MODEL data
 		List<NodeTemplate> vfcNodes = sdcCsarHelper.getVfcListByVf(getCustomizationUUIDNoQuotes());
 		for (NodeTemplate vfcNode : vfcNodes){
@@ -194,6 +203,7 @@ public class SdncVFModel extends SdncBaseModel {
 				
 				vfcModel.insertVFCModelData();
 				vfcModel.insertVFCtoNetworkRoleMappingData(vfcNode);
+				//vfcModel.insertVFCRelatedNetworkRoleData(getCustomizationUUID(), vfcNode);
 			} catch (IOException e) {
 				LOG.error("Could not insert Tosca CSAR VFC data");
 				throw new IOException (e);
