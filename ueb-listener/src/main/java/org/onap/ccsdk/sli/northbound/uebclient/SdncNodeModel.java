@@ -130,7 +130,7 @@ public class SdncNodeModel extends SdncBaseModel {
 
 	public void insertRelatedNetworkRoleData () throws IOException {
 		
-		Object propertyValue = sdcCsarHelper.getNodeTemplatePropertyAsObject(nodeTemplate, "network_assignments#related_networks");
+		Object propertyValue = sdcCsarHelper.getNodeTemplatePropertyValueAsObject(nodeTemplate, "network_assignments#related_networks");
 		ArrayList<Map<String, String>> relatedNetworkList = (ArrayList)propertyValue;
 
 		String networkModelCustomizationUUID = getCustomizationUUID();

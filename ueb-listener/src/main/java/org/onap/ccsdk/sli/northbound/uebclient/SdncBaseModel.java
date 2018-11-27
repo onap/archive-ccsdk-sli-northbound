@@ -763,7 +763,7 @@ public class SdncBaseModel {
 	}
 
 	protected Object extractObjectValue (NodeTemplate nodeTemplate, String name) {
-		Object value = sdcCsarHelper.getNodeTemplatePropertyAsObject(nodeTemplate, name);
+		Object value = sdcCsarHelper.getNodeTemplatePropertyValueAsObject(nodeTemplate, name);
 		if (value != null) {
 			return value;
 		} else {
