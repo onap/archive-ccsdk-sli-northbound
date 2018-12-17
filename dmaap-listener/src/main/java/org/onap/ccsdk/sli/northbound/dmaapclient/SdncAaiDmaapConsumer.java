@@ -4,6 +4,7 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights
  *             reserved.
+ * Modifications Copyright © 2018 IBM.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -128,13 +129,13 @@ public class SdncAaiDmaapConsumer extends SdncDmaapConsumerImpl {
         JSONObject eventHeader = jsonObj.getJSONObject(EVENT_HEADER);
         for(Object key : eventHeader.keySet())
         {
-            if (!key.equals("action")) {
+            if (!("action").equals(key)) {
                 context.put(((String)key).replaceAll("-", ""), eventHeader.get((String)key));
             } else {
                 String action = (String) eventHeader.get((String) key);
-                if (action.equalsIgnoreCase("create")) {
+                if (("create").equalsIgnoreCase(action)) {
                     context.put((String)key,"Update");
-                } else if (action.equalsIgnoreCase("delete")) {
+                } else if (("delete").equalsIgnoreCase(action)) {
                     context.put((String) key, "Delete");
                 } else {
                     throw new IOException("Action type not supported " + action);
@@ -202,7 +203,7 @@ public class SdncAaiDmaapConsumer extends SdncDmaapConsumerImpl {
         JsonNode eventTypeNode = eventHeaderNode.get(EVENT_TYPE);
         String eventType = eventTypeNode.textValue();
 
-        if(AAI_EVENT.equals(eventType) == false) {
+        if(!AAI_EVENT.equals(eventType)) {
             LOG.info("Unknown Event Type {}", eventType);
             return;
         }
