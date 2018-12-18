@@ -4,6 +4,7 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights
  * 			reserved.
+ * Modifications Copyright © 2018 IBM.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +23,6 @@
 package org.onap.ccsdk.sli.northbound.uebclient;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
@@ -37,7 +37,6 @@ public class SdncARModel extends SdncBaseModel {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SdncARModel.class);
 
-	private String type = null;
 	private String subcategory = null;
 
 	public SdncARModel(ISdcCsarHelper sdcCsarHelper, NodeTemplate nodeTemplate,DBResourceManager jdbcDataSource) {
