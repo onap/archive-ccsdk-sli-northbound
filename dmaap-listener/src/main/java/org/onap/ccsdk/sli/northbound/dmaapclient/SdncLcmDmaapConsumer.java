@@ -4,6 +4,7 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights
  * 			reserved.
+ * Modifications Copyright © 2018 IBM.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +32,6 @@ public class SdncLcmDmaapConsumer extends SdncDmaapConsumerImpl {
 
     private static final Logger LOG = LoggerFactory.getLogger(SdncLcmDmaapConsumer.class);
 
-    private static final String PARTITION = "cambria.partition";
-    private static final String PARTITION_VALUE = "SDNC";
     private static final String BODY = "body";
     private static final String RPC = "rpc-name";
     
