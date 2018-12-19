@@ -4,6 +4,7 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights
  * 			reserved.
+ * Modifications Copyright © 2018 IBM.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +34,8 @@ public class AsdcApiSliClient {
 	private static final Logger LOG = LoggerFactory.getLogger(AsdcApiSliClient.class);
 
 	private final SvcLogicService svcLogicService;
+
+	private  String ErrorCode = "error-code";
 
 	public AsdcApiSliClient(final SvcLogicService svcLogicService) {
 		this.svcLogicService = svcLogicService;
@@ -78,12 +81,12 @@ public class AsdcApiSliClient {
 
 		if ("failure".equalsIgnoreCase(respProps.getProperty("SvcLogic.status"))) {
 
-			if (!respProps.containsKey("error-code")) {
-				respProps.setProperty("error-code", "500");
+			if (!respProps.containsKey(ErrorCode)) {
+				respProps.setProperty(ErrorCode, "500");
 			}
 		} else {
-			if (!respProps.containsKey("error-code")) {
-				respProps.setProperty("error-code", "200");
+			if (!respProps.containsKey(ErrorCode)) {
+				respProps.setProperty(ErrorCode, "200");
 			}
 		}
 
