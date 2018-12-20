@@ -4,6 +4,7 @@
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights
  * 						reserved.
+ * Modifications Copyright © 2018 IBM.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,8 +36,10 @@ public class SdncGroupModel extends SdncBaseModel {
 	
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SdncVFModuleModel.class);
+
+	private static final String groupType = "group_type";
 	
-	public SdncGroupModel(ISdcCsarHelper sdcCsarHelper, Group group, NodeTemplate nodeTemplate, SdncUebConfiguration config, DBResourceManager jdbcDataSource) throws IOException {
+	public SdncGroupModel(ISdcCsarHelper sdcCsarHelper, Group group, NodeTemplate nodeTemplate, SdncUebConfiguration config, DBResourceManager jdbcDataSource) {
 
 		super(sdcCsarHelper, group);
 		
@@ -47,7 +50,7 @@ public class SdncGroupModel extends SdncBaseModel {
 		UUID = extractValue (metadata, "UUID");
 		addParameter("group_uuid", UUID);	
 		addParameter("group_name", extractValue (metadata, "name"));
-		addParameter("group_type", group.getType());
+		addParameter(groupType, group.getType());
 		addParameter("version", extractValue (metadata, "version"));
 		
 		// extract properties
@@ -55,7 +58,7 @@ public class SdncGroupModel extends SdncBaseModel {
 		addParameter("subinterface_role", extractValue(group, "subinterface_role"), attributeValueParams);
 		
 		// relevant complex group properties are extracted and inserted into ATTRIBUTE_VALUE_PAIR 
-		addParameter(extractGetInputName (group, "group_type"), extractGetInputValue(group, nodeTemplate, "group_type"), attributeValueParams);
+		addParameter(extractGetInputName (group, groupType), extractGetInputValue(group, nodeTemplate, groupType), attributeValueParams);
 		addParameter(extractGetInputName (group, "group_role"), extractGetInputValue(group, nodeTemplate, "group_role"), attributeValueParams);
 		addParameter(extractGetInputName (group, "group_function"), extractGetInputValue(group, nodeTemplate, "group_function"), attributeValueParams);
 	}
