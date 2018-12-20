@@ -25,7 +25,6 @@ import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
@@ -59,6 +58,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Defines a base implementation for your provider. This class extends from a helper class
@@ -203,7 +203,7 @@ public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
 
             InstanceIdentifier.InstanceIdentifierBuilder<Artifact> aIdBuilder = InstanceIdentifier
                     .<Artifacts> builder(Artifacts.class)
-                    .child(Artifact.class, artifact.getKey());
+                    .child(Artifact.class, artifact.key());
 
             InstanceIdentifier<Artifact> path = aIdBuilder.build();
 
@@ -238,7 +238,7 @@ public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
 
         InstanceIdentifier.InstanceIdentifierBuilder<VfLicenseModelVersion> versionIdBuilder = InstanceIdentifier
                 .<VfLicenseModelVersions> builder(VfLicenseModelVersions.class)
-                .child(VfLicenseModelVersion.class, version.getKey());
+                .child(VfLicenseModelVersion.class, version.key());
 
         InstanceIdentifier<VfLicenseModelVersion> path = versionIdBuilder.build();
 
@@ -264,7 +264,7 @@ public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
         VfLicenseModelVersion version = vBuilder.build();
         InstanceIdentifier.InstanceIdentifierBuilder<VfLicenseModelVersion> versionIdBuilder = InstanceIdentifier
                 .<VfLicenseModelVersions> builder(VfLicenseModelVersions.class)
-                .child(VfLicenseModelVersion.class, version.getKey());
+                .child(VfLicenseModelVersion.class, version.key());
 
         InstanceIdentifier<VfLicenseModelVersion> path = versionIdBuilder.build();
 
@@ -282,7 +282,7 @@ public class AsdcApiProvider implements AutoCloseable, ASDCAPIService {
 }
 
 @Override
-public Future<RpcResult<VfLicenseModelUpdateOutput>> vfLicenseModelUpdate(VfLicenseModelUpdateInput input) {
+public ListenableFuture<RpcResult<VfLicenseModelUpdateOutput>> vfLicenseModelUpdate(VfLicenseModelUpdateInput input) {
     final String svcOperation = "vf-license-model-update";
 
     Properties parms = new Properties();

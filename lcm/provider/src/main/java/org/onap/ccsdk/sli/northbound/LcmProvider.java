@@ -43,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import org.onap.ccsdk.sli.northbound.LcmResponseCode.*;
 
@@ -129,7 +130,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 
 
 	@Override
-	public Future<RpcResult<CheckLockOutput>> checkLock(CheckLockInput input) {
+	public ListenableFuture<RpcResult<CheckLockOutput>> checkLock(CheckLockInput input) {
 		CheckLockInputBuilder iBuilder = new CheckLockInputBuilder(input);
 		CheckLockOutputBuilder oBuilder = new CheckLockOutputBuilder();
 
@@ -151,7 +152,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<RebootOutput>> reboot(RebootInput input) {
+	public ListenableFuture<RpcResult<RebootOutput>> reboot(RebootInput input) {
 		RebootInputBuilder iBuilder = new RebootInputBuilder(input);
 		RebootOutputBuilder oBuilder = new RebootOutputBuilder();
 
@@ -172,7 +173,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<UpgradeBackupOutput>> upgradeBackup(UpgradeBackupInput input) {
+	public ListenableFuture<RpcResult<UpgradeBackupOutput>> upgradeBackup(UpgradeBackupInput input) {
 		UpgradeBackupInputBuilder iBuilder = new UpgradeBackupInputBuilder(input);
 		UpgradeBackupOutputBuilder oBuilder = new UpgradeBackupOutputBuilder();
 
@@ -194,7 +195,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<RollbackOutput>> rollback(RollbackInput input) {
+	public ListenableFuture<RpcResult<RollbackOutput>> rollback(RollbackInput input) {
 		RollbackInputBuilder iBuilder = new RollbackInputBuilder(input);
 		RollbackOutputBuilder oBuilder = new RollbackOutputBuilder();
 
@@ -215,7 +216,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<SyncOutput>> sync(SyncInput input) {
+	public ListenableFuture<RpcResult<SyncOutput>> sync(SyncInput input) {
 		SyncInputBuilder iBuilder = new SyncInputBuilder(input);
 		SyncOutputBuilder oBuilder = new SyncOutputBuilder();
 
@@ -236,7 +237,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<QueryOutput>> query(QueryInput input) {
+	public ListenableFuture<RpcResult<QueryOutput>> query(QueryInput input) {
 		QueryInputBuilder iBuilder = new QueryInputBuilder(input);
 		QueryOutputBuilder oBuilder = new QueryOutputBuilder();
 
@@ -257,7 +258,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<ConfigExportOutput>> configExport(ConfigExportInput input) {
+	public ListenableFuture<RpcResult<ConfigExportOutput>> configExport(ConfigExportInput input) {
 		ConfigExportInputBuilder iBuilder = new ConfigExportInputBuilder(input);
 		ConfigExportOutputBuilder oBuilder = new ConfigExportOutputBuilder();
 
@@ -278,7 +279,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<StopApplicationOutput>> stopApplication(StopApplicationInput input) {
+	public ListenableFuture<RpcResult<StopApplicationOutput>> stopApplication(StopApplicationInput input) {
 		StopApplicationInputBuilder iBuilder = new StopApplicationInputBuilder(input);
 		StopApplicationOutputBuilder oBuilder = new StopApplicationOutputBuilder();
 
@@ -299,7 +300,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<SoftwareUploadOutput>> softwareUpload(SoftwareUploadInput input) {
+	public ListenableFuture<RpcResult<SoftwareUploadOutput>> softwareUpload(SoftwareUploadInput input) {
 		SoftwareUploadInputBuilder iBuilder = new SoftwareUploadInputBuilder(input);
 		SoftwareUploadOutputBuilder oBuilder = new SoftwareUploadOutputBuilder();
 
@@ -320,7 +321,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<ResumeTrafficOutput>> resumeTraffic(ResumeTrafficInput input) {
+	public ListenableFuture<RpcResult<ResumeTrafficOutput>> resumeTraffic(ResumeTrafficInput input) {
 		ResumeTrafficInputBuilder iBuilder = new ResumeTrafficInputBuilder(input);
 		ResumeTrafficOutputBuilder oBuilder = new ResumeTrafficOutputBuilder();
 
@@ -341,7 +342,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<DistributeTrafficOutput>> distributeTraffic(DistributeTrafficInput input) {
+	public ListenableFuture<RpcResult<DistributeTrafficOutput>> distributeTraffic(DistributeTrafficInput input) {
 		DistributeTrafficInputBuilder iBuilder = new DistributeTrafficInputBuilder(input);
 		DistributeTrafficOutputBuilder oBuilder = new DistributeTrafficOutputBuilder();
 
@@ -362,7 +363,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<ConfigureOutput>> configure(ConfigureInput input) {
+	public ListenableFuture<RpcResult<ConfigureOutput>> configure(ConfigureInput input) {
 		ConfigureInputBuilder iBuilder = new ConfigureInputBuilder(input);
 		ConfigureOutputBuilder oBuilder = new ConfigureOutputBuilder();
 
@@ -383,7 +384,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<ActionStatusOutput>> actionStatus(ActionStatusInput input) {
+	public ListenableFuture<RpcResult<ActionStatusOutput>> actionStatus(ActionStatusInput input) {
 		ActionStatusInputBuilder iBuilder = new ActionStatusInputBuilder(input);
 		ActionStatusOutputBuilder oBuilder = new ActionStatusOutputBuilder();
 
@@ -404,7 +405,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<UpgradePreCheckOutput>> upgradePreCheck(UpgradePreCheckInput input) {
+	public ListenableFuture<RpcResult<UpgradePreCheckOutput>> upgradePreCheck(UpgradePreCheckInput input) {
 		UpgradePreCheckInputBuilder iBuilder = new UpgradePreCheckInputBuilder(input);
 		UpgradePreCheckOutputBuilder oBuilder = new UpgradePreCheckOutputBuilder();
 
@@ -425,7 +426,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<LiveUpgradeOutput>> liveUpgrade(LiveUpgradeInput input) {
+	public ListenableFuture<RpcResult<LiveUpgradeOutput>> liveUpgrade(LiveUpgradeInput input) {
 		LiveUpgradeInputBuilder iBuilder = new LiveUpgradeInputBuilder(input);
 		LiveUpgradeOutputBuilder oBuilder = new LiveUpgradeOutputBuilder();
 
@@ -446,7 +447,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<ConfigModifyOutput>> configModify(ConfigModifyInput input) {
+	public ListenableFuture<RpcResult<ConfigModifyOutput>> configModify(ConfigModifyInput input) {
 		ConfigModifyInputBuilder iBuilder = new ConfigModifyInputBuilder(input);
 		ConfigModifyOutputBuilder oBuilder = new ConfigModifyOutputBuilder();
 
@@ -467,7 +468,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<RestartOutput>> restart(RestartInput input) {
+	public ListenableFuture<RpcResult<RestartOutput>> restart(RestartInput input) {
 		RestartInputBuilder iBuilder = new RestartInputBuilder(input);
 		RestartOutputBuilder oBuilder = new RestartOutputBuilder();
 
@@ -488,7 +489,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<HealthCheckOutput>> healthCheck(HealthCheckInput input) {
+	public ListenableFuture<RpcResult<HealthCheckOutput>> healthCheck(HealthCheckInput input) {
 		HealthCheckInputBuilder iBuilder = new HealthCheckInputBuilder(input);
 		HealthCheckOutputBuilder oBuilder = new HealthCheckOutputBuilder();
 
@@ -509,7 +510,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<LockOutput>> lock(LockInput input) {
+	public ListenableFuture<RpcResult<LockOutput>> lock(LockInput input) {
 		LockInputBuilder iBuilder = new LockInputBuilder(input);
 		LockOutputBuilder oBuilder = new LockOutputBuilder();
 
@@ -530,7 +531,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<TerminateOutput>> terminate(TerminateInput input) {
+	public ListenableFuture<RpcResult<TerminateOutput>> terminate(TerminateInput input) {
 		TerminateInputBuilder iBuilder = new TerminateInputBuilder(input);
 		TerminateOutputBuilder oBuilder = new TerminateOutputBuilder();
 
@@ -551,7 +552,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<AttachVolumeOutput>> attachVolume(AttachVolumeInput input) {
+	public ListenableFuture<RpcResult<AttachVolumeOutput>> attachVolume(AttachVolumeInput input) {
 		AttachVolumeInputBuilder iBuilder = new AttachVolumeInputBuilder(input);
 		AttachVolumeOutputBuilder oBuilder = new AttachVolumeOutputBuilder();
 
@@ -572,7 +573,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<MigrateOutput>> migrate(MigrateInput input) {
+	public ListenableFuture<RpcResult<MigrateOutput>> migrate(MigrateInput input) {
 		MigrateInputBuilder iBuilder = new MigrateInputBuilder(input);
 		MigrateOutputBuilder oBuilder = new MigrateOutputBuilder();
 
@@ -593,7 +594,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<QuiesceTrafficOutput>> quiesceTraffic(QuiesceTrafficInput input) {
+	public ListenableFuture<RpcResult<QuiesceTrafficOutput>> quiesceTraffic(QuiesceTrafficInput input) {
 		QuiesceTrafficInputBuilder iBuilder = new QuiesceTrafficInputBuilder(input);
 		QuiesceTrafficOutputBuilder oBuilder = new QuiesceTrafficOutputBuilder();
 
@@ -614,7 +615,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<ConfigRestoreOutput>> configRestore(ConfigRestoreInput input) {
+	public ListenableFuture<RpcResult<ConfigRestoreOutput>> configRestore(ConfigRestoreInput input) {
 		ConfigRestoreInputBuilder iBuilder = new ConfigRestoreInputBuilder(input);
 		ConfigRestoreOutputBuilder oBuilder = new ConfigRestoreOutputBuilder();
 
@@ -635,7 +636,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<UpgradeBackoutOutput>> upgradeBackout(UpgradeBackoutInput input) {
+	public ListenableFuture<RpcResult<UpgradeBackoutOutput>> upgradeBackout(UpgradeBackoutInput input) {
 		UpgradeBackoutInputBuilder iBuilder = new UpgradeBackoutInputBuilder(input);
 		UpgradeBackoutOutputBuilder oBuilder = new UpgradeBackoutOutputBuilder();
 
@@ -656,7 +657,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<EvacuateOutput>> evacuate(EvacuateInput input) {
+	public ListenableFuture<RpcResult<EvacuateOutput>> evacuate(EvacuateInput input) {
 		EvacuateInputBuilder iBuilder = new EvacuateInputBuilder(input);
 		EvacuateOutputBuilder oBuilder = new EvacuateOutputBuilder();
 
@@ -677,7 +678,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<UnlockOutput>> unlock(UnlockInput input) {
+	public ListenableFuture<RpcResult<UnlockOutput>> unlock(UnlockInput input) {
 		UnlockInputBuilder iBuilder = new UnlockInputBuilder(input);
 		UnlockOutputBuilder oBuilder = new UnlockOutputBuilder();
 
@@ -698,7 +699,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<ConfigBackupDeleteOutput>> configBackupDelete(ConfigBackupDeleteInput input) {
+	public ListenableFuture<RpcResult<ConfigBackupDeleteOutput>> configBackupDelete(ConfigBackupDeleteInput input) {
 		ConfigBackupDeleteInputBuilder iBuilder = new ConfigBackupDeleteInputBuilder(input);
 		ConfigBackupDeleteOutputBuilder oBuilder = new ConfigBackupDeleteOutputBuilder();
 
@@ -719,7 +720,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<UpgradeSoftwareOutput>> upgradeSoftware(UpgradeSoftwareInput input) {
+	public ListenableFuture<RpcResult<UpgradeSoftwareOutput>> upgradeSoftware(UpgradeSoftwareInput input) {
 		UpgradeSoftwareInputBuilder iBuilder = new UpgradeSoftwareInputBuilder(input);
 		UpgradeSoftwareOutputBuilder oBuilder = new UpgradeSoftwareOutputBuilder();
 
@@ -740,7 +741,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<StopOutput>> stop(StopInput input) {
+	public ListenableFuture<RpcResult<StopOutput>> stop(StopInput input) {
 		StopInputBuilder iBuilder = new StopInputBuilder(input);
 		StopOutputBuilder oBuilder = new StopOutputBuilder();
 
@@ -761,7 +762,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<DetachVolumeOutput>> detachVolume(DetachVolumeInput input) {
+	public ListenableFuture<RpcResult<DetachVolumeOutput>> detachVolume(DetachVolumeInput input) {
 		DetachVolumeInputBuilder iBuilder = new DetachVolumeInputBuilder(input);
 		DetachVolumeOutputBuilder oBuilder = new DetachVolumeOutputBuilder();
 
@@ -782,7 +783,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<ConfigScaleOutOutput>> configScaleOut(ConfigScaleOutInput input) {
+	public ListenableFuture<RpcResult<ConfigScaleOutOutput>> configScaleOut(ConfigScaleOutInput input) {
 		ConfigScaleOutInputBuilder iBuilder = new ConfigScaleOutInputBuilder(input);
 		ConfigScaleOutOutputBuilder oBuilder = new ConfigScaleOutOutputBuilder();
 
@@ -803,7 +804,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<UpgradePostCheckOutput>> upgradePostCheck(UpgradePostCheckInput input) {
+	public ListenableFuture<RpcResult<UpgradePostCheckOutput>> upgradePostCheck(UpgradePostCheckInput input) {
 		UpgradePostCheckInputBuilder iBuilder = new UpgradePostCheckInputBuilder(input);
 		UpgradePostCheckOutputBuilder oBuilder = new UpgradePostCheckOutputBuilder();
 
@@ -824,7 +825,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<TestOutput>> test(TestInput input) {
+	public ListenableFuture<RpcResult<TestOutput>> test(TestInput input) {
 		TestInputBuilder iBuilder = new TestInputBuilder(input);
 		TestOutputBuilder oBuilder = new TestOutputBuilder();
 
@@ -845,7 +846,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<StartApplicationOutput>> startApplication(StartApplicationInput input) {
+	public ListenableFuture<RpcResult<StartApplicationOutput>> startApplication(StartApplicationInput input) {
 		StartApplicationInputBuilder iBuilder = new StartApplicationInputBuilder(input);
 		StartApplicationOutputBuilder oBuilder = new StartApplicationOutputBuilder();
 
@@ -866,7 +867,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<ConfigBackupOutput>> configBackup(ConfigBackupInput input) {
+	public ListenableFuture<RpcResult<ConfigBackupOutput>> configBackup(ConfigBackupInput input) {
 		ConfigBackupInputBuilder iBuilder = new ConfigBackupInputBuilder(input);
 		ConfigBackupOutputBuilder oBuilder = new ConfigBackupOutputBuilder();
 
@@ -887,7 +888,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<RebuildOutput>> rebuild(RebuildInput input) {
+	public ListenableFuture<RpcResult<RebuildOutput>> rebuild(RebuildInput input) {
 		RebuildInputBuilder iBuilder = new RebuildInputBuilder(input);
 		RebuildOutputBuilder oBuilder = new RebuildOutputBuilder();
 
@@ -908,7 +909,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<AuditOutput>> audit(AuditInput input) {
+	public ListenableFuture<RpcResult<AuditOutput>> audit(AuditInput input) {
 		AuditInputBuilder iBuilder = new AuditInputBuilder(input);
 		AuditOutputBuilder oBuilder = new AuditOutputBuilder();
 
@@ -929,7 +930,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<StartOutput>> start(StartInput input) {
+	public ListenableFuture<RpcResult<StartOutput>> start(StartInput input) {
 		StartInputBuilder iBuilder = new StartInputBuilder(input);
 		StartOutputBuilder oBuilder = new StartOutputBuilder();
 
@@ -950,7 +951,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public Future<RpcResult<SnapshotOutput>> snapshot(SnapshotInput input) {
+	public ListenableFuture<RpcResult<SnapshotOutput>> snapshot(SnapshotInput input) {
 		SnapshotInputBuilder iBuilder = new SnapshotInputBuilder(input);
 		SnapshotOutputBuilder oBuilder = new SnapshotOutputBuilder();
 

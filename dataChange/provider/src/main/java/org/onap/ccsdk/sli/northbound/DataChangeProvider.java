@@ -25,7 +25,6 @@ package org.onap.ccsdk.sli.northbound;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import org.onap.ccsdk.sli.core.sli.provider.MdsalHelper;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
@@ -43,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Defines a base implementation for your provider. This class extends from a helper class
@@ -98,7 +98,7 @@ public class DataChangeProvider implements AutoCloseable, DataChangeService {
     }
 
 	@Override
-	public Future<RpcResult<DataChangeNotificationOutput>> dataChangeNotification(
+	public ListenableFuture<RpcResult<DataChangeNotificationOutput>> dataChangeNotification(
 			DataChangeNotificationInput input) {
 		final String svcOperation = "data-change-notification";
 

@@ -23,10 +23,6 @@
             <artifactId>dataChange-model</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.opendaylight.controller</groupId>
-            <artifactId>sal-binding-config</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>org.opendaylight.controller</groupId>
