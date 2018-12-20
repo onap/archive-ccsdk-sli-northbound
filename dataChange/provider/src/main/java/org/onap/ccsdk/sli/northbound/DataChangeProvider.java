@@ -127,7 +127,7 @@ public class DataChangeProvider implements AutoCloseable, DataChangeService {
 			{
 				try
 				{
-					dataChangeClient.execute("DataChange", svcOperation, null, "sync", serviceDataBuilder, parms);
+					dataChangeClient.execute(APPLICATION_NAME, svcOperation, null, "sync", serviceDataBuilder, parms);
 				}
 				catch (Exception e)
 				{
