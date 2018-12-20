@@ -19,7 +19,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.sdnc.northbound;
+package org.onap.sdnc.northbound.dataChange;
 
 import org.junit.Before;
 import org.junit.Test;
