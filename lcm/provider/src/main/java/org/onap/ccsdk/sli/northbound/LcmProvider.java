@@ -75,6 +75,8 @@ public class LcmProvider implements AutoCloseable, LCMService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(LcmProvider.class);
 
+	private static final String exceptionMessage = "Caught exception";
+
 	private static final String APPLICATION_NAME = "LCM";
 
 	private final ExecutorService executor;
@@ -138,7 +140,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -160,7 +162,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -182,7 +184,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -203,7 +205,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -224,7 +226,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -245,7 +247,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -266,7 +268,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -287,7 +289,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -308,7 +310,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -329,7 +331,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -350,7 +352,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -371,7 +373,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -392,7 +394,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -413,7 +415,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -434,7 +436,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -455,7 +457,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -476,7 +478,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -497,7 +499,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -518,7 +520,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -539,7 +541,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -560,7 +562,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -581,7 +583,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -602,7 +604,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -623,7 +625,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -644,7 +646,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -665,7 +667,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -686,7 +688,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -707,7 +709,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -728,7 +730,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -749,7 +751,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -770,7 +772,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -791,7 +793,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -812,7 +814,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -833,7 +835,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -854,7 +856,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -875,7 +877,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -896,7 +898,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -917,7 +919,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -938,7 +940,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
@@ -959,7 +961,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 		} catch (LcmRpcInvocationException e) {
-			LOG.debug("Caught exception", e);
+			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
 			oBuilder.setStatus(e.getStatus());
 		}
