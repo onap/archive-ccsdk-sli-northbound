@@ -4,6 +4,7 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights
  * 			reserved.
+ * Modifications Copyright © 2018 IBM.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +42,16 @@ public class SdncArtifactMap {
 		private String rpc;
 		private int pass;
 
+		private SdncArtifactType(String tag, String rpc, String pass) {
+			this.tag = tag;
+			this.rpc = rpc;
+			try {
+				this.pass = Integer.parseInt(pass);
+			} catch (Exception e) {
+				LOG.error("Invalid pass value for artifact map entry ({} {} {})", tag, rpc, pass, e);
+			}
+		}
+
 		public String getTag() {
 			return tag;
 		}
@@ -58,26 +69,16 @@ public class SdncArtifactMap {
         public String getRpcUrl(String base) {
 			return base+rpc;
         }
-
-		private SdncArtifactType(String tag, String rpc, String pass) {
-			this.tag = tag;
-			this.rpc = rpc;
-			try {
-				this.pass = Integer.parseInt(pass);
-			} catch (Exception e) {
-				LOG.error("Invalid pass value for artifact map entry ({} {} {})", tag, rpc, pass, e);
-			}
-		}
 	}
 
 
 
 	private Map<String, SdncArtifactType> mapItems = new HashMap<>();
 
-	private int NumPasses = 1;
+	private int numPasses = 1;
 
 	public int getNumPasses() {
-		return NumPasses;
+		return numPasses;
 	}
 
 	public void load(String fileName) {
@@ -93,8 +94,8 @@ public class SdncArtifactMap {
 					if (lnFields.length == 3) {
 						SdncArtifactType entry = new SdncArtifactType(lnFields[0], lnFields[1], lnFields[2]);
 						mapItems.put(entry.getTag(), entry);
-						if (entry.getPass() + 1 > NumPasses ) {
-							NumPasses = entry.getPass() + 1;
+						if (entry.getPass() + 1 > numPasses ) {
+							numPasses = entry.getPass() + 1;
 						}
 					}
 				}
