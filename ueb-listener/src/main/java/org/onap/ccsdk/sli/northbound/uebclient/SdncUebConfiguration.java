@@ -4,6 +4,7 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights
  * 			reserved.
+ * Modifications Copyright © 2018 IBM.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,10 +59,6 @@ public class SdncUebConfiguration implements IConfiguration{
 
 	private SdncArtifactMap artifactMap = SdncArtifactMap.getInstance();
 
-	public String getAsdcApiNamespace() {
-		return asdcApiNamespace;
-	}
-
 	private String incomingDir = null;
 
 	private String archiveDir = null;
@@ -73,14 +70,6 @@ public class SdncUebConfiguration implements IConfiguration{
 	private String keyStorePath;
 
 	private String xsltPathList;
-
-	public String getXsltPathList() {
-		return xsltPathList;
-	}
-
-	public String getOverrideFile() {
-		return overrideFile;
-	}
 
 	public SdncUebConfiguration() {
 		String propDir = System.getenv(SDNC_CONFIG_DIR);
@@ -103,6 +92,17 @@ public class SdncUebConfiguration implements IConfiguration{
 		}
 	}
 
+	public String getAsdcApiNamespace() {
+		return asdcApiNamespace;
+	}
+
+	public String getXsltPathList() {
+		return xsltPathList;
+	}
+
+	public String getOverrideFile() {
+		return overrideFile;
+	}
 
 	public void init(String propDir) throws IOException {
 		String propPath;
