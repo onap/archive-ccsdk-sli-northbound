@@ -4,6 +4,7 @@
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights
  * 						reserved.
+ * Modifications Copyright © 2018 IBM.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,13 +25,8 @@ package org.onap.ccsdk.sli.northbound.uebclient;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
 import org.onap.sdc.toscaparser.api.Group;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SdncVFModuleModel extends SdncBaseModel {
-	
-	private static final Logger LOG = LoggerFactory
-			.getLogger(SdncVFModuleModel.class);
 	
 	public SdncVFModuleModel(ISdcCsarHelper sdcCsarHelper, Group group, SdncVFModel vfNodeModel) {
 
