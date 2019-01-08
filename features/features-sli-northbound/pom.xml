@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.onap.ccsdk.parent</groupId>
         <artifactId>feature-repo-parent</artifactId>
-        <version>1.2.0-SNAPSHOT</version>
+        <version>1.2.0</version>
         <relativePath/>
     </parent>
 
@@ -15,6 +15,10 @@
     <packaging>feature</packaging>
 
     <name>ccsdk-sli-northbound :: features :: ${project.artifactId}</name>
+
+    <properties>
+        <ccsdk.sli.northbound.version>${project.version}</ccsdk.sli.northbound.version>
+    </properties>
 
     <dependencies>
         <dependency>
