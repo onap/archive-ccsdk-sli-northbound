@@ -107,6 +107,7 @@
         <module>lcm</module>
         <module>dmaap-listener</module>
         <module>ueb-listener</module>
+        <module>daexim-offsite-backup</module>
         <module>features</module>
         <module>artifacts</module>
     </modules>
