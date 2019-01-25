@@ -75,11 +75,11 @@ public class DaeximOffsiteBackupProvider implements AutoCloseable, DaeximOffsite
     private static String CREDENTIALS;
     private static String NEXUS_URL;
     private static String POD_NAME;
+    private static String OPERATIONAL_JSON;
+    private static String MODELS_JSON;
+    private static String CONFIG_JSON;
     private static String PROPERTIES_FILE = System.getenv("SDNC_CONFIG_DIR") + "/daexim-offsite-backup.properties";
 
-    private static final String OPERATIONAL_JSON = "odl_backup_operational.json";
-    private static final String MODELS_JSON = "odl_backup_models.json";
-    private static final String CONFIG_JSON = "odl_backup_config.json";
     private static final String BACKUP_ARCHIVE = "odl_backup.zip";
     private static final String appName = "daexim-offsite-backup";
 
@@ -122,6 +122,9 @@ public class DaeximOffsiteBackupProvider implements AutoCloseable, DaeximOffsite
             properties.put("credentials", "admin:enc:YWRtaW4xMjM=");
             properties.put("nexusUrl", "http://localhost:8081/nexus/content/repositories/");
             properties.put("podName", "UNKNOWN_ODL");
+            properties.put("file.operational", "odl_backup_operational.json");
+            properties.put("file.models", "odl_backup_models.json");
+            properties.put("file.config", "odl_backup_config.json");
             return;
         }
         FileInputStream fileInputStream;
@@ -133,6 +136,9 @@ public class DaeximOffsiteBackupProvider implements AutoCloseable, DaeximOffsite
             LOG.info("daeximDirectory: " + properties.getProperty("daeximDirectory"));
             LOG.info("nexusUrl: " + properties.getProperty("nexusUrl"));
             LOG.info("podName: " + properties.getProperty("podName"));
+            LOG.info("file.operational: " + properties.getProperty("file.operational"));
+            LOG.info("file.models: " + properties.getProperty("file.models"));
+            LOG.info("file.config: " + properties.getProperty("file.config"));
         } catch(IOException e) {
             LOG.error("Error loading properties.", e);
         }
@@ -146,6 +152,10 @@ public class DaeximOffsiteBackupProvider implements AutoCloseable, DaeximOffsite
         }
         DAEXIM_DIR =  properties.getProperty("daeximDirectory");
         NEXUS_URL = properties.getProperty("nexusUrl");
+
+        OPERATIONAL_JSON = properties.getProperty("file.operational");
+        MODELS_JSON = properties.getProperty("file.models");
+        CONFIG_JSON = properties.getProperty("file.config");
 
         if(!properties.getProperty("credentials").contains(":")) { //Entire thing is encoded
             CREDENTIALS = new String(Base64.getDecoder().decode(properties.getProperty("credentials")));

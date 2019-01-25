@@ -78,5 +78,10 @@ Before each RPC execution this module pulls information from a user supplied pro
 - credentials
 - nexusUrl
 - podName
+- file.operational
+- file.models
+- file.config
+
+> Refer to the example properties file
 
 If the module cannot find the properties file it will default to generic values and attempt to move forward.
