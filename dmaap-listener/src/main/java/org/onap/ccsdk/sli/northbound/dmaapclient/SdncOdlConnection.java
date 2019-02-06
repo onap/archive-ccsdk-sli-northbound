@@ -106,12 +106,7 @@ public class SdncOdlConnection {
         httpConn.setUseCaches(false);
 
         if (httpConn instanceof HttpsURLConnection) {
-            HostnameVerifier hostnameVerifier = new HostnameVerifier() {
-                @Override
-                public boolean verify(String hostname, SSLSession session) {
-                    return true;
-                }
-            };
+            HostnameVerifier hostnameVerifier = (hostname, session) -> true;
             ((HttpsURLConnection) httpConn).setHostnameVerifier(hostnameVerifier);
         }
 
