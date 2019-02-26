@@ -27,10 +27,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
+import org.onap.sdc.tosca.parser.enums.SdcTypes;
 import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
+import org.onap.sdc.tosca.parser.api.IEntityDetails;
+import org.onap.sdc.tosca.parser.elements.queries.EntityQuery;
+import org.onap.sdc.tosca.parser.elements.queries.TopologyTemplateQuery;
 import org.onap.sdc.toscaparser.api.Group;
 import org.onap.sdc.toscaparser.api.NodeTemplate;
-import org.onap.sdc.toscaparser.api.Policy;
+import org.onap.sdc.toscaparser.api.Property;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.onap.ccsdk.sli.core.dblib.DBResourceManager;
 import org.slf4j.Logger;
@@ -162,21 +166,48 @@ public class SdncVFModel extends SdncBaseModel {
 	
 	private void insertVFtoNetworkRoleMappingData () throws IOException {
 		
-		// For each VF, insert VF_TO_NETWORK_ROLE_MAPPING data
-		List<NodeTemplate> cpNodes = sdcCsarHelper.getCpListByVf(getCustomizationUUIDNoQuotes());
-		for (NodeTemplate cpNode : cpNodes){
+		// Cleanup existing VF_TO_NETWORK_ROLE_MAPPING for this VF
+		try {
+			cleanUpExistingToscaData("VF_TO_NETWORK_ROLE_MAPPING", "vf_customization_uuid", getCustomizationUUID());
+		} catch (IOException e) {
+			LOG.error("Could not cleanup Tosca CSAR data into the VF_TO_NETWORK_ROLE_MAPPING table");
+			throw new IOException (e);
+		}	
+		
+		// For this VF, insert VF_TO_NETWORK_ROLE_MAPPING data
+		EntityQuery entityQueryCP = EntityQuery.newBuilder(SdcTypes.CP).build();
+	    TopologyTemplateQuery topologyTemplateQueryVF = TopologyTemplateQuery.newBuilder(SdcTypes.VF).customizationUUID(getCustomizationUUIDNoQuotes()).build();
+	    List<IEntityDetails> cpEntities = sdcCsarHelper.getEntity(entityQueryCP, topologyTemplateQueryVF, true);
+	    
+		for (IEntityDetails entity: cpEntities ) {		
+			
+			Map<String, Property> properties = entity.getProperties();
+			if (properties.containsKey("network_role")) {
 
-			// Insert into VF_TO_NETWORK_ROLE_MAPPING vf_customization_uuid and network_role
-			String cpNetworkRole = sdcCsarHelper.getNodeTemplatePropertyLeafValue(cpNode, "network_role");
-
-			try {
-				cleanUpExistingToscaData("VF_TO_NETWORK_ROLE_MAPPING", "vf_customization_uuid", getCustomizationUUID());
-				LOG.info("Call insertToscaData for VF_TO_NETWORK_ROLE_MAPPING where vf_customization_uuid = " + getCustomizationUUID());
-				insertToscaData("insert into VF_TO_NETWORK_ROLE_MAPPING (vf_customization_uuid, network_role) values (" +
-				getCustomizationUUID() + ", \"" + cpNetworkRole + "\")", null);
-			} catch (IOException e) {
-				LOG.error("Could not insert Tosca CSAR data into the VF_TO_NETWORK_ROLE_MAPPING table");
-				throw new IOException (e);
+				Property networkRoleProperty = properties.get("network_role");
+				if (networkRoleProperty != null && networkRoleProperty.getValue() != null) {
+					String cpNetworkRole = networkRoleProperty.getValue().toString();
+					LOG.debug("insertVFtoNetworkRoleMappingData: " + "VF: "  + getCustomizationUUID() + ", networkRole = " + cpNetworkRole);
+					
+					// Only insert unique network_role values for this VF
+					boolean networkRoleExists = false;
+					Map<String, String> networkRoleyKeys = new HashMap<String, String>();
+					networkRoleyKeys.put("vf_customization_uuid", getCustomizationUUID());
+					networkRoleyKeys.put("network_role", "\"" + cpNetworkRole + "\"");			
+					networkRoleExists = checkForExistingToscaData("VF_TO_NETWORK_ROLE_MAPPING", networkRoleyKeys);
+					
+					if (networkRoleExists == false) {
+						try {
+							//cleanUpExistingToscaData("VF_TO_NETWORK_ROLE_MAPPING", "vf_customization_uuid", getCustomizationUUID());
+							LOG.info("Call insertToscaData for VF_TO_NETWORK_ROLE_MAPPING where vf_customization_uuid = " + getCustomizationUUID());
+							insertToscaData("insert into VF_TO_NETWORK_ROLE_MAPPING (vf_customization_uuid, network_role) values (" +
+							getCustomizationUUID() + ", \"" + cpNetworkRole + "\")", null);
+						} catch (IOException e) {
+							LOG.error("Could not insert Tosca CSAR data into the VF_TO_NETWORK_ROLE_MAPPING table");
+							throw new IOException (e);
+						}							
+					}
+				}
 			}
 
 		} // CP loop

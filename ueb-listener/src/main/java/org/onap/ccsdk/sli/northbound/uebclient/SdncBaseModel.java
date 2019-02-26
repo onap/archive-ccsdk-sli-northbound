@@ -278,9 +278,9 @@ public class SdncBaseModel {
 		for (Policy policy : policyList) {
 			
 			// extract policy metadata
-			String policyUuid = policy.getMetaData().getOrDefault("UUID", "").toString(); 
-			String policyInvariantUuid = policy.getMetaData().getOrDefault("invariantUUID", "").toString();
-			String policyCustomizationUuid = policy.getMetaData().getOrDefault("customizationUUID", "").toString();
+			String policyUuid = policy.getMetaDataObj().getAllProperties().getOrDefault("UUID", "").toString();
+			String policyInvariantUuid = policy.getMetaDataObj().getAllProperties().getOrDefault("invariantUUID", "").toString();
+			String policyCustomizationUuid = policy.getMetaDataObj().getAllProperties().getOrDefault("customizationUUID", "").toString();
 			
 			// cleanup existing RESOURCE_POLICY data
 			Map<String, String> cleanupParams = new HashMap<String, String>();
@@ -293,9 +293,9 @@ public class SdncBaseModel {
 			addParameter("policy_uuid", policyUuid, policyParams);
 			addParameter("policy_customization_uuid", policyCustomizationUuid, policyParams);
 			addParameter("policy_invariant_uuid", policyInvariantUuid, policyParams);
-			addParameter("policy_name", policy.getMetaData().getOrDefault(PARAM_NAME_KEY, "").toString(), policyParams);
-			addParameter(PARAM_VERSION_KEY, policy.getMetaData().getOrDefault(PARAM_VERSION_KEY, "").toString(), policyParams);
-			addParameter("policy_type", policy.getMetaData().getOrDefault(PARAM_TYPE_KEY, "").toString(), policyParams);
+			addParameter("policy_name", policy.getMetaDataObj().getAllProperties().getOrDefault(PARAM_NAME_KEY, "").toString(), policyParams);
+			addParameter(PARAM_VERSION_KEY, policy.getMetaDataObj().getAllProperties().getOrDefault(PARAM_VERSION_KEY, "").toString(), policyParams);
+			addParameter("policy_type", policy.getType(), policyParams);
 			
 			// extract properties
 			addParameter("property_type", extractValue(policy, PARAM_TYPE_KEY), policyParams);
@@ -350,8 +350,8 @@ public class SdncBaseModel {
 		for (Policy policy : policyList) {
 			
 			// extract policy metadata
-			String policyUuid = policy.getMetaData().getOrDefault("UUID", "").toString();
-			String policyInvariantUuid = policy.getMetaData().getOrDefault("invariantUUID", "").toString();
+			String policyUuid = policy.getMetaDataObj().getAllProperties().getOrDefault("UUID", "").toString();
+			String policyInvariantUuid = policy.getMetaDataObj().getAllProperties().getOrDefault("invariantUUID", "").toString();
 			
 			// cleanup existing RESOURCE_POLICY data
 			Map<String, String> cleanupParams = new HashMap<String, String>();
@@ -363,8 +363,8 @@ public class SdncBaseModel {
 			Map<String, String> policyParams = new HashMap<String, String>();
 			addParameter("policy_uuid", policyUuid, policyParams);
 			addParameter("policy_invariant_uuid", policyInvariantUuid, policyParams);
-			addParameter("policy_name", policy.getMetaData().getOrDefault("name", "").toString(), policyParams);
-			addParameter("version", policy.getMetaData().getOrDefault("version", "").toString(), policyParams);
+			addParameter("policy_name", policy.getMetaDataObj().getAllProperties().getOrDefault("name", "").toString(), policyParams);
+			addParameter("version", policy.getMetaDataObj().getAllProperties().getOrDefault("version", "").toString(), policyParams);
 			addParameter("policy_type", policy.getType(), policyParams);
 			
 			// extract properties
@@ -386,6 +386,10 @@ public class SdncBaseModel {
 			
 			// insert into RESOURCE_POLICY_TO_TARGET_NODE_MAPPING
 			List<String> policyTargetNameList = policy.getTargets();
+			if (policyTargetNameList == null) {
+				continue;
+			}
+
 			for (String targetName : policyTargetNameList) {
 				NodeTemplate targetNode = sdcCsarHelper.getNodeTemplateByName(targetName);
 				
@@ -423,8 +427,8 @@ public class SdncBaseModel {
 		for (Policy policy : policyList) {
 			
 			// extract policy metadata
-			String policyUuid = policy.getMetaData().getOrDefault("UUID", "").toString();
-			String policyInvariantUuid = policy.getMetaData().getOrDefault("invariantUUID", "").toString();
+			String policyUuid = policy.getMetaDataObj().getAllProperties().getOrDefault("UUID", "").toString();
+			String policyInvariantUuid = policy.getMetaDataObj().getAllProperties().getOrDefault("invariantUUID", "").toString();
 			
 			// cleanup existing RESOURCE_POLICY data
 			Map<String, String> cleanupParams = new HashMap<String, String>();
@@ -436,9 +440,9 @@ public class SdncBaseModel {
 			Map<String, String> policyParams = new HashMap<String, String>();
 			addParameter("policy_uuid", policyUuid, policyParams);
 			addParameter("policy_invariant_uuid", policyInvariantUuid, policyParams);
-			String policyName = policy.getMetaData().getOrDefault(PARAM_NAME_KEY, "").toString();
+			String policyName = policy.getMetaDataObj().getAllProperties().getOrDefault(PARAM_NAME_KEY, "").toString();
 			addParameter("policy_name", policyName, policyParams);
-			addParameter(PARAM_VERSION_KEY, policy.getMetaData().getOrDefault(PARAM_VERSION_KEY, "").toString(), policyParams);
+			addParameter(PARAM_VERSION_KEY, policy.getMetaDataObj().getAllProperties().getOrDefault(PARAM_VERSION_KEY, "").toString(), policyParams);
 			addParameter("policy_type", policy.getType(), policyParams);
 			
 			// extract properties
@@ -460,6 +464,10 @@ public class SdncBaseModel {
 			
 			// insert into RESOURCE_POLICY_TO_TARGET_NODE_MAPPING
 			List<NodeTemplate> targetNodeList = sdcCsarHelper.getPolicyTargetsFromOrigin(nodeTemplate, policyName);
+			if (targetNodeList == null) {
+				continue;
+			}
+
 			for (NodeTemplate targetNode : targetNodeList) {
 				//NodeTemplate targetNode = sdcCsarHelper.getNodeTemplateByName(targetName);
 				if (targetNode == null) {					
