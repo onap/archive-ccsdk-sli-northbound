@@ -275,6 +275,7 @@ public class TestSdncUebCallback {
 		
 		when(iData.getServiceName()).thenReturn("testServiceName");
 		//when(iData.getServiceArtifacts()).thenReturn(artifactInfoList);
+		cb.deployDownloadedFiles(null, null, null);
 		cb.activateCallback(iData);
 
 	}
