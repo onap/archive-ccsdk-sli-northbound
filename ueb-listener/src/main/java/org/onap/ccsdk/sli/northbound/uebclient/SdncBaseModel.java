@@ -31,6 +31,7 @@ import java.util.Map;
 
 import javax.sql.rowset.CachedRowSet;
 
+import org.onap.sdc.tosca.parser.api.IEntityDetails;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
 import org.onap.sdc.toscaparser.api.CapabilityAssignment;
@@ -70,6 +71,7 @@ public class SdncBaseModel {
 	protected static DBResourceManager jdbcDataSource = null;
 	protected static SdncUebConfiguration config = null;
 	protected NodeTemplate nodeTemplate = null;
+	protected IEntityDetails entityDetails = null;
 	
 	public SdncBaseModel(DBResourceManager jdbcDataSource) {
 		this.jdbcDataSource = jdbcDataSource;		
@@ -86,6 +88,14 @@ public class SdncBaseModel {
 		this (sdcCsarHelper, nodeTemplate);
 		this.sdcCsarHelper = sdcCsarHelper;
 		this.nodeTemplate = nodeTemplate;
+		this.jdbcDataSource = jdbcDataSource;		
+		this.config = config;
+	}
+	
+	public SdncBaseModel(ISdcCsarHelper sdcCsarHelper, IEntityDetails entityDetails, DBResourceManager jdbcDataSource, SdncUebConfiguration config) throws IOException {
+		this (sdcCsarHelper, entityDetails);
+		this.sdcCsarHelper = sdcCsarHelper;
+		this.entityDetails = entityDetails;
 		this.jdbcDataSource = jdbcDataSource;		
 		this.config = config;
 	}
@@ -126,6 +136,23 @@ public class SdncBaseModel {
 		//addParameter("ecomp_generated_naming", extractValue (nodeTemplate, "naming#ecompnaming")); // should be extractBooleanValue?
 		//addParameter("naming_policy", extractValue (nodeTemplate, "naming#namingpolicy"));
 		
+	}
+	
+	public SdncBaseModel(ISdcCsarHelper sdcCsarHelper, IEntityDetails entityDetails) {
+
+		params = new HashMap<String, String>();
+		attributeValueParams = new HashMap<String, String>();
+		this.sdcCsarHelper = sdcCsarHelper;
+		this.entityDetails = entityDetails;
+
+		// extract common nodeTemplate metadata
+		Metadata metadata = entityDetails.getMetadata();
+		customizationUUID = extractValue (metadata, SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
+		invariantUUID = extractValue (metadata, SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID);
+		addParameter(PARAM_INVARIANT_UUID_KEY, invariantUUID);
+		UUID = extractValue (metadata, SdcPropertyNames.PROPERTY_NAME_UUID);
+		addParameter(PARAM_UUID_KEY, UUID);
+		addParameter(PARAM_VERSION_KEY, extractValue (metadata, SdcPropertyNames.PROPERTY_NAME_VERSION));
 	}
 	
 	public SdncBaseModel(ISdcCsarHelper sdcCsarHelper, Group group, SdncUebConfiguration config, DBResourceManager jdbcDataSource) throws IOException {
@@ -662,6 +689,22 @@ public class SdncBaseModel {
 		}
 	}
 
+	protected String extractValue (IEntityDetails  entityDetails, String name) {
+		String value = null; 
+		if (entityDetails.getProperties().containsKey(name)) {
+			Property property = entityDetails.getProperties().get(name);
+			if (property != null && property.getValue() != null) {
+				value = property.getValue().toString();
+			}
+		}
+		
+		if (value != null) {
+			return value;
+		} else {
+			return "";
+		}
+	}
+
 	protected String extractGetInputValue (Group group, NodeTemplate nodeTemplate, String name) {
 
 		String value = sdcCsarHelper.getNodeTemplatePropertyLeafValue(nodeTemplate, extractGetInputName (group, name));
@@ -754,6 +797,22 @@ public class SdncBaseModel {
 
 	protected String extractBooleanValue (NodeTemplate nodeTemplate, String name) {
 		String value = sdcCsarHelper.getNodeTemplatePropertyLeafValue(nodeTemplate, name);
+		if (value != null && !value.isEmpty()) {
+			return value.contains("true") ? "Y" : "N";
+		} else {
+			return "";
+		}
+	}
+
+	protected String extractBooleanValue (IEntityDetails entityDetails, String name) {
+		String value = null; 
+		if (entityDetails.getProperties().containsKey(name)) {
+			Property property = entityDetails.getProperties().get(name);
+			if (property != null && property.getValue() != null) {
+				value = property.getValue().toString();
+			}
+		}
+		
 		if (value != null && !value.isEmpty()) {
 			return value.contains("true") ? "Y" : "N";
 		} else {

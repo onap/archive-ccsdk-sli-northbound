@@ -70,7 +70,11 @@ import org.onap.sdc.api.notification.INotificationData;
 import org.onap.sdc.api.notification.IResourceInstance;
 import org.onap.sdc.api.results.IDistributionClientDownloadResult;
 import org.onap.sdc.api.results.IDistributionClientResult;
+import org.onap.sdc.tosca.parser.api.IEntityDetails;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
+import org.onap.sdc.tosca.parser.elements.queries.EntityQuery;
+import org.onap.sdc.tosca.parser.elements.queries.TopologyTemplateQuery;
+import org.onap.sdc.tosca.parser.enums.SdcTypes;
 import org.onap.sdc.tosca.parser.exceptions.SdcToscaParserException;
 import org.onap.sdc.tosca.parser.impl.SdcToscaParserFactory;
 import org.onap.sdc.toscaparser.api.NodeTemplate;
@@ -750,6 +754,28 @@ public class SdncUebCallback implements INotificationCallback {
 			}
 
 		} // VF loop
+		
+
+		// Ingest Network (PNF) Data - Dublin/1906
+		EntityQuery entityQuery = EntityQuery.newBuilder(SdcTypes.PNF).build();
+		TopologyTemplateQuery topologyTemplateQuery = TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE).build();
+ 
+		List<IEntityDetails> pnfs = sdcCsarHelper.getEntity(entityQuery, topologyTemplateQuery, false);
+		if (!pnfs.isEmpty()) {
+			
+			for (IEntityDetails pnf :  pnfs) {
+				
+				try {
+					SdncPNFModel pnfModel = new SdncPNFModel(sdcCsarHelper, pnf, jdbcDataSource, config);
+					pnfModel.setServiceUUID(serviceModel.getServiceUUID());
+					pnfModel.setServiceInvariantUUID(serviceModel.getServiceInvariantUUID());
+					pnfModel.insertData();
+					
+				} catch (IOException e) {
+					deployStatus = DistributionStatusEnum.DEPLOY_ERROR;
+				}	
+			} // PNF loop	
+		}
 		
 		DistributionStatusEnum complexToscaDeployStatus = customProcessComplexTosca(sdcCsarHelper, config, jdbcDataSource, serviceModel,
 				data, svcName, resourceName, artifact, archiveDir);
