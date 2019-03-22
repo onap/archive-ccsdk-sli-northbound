@@ -682,16 +682,20 @@ module LCM {
             }
             leaf identity-url {
                 type string;
-                mandatory true;
+                mandatory false;
             }
             leaf snapshot-id {
                 type string;
-                 mandatory true;
+                 mandatory false;
             }
         }
         output {
             uses common-header;
             uses status;
+            leaf payload {
+                type payload;
+                mandatory false;
+            }
         }
     }
 
