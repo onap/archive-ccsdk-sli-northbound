@@ -100,6 +100,7 @@
         <module>daexim-offsite-backup</module>
         <module>features</module>
         <module>artifacts</module>
+        <module>ccsdk-northbound-lighty</module>
     </modules>
     <organization>
         <name>ONAP</name>
