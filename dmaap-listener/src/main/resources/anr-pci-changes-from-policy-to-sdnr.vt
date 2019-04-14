@@ -1,7 +1,7 @@
 {
 	"input": {
 		"module-name": "oofpcipoc-api",
-		"rpc-name": $rpc_name,
+		"rpc-name": "$rpc_name",
 		"mode": "sync",
 		"sli-parameter": $sli_parameters
 	}
