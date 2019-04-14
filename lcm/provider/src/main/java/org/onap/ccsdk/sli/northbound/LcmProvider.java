@@ -59,10 +59,18 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	private class CommonLcmFields {
 		private StatusBuilder statusBuilder;
 		private CommonHeaderBuilder commonHeaderBuilder;
+		private Payload payload;
 
 		public CommonLcmFields(StatusBuilder statusBuilder, CommonHeaderBuilder commonHeaderBuilder) {
 			this.statusBuilder = statusBuilder;
 			this.commonHeaderBuilder = commonHeaderBuilder;
+			this.payload = null;
+		}
+
+		public CommonLcmFields(StatusBuilder statusBuilder, CommonHeaderBuilder commonHeaderBuilder, Payload payload) {
+			this.statusBuilder = statusBuilder;
+			this.commonHeaderBuilder = commonHeaderBuilder;
+			this.payload = payload;
 		}
 
 		public StatusBuilder getStatusBuilder() {
@@ -71,6 +79,10 @@ public class LcmProvider implements AutoCloseable, LCMService {
 
 		public CommonHeaderBuilder getCommonHeaderBuilder() {
 			return commonHeaderBuilder;
+		}
+
+		public Payload getPayload() {
+			return payload;
 		}
 	}
 
@@ -205,6 +217,9 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			CommonLcmFields retval = callDG("rollback", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
+			if (retval.getPayload() != null) {
+				oBuilder.setPayload(retval.getPayload());
+			}
 		} catch (LcmRpcInvocationException e) {
 			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
@@ -415,6 +430,9 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			CommonLcmFields retval = callDG("upgrade-pre-check", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
+			if (retval.getPayload() != null) {
+				oBuilder.setPayload(retval.getPayload());
+			}
 		} catch (LcmRpcInvocationException e) {
 			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
@@ -814,6 +832,9 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			CommonLcmFields retval = callDG("upgrade-post-check", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
+			if (retval.getPayload() != null) {
+				oBuilder.setPayload(retval.getPayload());
+			}
 		} catch (LcmRpcInvocationException e) {
 			LOG.debug(exceptionMessage, e);
 			oBuilder.setCommonHeader(e.getCommonHeader());
@@ -1036,6 +1057,12 @@ public class LcmProvider implements AutoCloseable, LCMService {
 		MdsalHelper.toBuilder(respProps, sBuilder);
 		MdsalHelper.toBuilder(respProps, hBuilder);
 
+		Payload payload = null;
+		String payloadValue = respProps.getProperty("payload");
+		if (payloadValue != null) {
+			payload = new Payload(payloadValue);
+		}
+
 		String statusCode = sBuilder.getCode().toString();
 
 		if (!"400".equals(statusCode)) {
@@ -1044,7 +1071,7 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			LOG.info("Returned SUCCESS for "+rpcName+" ");
 		}
 
-		return new CommonLcmFields(sBuilder,hBuilder);
+		return new CommonLcmFields(sBuilder, hBuilder, payload);
 
 	}
 
