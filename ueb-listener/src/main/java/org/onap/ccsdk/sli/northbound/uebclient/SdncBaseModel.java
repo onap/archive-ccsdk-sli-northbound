@@ -58,6 +58,7 @@ public class SdncBaseModel {
 	protected String name = null;
 
 	protected String PARAM_INVARIANT_UUID_KEY = "invariant_uuid";
+	protected String PARAM_CUSTOMIZATION_UUID_KEY = "customization_uuid";
 	protected String PARAM_UUID_KEY = "uuid";
 	protected String PARAM_VERSION_KEY = "version";
 	protected String PARAM_NAME_KEY = "name";

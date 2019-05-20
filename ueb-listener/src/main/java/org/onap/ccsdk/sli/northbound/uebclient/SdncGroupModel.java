@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 public class SdncGroupModel extends SdncBaseModel {
 	
 	private static final Logger LOG = LoggerFactory
-			.getLogger(SdncVFModuleModel.class);
+			.getLogger(SdncGroupModel.class);
 
 	private static final String groupType = "group_type";
 	

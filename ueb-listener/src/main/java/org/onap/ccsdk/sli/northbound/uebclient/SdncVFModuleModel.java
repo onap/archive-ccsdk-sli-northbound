@@ -22,22 +22,26 @@
 
 package org.onap.ccsdk.sli.northbound.uebclient;
 
+import org.onap.sdc.tosca.parser.api.IEntityDetails;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
 import org.onap.sdc.toscaparser.api.Group;
 
 public class SdncVFModuleModel extends SdncBaseModel {
 	
-	public SdncVFModuleModel(ISdcCsarHelper sdcCsarHelper, Group group, SdncVFModel vfNodeModel) {
+	public SdncVFModuleModel(ISdcCsarHelper sdcCsarHelper, IEntityDetails vfModule, SdncVFModel vfNodeModel) {
 
-		super(sdcCsarHelper, group);
+		super(sdcCsarHelper, vfModule);
+		// override base implementation for setting customizationUUID because customizationUUID is called differently for Groups
+		customizationUUID = extractValue (vfModule.getMetadata(), "vfModuleModelCustomizationUUID");  
+		UUID = extractValue (vfModule.getMetadata(), "vfModuleModelUUID"); 
 		addParameter("vf_customization_uuid", vfNodeModel.getCustomizationUUIDNoQuotes());
 		
 		// extract properties
-		addParameter("vf_module_type", extractValue(group, SdcPropertyNames.PROPERTY_NAME_VFMODULETYPE));
-		addParameter("vf_module_label", extractValue(group, "vf_module_label"));
-		addIntParameter("availability_zone_count", extractValue(group, SdcPropertyNames.PROPERTY_NAME_AVAILABILITYZONECOUNT));
-		addParameter("ecomp_generated_vm_assignments", extractBooleanValue(group, SdcPropertyNames.PROPERTY_NAME_ECOMPGENERATEDVMASSIGNMENTS));
+		addParameter("vf_module_type", extractValue(vfModule, SdcPropertyNames.PROPERTY_NAME_VFMODULETYPE));
+		addParameter("vf_module_label", extractValue(vfModule, "vf_module_label"));
+		addIntParameter("availability_zone_count", extractValue(vfModule, SdcPropertyNames.PROPERTY_NAME_AVAILABILITYZONECOUNT));
+		addParameter("ecomp_generated_vm_assignments", extractBooleanValue(vfModule, SdcPropertyNames.PROPERTY_NAME_ECOMPGENERATEDVMASSIGNMENTS));
 	}
 
 }
