@@ -40,35 +40,41 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class ANRChangesFromPolicyToSDNRDmaapConsumer extends SdncDmaapConsumerImpl {
+public class OofPciPocDmaapConsumers extends SdncDmaapConsumerImpl {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ANRChangesFromPolicyToSDNRDmaapConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OofPciPocDmaapConsumers.class);
     private static final String SDNC_ENDPOINT = "SDNC.endpoint";
     private static final String TEMPLATE = "SDNC.template";
     private static final String DMAAPLISTENERROOT = "DMAAPLISTENERROOT";
+    private static final String UTF_8 = "UTF-8";
 
     private static final String PARAMETER_NAME = "parameter-name";
     private static final String STRING_VALUE = "string-value";
-    private static final String GENERIC_NEIGHBOR_CONFIGURATION_INPUT = "generic-neighbor-configuration-input.";
-    private static final String GENERIC_NEIGHBOR_CONFIGURATION_INPUT_NEIGHBOR_LIST_IN_USE = GENERIC_NEIGHBOR_CONFIGURATION_INPUT.concat("neighbor-list-in-use");
+    private static final String PHYSICAL_CELL_ID_INPUT_FAP_SERVICE = "configuration-phy-cell-id-input.fap-service";
     private static final String EVENT_HEADER = "event-header";
 	private static final String ACTION = "Action";
-	private static final String PAYLOAD = "Payload";
 	private static final String CONFIGURATIONS = "Configurations";
-	private static final String MODIFY_CONFIG_ANR = "ModifyConfigANR";
-	private static final String MAP_FILE_NAME = "anr-changes-from-policy-to-sdnr";
+	private static final String MODIFY_CONFIG = "ModifyConfig";
 	private static final String DATA = "data";
 	private static final String FAP_SERVICE = "FAPService";
+	
+	private static final String PAYLOAD = "Payload";
+	private static final String PCI_CHANGES_MAP_FILE_NAME = "pci-changes-from-policy-to-sdnr";
 	private static final String SLI_PARAMETERS = "sli_parameters";
 	private static final String RPC_NAME = "rpc-name";
 	private static final String BODY = "body";
 	private static final String INPUT = "input";
+	
+    private static final String GENERIC_NEIGHBOR_CONFIGURATION_INPUT = "generic-neighbor-configuration-input.";
+    private static final String GENERIC_NEIGHBOR_CONFIGURATION_INPUT_NEIGHBOR_LIST_IN_USE = GENERIC_NEIGHBOR_CONFIGURATION_INPUT.concat("neighbor-list-in-use");
+	private static final String MODIFY_CONFIG_ANR = "ModifyConfigANR";
+	private static final String ANR_CHANGES_MAP_FILE_NAME = "anr-changes-from-policy-to-sdnr";
 
     private String rootDir;
 
     protected VelocityEngine velocityEngine;
 
-    public ANRChangesFromPolicyToSDNRDmaapConsumer() {
+    public OofPciPocDmaapConsumers() {
         velocityEngine = new VelocityEngine();
         Properties props = new Properties();
         rootDir = System.getenv(DMAAPLISTENERROOT);
@@ -87,15 +93,17 @@ public class ANRChangesFromPolicyToSDNRDmaapConsumer extends SdncDmaapConsumerIm
     /*
      * for testing purposes
      */
-    ANRChangesFromPolicyToSDNRDmaapConsumer(Properties props) {
+    OofPciPocDmaapConsumers(Properties props) {
         velocityEngine = new VelocityEngine();
         velocityEngine.init(props);
     }
 
-    protected String publish(String templatePath, String jsonString, JsonNode dataNode) throws IOException, InvalidMessageException
+    protected String publish(String templatePath, String jsonString, JsonNode configurationsOrDataNode, boolean invokePciChangesPublish, boolean invokeAnrChangesPublish) throws IOException, InvalidMessageException
     {
-        if (templatePath.contains("anr-pci-changes-from-policy-to-sdnr")){
-            return publishANRChangesFromPolicyToSDNR(templatePath, dataNode);
+    	if (invokePciChangesPublish){
+            return publishPciChangesFromPolicyToSDNR(templatePath, configurationsOrDataNode);
+        } else if (invokeAnrChangesPublish){
+            return publishANRChangesFromPolicyToSDNR(templatePath, configurationsOrDataNode);
         } else {
             return publishFullMessage(templatePath, jsonString);
         }
@@ -121,17 +129,17 @@ public class ANRChangesFromPolicyToSDNRDmaapConsumer extends SdncDmaapConsumerIm
         context.put("full_message", rpcMsgbody);
 
         Writer writer = new StringWriter();
-        velocityEngine.mergeTemplate(templatePath, "UTF-8", context, writer);
+        velocityEngine.mergeTemplate(templatePath, UTF_8, context, writer);
         writer.flush();
 
         return writer.toString();
     }
-
+    
     private String publishANRChangesFromPolicyToSDNR(String templatePath, JsonNode dataNode) throws IOException, InvalidMessageException
     {
     	VelocityContext context = new VelocityContext();
-		
-		String RPC_NAME_KEY_IN_VT = "rpc_name";
+    	
+    	String RPC_NAME_KEY_IN_VT = "rpc_name";
     	String RPC_NAME_VALUE_IN_VT = "generic-neighbor-configuration";
     	
     	String CELL_CONFIG = "CellConfig";
@@ -181,7 +189,7 @@ public class ANRChangesFromPolicyToSDNRDmaapConsumer extends SdncDmaapConsumerIm
             context.put(RPC_NAME_KEY_IN_VT, RPC_NAME_VALUE_IN_VT);
 
             Writer writer = new StringWriter();
-            velocityEngine.mergeTemplate(templatePath, "UTF-8", context, writer);
+            velocityEngine.mergeTemplate(templatePath, UTF_8, context, writer);
             writer.flush();
 
             return writer.toString();
@@ -191,34 +199,101 @@ public class ANRChangesFromPolicyToSDNRDmaapConsumer extends SdncDmaapConsumerIm
         }
         
     }
+    
+    private String publishPciChangesFromPolicyToSDNR(String templatePath, JsonNode configurationsJsonNode) throws IOException, InvalidMessageException
+    {
+    	String RPC_NAME_KEY_IN_VT = "rpc_name";
+    	String RPC_NAME_VALUE_IN_VT = "configuration-phy-cell-id";
+    	String ALIAS = "alias";
+    	String X0005b9Lte = "X0005b9Lte";
+    	
+        VelocityContext context = new VelocityContext();
+        
+        JSONObject numberOfEntries = new JSONObject();
+        JSONArray sliParametersArray = new JSONArray();
+        
+        JsonNode configurations = configurationsJsonNode.get(CONFIGURATIONS);
+        
+        int entryCount = 0;
+        
+        if(configurations.isArray()) {
+        	for(JsonNode dataNode:configurations) {
+        		sliParametersArray.put(new JSONObject().put(PARAMETER_NAME, PHYSICAL_CELL_ID_INPUT_FAP_SERVICE+"["+entryCount+"]."+ALIAS)
+            			.put(STRING_VALUE, dataNode.get(DATA).get(FAP_SERVICE).get(ALIAS)));
+        		sliParametersArray.put(new JSONObject().put(PARAMETER_NAME, PHYSICAL_CELL_ID_INPUT_FAP_SERVICE+"["+entryCount+"]."+"cid")
+            			.put(STRING_VALUE, dataNode.get(DATA).get(FAP_SERVICE).get("CellConfig").get("LTE").get("RAN").get("Common").get("CellIdentity")));
+        		sliParametersArray.put(new JSONObject().put(PARAMETER_NAME, PHYSICAL_CELL_ID_INPUT_FAP_SERVICE+"["+entryCount+"]."+"phy-cell-id-in-use")
+            			.put(STRING_VALUE, dataNode.get(DATA).get(FAP_SERVICE).get(X0005b9Lte).get("phyCellIdInUse")));
+        		sliParametersArray.put(new JSONObject().put(PARAMETER_NAME, PHYSICAL_CELL_ID_INPUT_FAP_SERVICE+"["+entryCount+"]."+"pnf-name")
+            			.put(STRING_VALUE, dataNode.get(DATA).get(FAP_SERVICE).get(X0005b9Lte).get("pnfName")));
+        		entryCount++;
+        	}
+            
+            numberOfEntries.put(PARAMETER_NAME, PHYSICAL_CELL_ID_INPUT_FAP_SERVICE+"-number-of-entries");
+            numberOfEntries.put(STRING_VALUE, entryCount);
+            
+            sliParametersArray.put(numberOfEntries);
+            
+            context.put(SLI_PARAMETERS, sliParametersArray);
+            
+            context.put(RPC_NAME_KEY_IN_VT, RPC_NAME_VALUE_IN_VT);
+
+            Writer writer = new StringWriter();
+            velocityEngine.mergeTemplate(templatePath, UTF_8, context, writer);
+            writer.flush();
+
+            return writer.toString();
+        	
+        }else {
+        	throw new InvalidMessageException("Configurations is not of Type Array. Could not read configuration changes");
+        }
+        
+    }
 
     @Override
     public void processMsg(String msg) throws InvalidMessageException {
 
-    	if (msg == null) {
+        if (msg == null) {
             throw new InvalidMessageException("Null message");
         }
 
         ObjectMapper oMapper = new ObjectMapper();
-        JsonNode anrChangesRootNode;
+        JsonNode dmaapMessageRootNode;
         try {
-        	anrChangesRootNode = oMapper.readTree(msg);
+        	dmaapMessageRootNode = oMapper.readTree(msg);
         } catch (Exception e) {
             throw new InvalidMessageException("Cannot parse json object", e);
         }
+        
 
-        JsonNode rpcname = anrChangesRootNode.get(RPC_NAME);
-        if(rpcname == null) {
-        	 LOG.info("Missing rpc-name node.");
+    	JsonNode rpcnameNode = dmaapMessageRootNode.get(RPC_NAME);
+        if(rpcnameNode == null) {
+        	 LOG.info("Unable to identify the respective consumer to invoke. Please verify the dmaap message..");
         	 return;
         }
         
-        if(!MODIFY_CONFIG_ANR.toLowerCase().equals(rpcname.textValue())) {
+        String rpcname = rpcnameNode.textValue();
+        
+        if(!MODIFY_CONFIG.toLowerCase().equals(rpcname) && !MODIFY_CONFIG_ANR.toLowerCase().equals(rpcname)) {
             LOG.info("Unknown rpc name {}", rpcname);
             return;
         }
         
-        JsonNode body = anrChangesRootNode.get(BODY);
+        if(MODIFY_CONFIG.toLowerCase().equals(rpcname)) {
+        	invokePCIChangesConsumer(dmaapMessageRootNode, oMapper, msg);
+            return;
+        }
+        
+        if(MODIFY_CONFIG_ANR.toLowerCase().equals(rpcname)) {
+        	invokeANRChangesConsumer(dmaapMessageRootNode, oMapper, msg);
+            return;
+        }
+    
+    }
+
+    private void invokeANRChangesConsumer(JsonNode dmaapMessageRootNode, ObjectMapper oMapper,
+			String msg) throws InvalidMessageException {
+    	JsonNode body = dmaapMessageRootNode.get(BODY);
         if(body == null) {
         	 LOG.info("Missing body node.");
         	 return;
@@ -261,7 +336,7 @@ public class ANRChangesFromPolicyToSDNRDmaapConsumer extends SdncDmaapConsumerIm
 	        throw new InvalidMessageException("Cannot parse payload value", e);
 	    }
 
-        String mapFilename = rootDir + MAP_FILE_NAME + ".map";
+        String mapFilename = rootDir + ANR_CHANGES_MAP_FILE_NAME + ".map";
         Map<String, String> fieldMap = loadMap(mapFilename);
         if (fieldMap == null) {
             return;
@@ -284,31 +359,117 @@ public class ANRChangesFromPolicyToSDNRDmaapConsumer extends SdncDmaapConsumerIm
     	        if(dataNode.get(DATA).get(FAP_SERVICE) == null) {
     	            LOG.info("Could not make a rpc call. Missing fapService node for dataNode element::", dataNode.textValue());
     	        }else {
-    	        	try {
-            	        
-                        String rpcMsgbody = publish(templateName, msg, dataNode);
-                        String odlUrlBase = getProperty("sdnc.odl.url-base");
-                        String odlUser = getProperty("sdnc.odl.user");
-                        String odlPassword = getProperty("sdnc.odl.password");
-
-                        if ((odlUrlBase != null) && (odlUrlBase.length() > 0)) {
-                            SdncOdlConnection conn = SdncOdlConnection.newInstance(odlUrlBase + "/" + sdncEndpoint, odlUser, odlPassword);
-
-                            conn.send("POST", "application/json", rpcMsgbody);
-                        } else {
-                            LOG.info("POST message body would be:\n" + rpcMsgbody);
-                        }
-                    } catch (Exception e) {
-                        LOG.error("Unable to process message", e);
-                    }
+    	        	buildAndInvokeANRChangesRPC(sdncEndpoint, templateName,msg, dataNode);
     	        }
         	}
         }else {
         	throw new InvalidMessageException("Configurations is not of Type Array. Could not read configuration changes");
         }
-    }
+	}
 
-    private Map<String, String> loadMap(String mapFilename) {
+	private void invokePCIChangesConsumer(JsonNode dmaapMessageRootNode, ObjectMapper oMapper,
+			String msg) throws InvalidMessageException {
+		JsonNode body = dmaapMessageRootNode.get(BODY);
+        if(body == null) {
+        	 LOG.info("Missing body node.");
+        	 return;
+        }
+        
+        JsonNode input = body.get(INPUT);
+        if(input == null) {
+        	 LOG.info("Missing input node.");
+        	 return;
+        }
+        
+        JsonNode action = input.get(ACTION);
+        if(action == null) {
+        	 LOG.info("Missing action node.");
+        	 return;
+        }
+        
+        if(!MODIFY_CONFIG.equals(action.textValue())) {
+            LOG.info("Unknown Action {}", action);
+            return;
+        }
+        
+        JsonNode payload = input.get(PAYLOAD);
+        if(payload == null) {
+            LOG.info("Missing payload node.");
+            return;
+        }
+
+        String configurations = payload.asText();
+        
+        if(!configurations.contains(CONFIGURATIONS)) {
+       	 LOG.info("Missing configurations node.");
+       	 return;
+       }
+        
+       JsonNode configurationsJsonNode;
+	    try {
+	    	configurationsJsonNode = oMapper.readTree(configurations);
+	    } catch (Exception e) {
+	        throw new InvalidMessageException("Cannot parse payload value", e);
+	    }
+
+        String mapFilename = rootDir + PCI_CHANGES_MAP_FILE_NAME + ".map";
+        Map<String, String> fieldMap = loadMap(mapFilename);
+        if (fieldMap == null) {
+            return;
+        }
+
+        if (!fieldMap.containsKey(SDNC_ENDPOINT)) {
+            return;
+        }
+        String sdncEndpoint = fieldMap.get(SDNC_ENDPOINT);
+
+        if (!fieldMap.containsKey(TEMPLATE)) {
+            throw new InvalidMessageException("No SDNC template known for message ");
+        }
+        String templateName = fieldMap.get(TEMPLATE);
+        
+        buildAndInvokePCIChangesRPC(sdncEndpoint, templateName, msg, configurationsJsonNode);
+	}
+
+	private void buildAndInvokePCIChangesRPC(String sdncEndpoint, String templateName, String msg, JsonNode configurationsOrDataNode) {
+		try {
+            String rpcMsgbody = publish(templateName, msg, configurationsOrDataNode, true, false);
+            String odlUrlBase = getProperty("sdnc.odl.url-base");
+            String odlUser = getProperty("sdnc.odl.user");
+            String odlPassword = getProperty("sdnc.odl.password");
+
+            if ((odlUrlBase != null) && (odlUrlBase.length() > 0)) {
+                SdncOdlConnection conn = SdncOdlConnection.newInstance(odlUrlBase + "/" + sdncEndpoint, odlUser, odlPassword);
+
+                conn.send("POST", "application/json", rpcMsgbody);
+            } else {
+                LOG.info("POST message body would be:\n" + rpcMsgbody);
+            }
+        } catch (Exception e) {
+            LOG.error("Unable to process message", e);
+        }
+	}
+	
+	private void buildAndInvokeANRChangesRPC(String sdncEndpoint, String templateName, String msg, JsonNode configurationsOrDataNode) {
+		try {
+            String rpcMsgbody = publish(templateName, msg, configurationsOrDataNode, false, true);
+            String odlUrlBase = getProperty("sdnc.odl.url-base");
+            String odlUser = getProperty("sdnc.odl.user");
+            String odlPassword = getProperty("sdnc.odl.password");
+
+            if ((odlUrlBase != null) && (odlUrlBase.length() > 0)) {
+                SdncOdlConnection conn = SdncOdlConnection.newInstance(odlUrlBase + "/" + sdncEndpoint, odlUser, odlPassword);
+
+                conn.send("POST", "application/json", rpcMsgbody);
+            } else {
+                LOG.info("POST message body would be:\n" + rpcMsgbody);
+            }
+        } catch (Exception e) {
+            LOG.error("Unable to process message", e);
+        }
+	}
+
+	private Map<String, String> loadMap(String mapFilename) {
         File mapFile = new File(mapFilename);
 
         if (!mapFile.canRead()) {
