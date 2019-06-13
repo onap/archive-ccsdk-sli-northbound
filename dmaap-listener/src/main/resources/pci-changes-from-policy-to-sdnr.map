@@ -1,5 +1,5 @@
 # SDN-C URL
-SDNC.endpoint => oofpcipoc-api:configuration-phy-cell-id
+SDNC.endpoint => SLI-API:execute-graph
 
-# Field mapping 
+# Field mapping
 SDNC.template => anr-pci-changes-from-policy-to-sdnr.vt
