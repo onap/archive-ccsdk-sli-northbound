@@ -706,6 +706,65 @@ public class SdncBaseModel {
 		}
 	}
 
+	protected String extractValue (IEntityDetails  entityDetails, String path, String name) {
+		String value = null; 
+		
+		if (entityDetails.getProperties().containsKey(path)) {
+			Property property = entityDetails.getProperties().get(path);
+			if (property != null && property.getLeafPropertyValue(name) != null) {
+				value = property.getLeafPropertyValue(name).get(0);
+			}
+		}			
+
+		if (value != null) {
+			return value;
+		} else {
+			return "";
+		}
+	}
+	
+	protected String extractValue (Property property, String name) {
+		String value = null; 
+		
+		if (!property.getLeafPropertyValue(name).isEmpty()) {
+			value = property.getLeafPropertyValue(name).get(0);
+		}
+		
+		if (value != null) {
+			return value;
+		} else {
+			return "";
+		}
+	}
+
+	protected String extractBooleanValue (Property property, String name) {
+		String value = null; 
+		
+		if (!property.getLeafPropertyValue(name).isEmpty()) {
+			value = property.getLeafPropertyValue(name).get(0);
+		}
+		
+		if (value != null) {
+			return value.contains("true") ? "Y" : "N";
+		} else {
+			return "";
+		}
+	}
+
+	protected String extractIntegerValue (Property property, String name) {
+		String value = null; 
+		
+		if (!property.getLeafPropertyValue(name).isEmpty()) {
+			value = property.getLeafPropertyValue(name).get(0);
+		}
+		
+		if (value != null && !value.isEmpty() && !value.contains("null")) {
+			return value;
+		} else {
+			return "";
+		}
+	}
+
 	protected String extractGetInputValue (Group group, NodeTemplate nodeTemplate, String name) {
 
 		String value = sdcCsarHelper.getNodeTemplatePropertyLeafValue(nodeTemplate, extractGetInputName (group, name));
@@ -811,6 +870,22 @@ public class SdncBaseModel {
 			Property property = entityDetails.getProperties().get(name);
 			if (property != null && property.getValue() != null) {
 				value = property.getValue().toString();
+			}
+		}
+		
+		if (value != null && !value.isEmpty()) {
+			return value.contains("true") ? "Y" : "N";
+		} else {
+			return "";
+		}
+	}
+
+	protected String extractBooleanValue (IEntityDetails entityDetails, String path, String name) {
+		String value = null; 
+		if (entityDetails.getProperties().containsKey(path)) {
+			Property property = entityDetails.getProperties().get(path);
+			if (property != null && property.getLeafPropertyValue(name) != null) {
+				value = property.getLeafPropertyValue(name).get(0);
 			}
 		}
 		

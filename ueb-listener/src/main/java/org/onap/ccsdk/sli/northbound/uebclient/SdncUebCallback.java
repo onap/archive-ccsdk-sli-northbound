@@ -718,16 +718,26 @@ public class SdncUebCallback implements INotificationCallback {
 			}
 		}
 		
-		// Ingest Allotted Resource Data - 1707
-		List<NodeTemplate> arNodeTemplatesList = sdcCsarHelper.getAllottedResources();
+		// Ingest Allotted Resource Data - 1707 / migrate to getEntity - 1908
+		// Use getEntity to get all VFs in the service filter by metadata Category = Allotted Resource 
+		EntityQuery vfEntityQuery = EntityQuery.newBuilder(SdcTypes.VF).build();
+		TopologyTemplateQuery vfTopologyTemplateQuery = TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE).build();
+		List<IEntityDetails> vfEntities = sdcCsarHelper.getEntity(vfEntityQuery, vfTopologyTemplateQuery, true);
+		if (vfEntities != null) {
+			for (IEntityDetails vfEntity : vfEntities){
 
-		for (NodeTemplate nodeTemplate :  arNodeTemplatesList) {
-			
-			try {
-				SdncARModel nodeModel = new SdncARModel (sdcCsarHelper, nodeTemplate, jdbcDataSource);
-				nodeModel.insertAllottedResourceModelData ();
-			} catch (IOException e) {
-				deployStatus = DistributionStatusEnum.DEPLOY_ERROR;
+				// If this VF has metadata Category: Allotted Resource, insert it into ALLOTTED_RESOURCE_MODEL table
+				String vfCategory = SdncBaseModel.extractValue(sdcCsarHelper, vfEntity.getMetadata(), "category");
+				if (vfCategory.contains("Allotted Resource")) {
+					
+					try {
+						SdncARModel arModel = new SdncARModel (sdcCsarHelper, vfEntity, jdbcDataSource, config);
+						arModel.insertAllottedResourceModelData ();
+						arModel.insertAllottedResourceVfcModelData();
+					} catch (IOException e) {
+						deployStatus = DistributionStatusEnum.DEPLOY_ERROR;
+					}		
+				}		
 			}
 		}
 
