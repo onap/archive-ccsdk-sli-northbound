@@ -10,7 +10,8 @@ import java.util.HashMap;
 import java.util.ArrayList;
 
 import org.junit.Before; 
-import org.junit.Test; 
+import org.junit.Test;
+import org.onap.sdc.tosca.parser.api.IEntityDetails;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper; 
 import org.onap.sdc.toscaparser.api.NodeTemplate;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
@@ -20,16 +21,20 @@ public class SdncVFCModelTest {
  
 	SdncVFCModel testSdncVFCModel; 
 	NodeTemplate mockVFCNodeTemplate = null;
+	IEntityDetails mockEntityDetails = null;
  
 	@Before 
 	public void setup() { 
 		ISdcCsarHelper mockCsarHelper = mock(ISdcCsarHelper.class); 
 		NodeTemplate mockNodeTemplate = mock(NodeTemplate.class); 
+		mockEntityDetails = mock(IEntityDetails.class); 
 		mockVFCNodeTemplate = mock(NodeTemplate.class); 
  		Metadata mockMetadata = mock(Metadata.class);
 		DBResourceManager mockDBResourceManager = mock(DBResourceManager.class); 
+		SdncUebConfiguration mockSdncUebConfiguration = mock(SdncUebConfiguration.class);
 		
 		when(mockNodeTemplate.getMetaData()).thenReturn(mockMetadata);
+		when(mockEntityDetails.getMetadata()).thenReturn(mockMetadata);
 		when(mockCsarHelper.getMetadataPropertyValue(mockMetadata, "customizationUUID")).thenReturn("aaaa-bbbb-cccc-dddd");
 		when(mockCsarHelper.getNodeTemplatePropertyLeafValue(mockNodeTemplate, "nfc_naming_code")).thenReturn("test-nfc-naming-code");
 		
@@ -50,9 +55,14 @@ public class SdncVFCModelTest {
 		cpPropertiesMap.put("cp-node-1", propertiesMap);
 		when(mockCsarHelper.getCpPropertiesFromVfcAsObject(mockVFCNodeTemplate)).thenReturn(cpPropertiesMap);
 		
-		testSdncVFCModel = new SdncVFCModel(mockCsarHelper, mockNodeTemplate, mockDBResourceManager); 
-		testSdncVFCModel.setVmType("Test-type"); 
-		testSdncVFCModel.setVmCount("5"); 
+		try {
+			testSdncVFCModel = new SdncVFCModel(mockCsarHelper, mockEntityDetails, mockDBResourceManager, mockSdncUebConfiguration);
+			testSdncVFCModel.setVmType("Test-type"); 
+			testSdncVFCModel.setVmCount("5"); 
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
  
 	} 
  
@@ -83,7 +93,7 @@ public class SdncVFCModelTest {
 	@Test 
 	public void testInsertVFCtoNetworkRoleMappingData() { 
 		try {
-			testSdncVFCModel.insertVFCtoNetworkRoleMappingData(mockVFCNodeTemplate);
+			testSdncVFCModel.insertVFCtoNetworkRoleMappingData(mockEntityDetails);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

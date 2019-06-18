@@ -23,10 +23,14 @@
 package org.onap.ccsdk.sli.northbound.uebclient;
 
 import java.io.IOException;
+import java.util.List;
 
+import org.onap.sdc.tosca.parser.api.IEntityDetails;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
+import org.onap.sdc.tosca.parser.elements.queries.EntityQuery;
+import org.onap.sdc.tosca.parser.elements.queries.TopologyTemplateQuery;
+import org.onap.sdc.tosca.parser.enums.SdcTypes;
 import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
-import org.onap.sdc.toscaparser.api.NodeTemplate;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.onap.ccsdk.sli.core.dblib.DBResourceManager;
 import org.slf4j.Logger;
@@ -40,21 +44,21 @@ public class SdncARModel extends SdncBaseModel {
   	private String type = null;
 	private String subcategory = null;
 
-	public SdncARModel(ISdcCsarHelper sdcCsarHelper, NodeTemplate nodeTemplate,DBResourceManager jdbcDataSource) {
+	public SdncARModel(ISdcCsarHelper sdcCsarHelper, IEntityDetails arEntity, DBResourceManager jdbcDataSource, SdncUebConfiguration config) throws IOException {
 
-		super(sdcCsarHelper, nodeTemplate, jdbcDataSource);
+		super(sdcCsarHelper, arEntity, jdbcDataSource, config);
 		
 		// extract metadata
-		Metadata metadata = nodeTemplate.getMetaData();
+		Metadata metadata = arEntity.getMetadata();
 		type = extractValue (metadata, SdcPropertyNames.PROPERTY_NAME_TYPE);
 		subcategory = extractValue (metadata, "subcategory");
 		addParameter("type", extractValue (metadata, SdcPropertyNames.PROPERTY_NAME_TYPE));
 
 		// extract properties
-		addParameter("role", extractValue (nodeTemplate, "nf_role"));
-		addParameter("type", extractValue (nodeTemplate, "nf_type"));
-		addParameter("ecomp_generated_naming", extractBooleanValue (nodeTemplate, "nf_naming#ecomp_generated_naming"));
-		addParameter("naming_policy", extractValue (nodeTemplate, "nf_naming#naming_policy"));
+		addParameter("role", extractValue (arEntity, "nf_role"));
+		addParameter("type", extractValue (arEntity, "nf_type"));
+		addParameter("ecomp_generated_naming", extractBooleanValue (arEntity, "nf_naming", "ecomp_generated_naming"));
+		addParameter("naming_policy", extractValue (arEntity, "nf_naming", "naming_policy"));
 	}
 
 	public void insertAllottedResourceModelData () throws IOException {
@@ -65,6 +69,29 @@ public class SdncARModel extends SdncBaseModel {
 		} catch (IOException e) {
 			LOG.error("Could not insert Tosca CSAR data into the ALLOTTED_RESOURCE_MODEL table");
 			throw new IOException (e);
+		}
+	}
+	
+	public void insertAllottedResourceVfcModelData () throws IOException {
+		
+		// Insert the child VFCs (not CVFC) into VFC_MODEL
+		String vfCustomizationUuid = getCustomizationUUID().replace("\"", "");
+		EntityQuery vfcEntityQuery = EntityQuery.newBuilder(SdcTypes.VFC).build();
+		TopologyTemplateQuery vfcTopologyTemplateQuery = TopologyTemplateQuery.newBuilder(SdcTypes.VF)
+				.customizationUUID(vfCustomizationUuid)
+				.build();
+		List<IEntityDetails> nestedVfcs  = sdcCsarHelper.getEntity(vfcEntityQuery, vfcTopologyTemplateQuery, true);  // true allows for nested search
+		if (nestedVfcs == null || nestedVfcs.isEmpty()) {
+			LOG.info("Could not find the nested VFCs for: " + vfCustomizationUuid);
+		}				
+    	
+		for (IEntityDetails nestedVfc: nestedVfcs) {
+			try {
+				SdncVFCModel arVfcModel = new SdncVFCModel (sdcCsarHelper, nestedVfc, jdbcDataSource, config);
+				arVfcModel.insertVFCModelData();
+			} catch (IOException e) {
+				LOG.info("Could not find the nested VFCs for: " + vfCustomizationUuid);
+			}	
 		}
 	}
 

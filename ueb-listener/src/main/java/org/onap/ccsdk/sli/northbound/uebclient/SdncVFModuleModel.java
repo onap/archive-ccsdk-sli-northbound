@@ -25,17 +25,21 @@ package org.onap.ccsdk.sli.northbound.uebclient;
 import org.onap.sdc.tosca.parser.api.IEntityDetails;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
-import org.onap.sdc.toscaparser.api.Group;
 
 public class SdncVFModuleModel extends SdncBaseModel {
 	
 	public SdncVFModuleModel(ISdcCsarHelper sdcCsarHelper, IEntityDetails vfModule, SdncVFModel vfNodeModel) {
 
 		super(sdcCsarHelper, vfModule);
-		// override base implementation for setting customizationUUID because customizationUUID is called differently for Groups
+		// override base implementation for setting metadata because properties are called differently for Groups
 		customizationUUID = extractValue (vfModule.getMetadata(), "vfModuleModelCustomizationUUID");  
+		invariantUUID = extractValue (vfModule.getMetadata(), "vfModuleModelInvariantUUID"); 
 		UUID = extractValue (vfModule.getMetadata(), "vfModuleModelUUID"); 
+		version = extractValue (vfModule.getMetadata(), "vfModuleModelVersion");
 		addParameter("vf_customization_uuid", vfNodeModel.getCustomizationUUIDNoQuotes());
+		addParameter("invariant_uuid", invariantUUID);
+		addParameter("uuid", UUID);
+		addParameter("version", version);
 		
 		// extract properties
 		addParameter("vf_module_type", extractValue(vfModule, SdcPropertyNames.PROPERTY_NAME_VFMODULETYPE));
