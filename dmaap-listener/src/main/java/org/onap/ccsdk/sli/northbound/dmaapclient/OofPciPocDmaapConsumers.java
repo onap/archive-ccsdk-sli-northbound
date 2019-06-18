@@ -65,6 +65,9 @@ public class OofPciPocDmaapConsumers extends SdncDmaapConsumerImpl {
 	private static final String BODY = "body";
 	private static final String INPUT = "input";
 	
+	private static final String EMPTY = "";
+	private static final String ESCAPE_SEQUENCE_QUOTES = "\"";
+	
     private static final String GENERIC_NEIGHBOR_CONFIGURATION_INPUT = "generic-neighbor-configuration-input.";
     private static final String GENERIC_NEIGHBOR_CONFIGURATION_INPUT_NEIGHBOR_LIST_IN_USE = GENERIC_NEIGHBOR_CONFIGURATION_INPUT.concat("neighbor-list-in-use");
 	private static final String MODIFY_CONFIG_ANR = "ModifyConfigANR";
@@ -162,15 +165,15 @@ public class OofPciPocDmaapConsumers extends SdncDmaapConsumerImpl {
         if(nbrListInUse.isArray()) {
         	for(JsonNode lteCell:nbrListInUse) {
         		sliParametersArray.put(new JSONObject().put(PARAMETER_NAME, GENERIC_NEIGHBOR_CONFIGURATION_INPUT_NEIGHBOR_LIST_IN_USE+"["+entryCount+"]."+"plmnid")
-            			.put(STRING_VALUE, lteCell.get("PLMNID")));
+            			.put(STRING_VALUE, lteCell.get("PLMNID").toString().replace(ESCAPE_SEQUENCE_QUOTES, EMPTY)));
         		sliParametersArray.put(new JSONObject().put(PARAMETER_NAME, GENERIC_NEIGHBOR_CONFIGURATION_INPUT_NEIGHBOR_LIST_IN_USE+"["+entryCount+"]."+"cid")
-            			.put(STRING_VALUE, lteCell.get("CID")));
+            			.put(STRING_VALUE, lteCell.get("CID").toString().replace(ESCAPE_SEQUENCE_QUOTES, EMPTY)));
         		sliParametersArray.put(new JSONObject().put(PARAMETER_NAME, GENERIC_NEIGHBOR_CONFIGURATION_INPUT_NEIGHBOR_LIST_IN_USE+"["+entryCount+"]."+"phy-cell-id")
-            			.put(STRING_VALUE, lteCell.get("PhyCellID")));
+            			.put(STRING_VALUE, lteCell.get("PhyCellID").toString().replace(ESCAPE_SEQUENCE_QUOTES, EMPTY)));
         		sliParametersArray.put(new JSONObject().put(PARAMETER_NAME, GENERIC_NEIGHBOR_CONFIGURATION_INPUT_NEIGHBOR_LIST_IN_USE+"["+entryCount+"]."+"pnf-name")
-            			.put(STRING_VALUE, lteCell.get("PNFName")));
+            			.put(STRING_VALUE, lteCell.get("PNFName").toString().replace(ESCAPE_SEQUENCE_QUOTES, EMPTY)));
         		sliParametersArray.put(new JSONObject().put(PARAMETER_NAME, GENERIC_NEIGHBOR_CONFIGURATION_INPUT_NEIGHBOR_LIST_IN_USE+"["+entryCount+"]."+"blacklisted")
-            			.put(STRING_VALUE, lteCell.get("Blacklisted")));
+            			.put(STRING_VALUE, lteCell.get("Blacklisted").toString().replace(ESCAPE_SEQUENCE_QUOTES, EMPTY)));
         		
         		entryCount++;
         	}
@@ -219,13 +222,13 @@ public class OofPciPocDmaapConsumers extends SdncDmaapConsumerImpl {
         if(configurations.isArray()) {
         	for(JsonNode dataNode:configurations) {
         		sliParametersArray.put(new JSONObject().put(PARAMETER_NAME, PHYSICAL_CELL_ID_INPUT_FAP_SERVICE+"["+entryCount+"]."+ALIAS)
-            			.put(STRING_VALUE, dataNode.get(DATA).get(FAP_SERVICE).get(ALIAS)));
+            			.put(STRING_VALUE, dataNode.get(DATA).get(FAP_SERVICE).get(ALIAS).toString().replace(ESCAPE_SEQUENCE_QUOTES, EMPTY)));
         		sliParametersArray.put(new JSONObject().put(PARAMETER_NAME, PHYSICAL_CELL_ID_INPUT_FAP_SERVICE+"["+entryCount+"]."+"cid")
-            			.put(STRING_VALUE, dataNode.get(DATA).get(FAP_SERVICE).get("CellConfig").get("LTE").get("RAN").get("Common").get("CellIdentity")));
+            			.put(STRING_VALUE, dataNode.get(DATA).get(FAP_SERVICE).get("CellConfig").get("LTE").get("RAN").get("Common").get("CellIdentity").toString().replace(ESCAPE_SEQUENCE_QUOTES, EMPTY)));
         		sliParametersArray.put(new JSONObject().put(PARAMETER_NAME, PHYSICAL_CELL_ID_INPUT_FAP_SERVICE+"["+entryCount+"]."+"phy-cell-id-in-use")
-            			.put(STRING_VALUE, dataNode.get(DATA).get(FAP_SERVICE).get(X0005b9Lte).get("phyCellIdInUse")));
+            			.put(STRING_VALUE, dataNode.get(DATA).get(FAP_SERVICE).get(X0005b9Lte).get("phyCellIdInUse").toString().replace(ESCAPE_SEQUENCE_QUOTES, EMPTY)));
         		sliParametersArray.put(new JSONObject().put(PARAMETER_NAME, PHYSICAL_CELL_ID_INPUT_FAP_SERVICE+"["+entryCount+"]."+"pnf-name")
-            			.put(STRING_VALUE, dataNode.get(DATA).get(FAP_SERVICE).get(X0005b9Lte).get("pnfName")));
+            			.put(STRING_VALUE, dataNode.get(DATA).get(FAP_SERVICE).get(X0005b9Lte).get("pnfName").toString().replace(ESCAPE_SEQUENCE_QUOTES, EMPTY)));
         		entryCount++;
         	}
             
