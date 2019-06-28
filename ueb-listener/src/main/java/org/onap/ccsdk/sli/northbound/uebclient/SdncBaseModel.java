@@ -691,7 +691,7 @@ public class SdncBaseModel {
 	}
 
 	protected String extractValue (IEntityDetails  entityDetails, String name) {
-		String value = null; 
+		String value = ""; 
 		if (entityDetails.getProperties().containsKey(name)) {
 			Property property = entityDetails.getProperties().get(name);
 			if (property != null && property.getValue() != null) {
@@ -699,7 +699,7 @@ public class SdncBaseModel {
 			}
 		}
 		
-		if (value != null) {
+		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("null")) {
 			return value;
 		} else {
 			return "";
@@ -707,7 +707,7 @@ public class SdncBaseModel {
 	}
 
 	protected String extractValue (IEntityDetails  entityDetails, String path, String name) {
-		String value = null; 
+		String value = ""; 
 		
 		if (entityDetails.getProperties().containsKey(path)) {
 			Property property = entityDetails.getProperties().get(path);
@@ -716,7 +716,7 @@ public class SdncBaseModel {
 			}
 		}			
 
-		if (value != null) {
+		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("null")) {
 			return value;
 		} else {
 			return "";
@@ -724,13 +724,13 @@ public class SdncBaseModel {
 	}
 	
 	protected String extractValue (Property property, String name) {
-		String value = null; 
+		String value = ""; 
 		
 		if (!property.getLeafPropertyValue(name).isEmpty()) {
 			value = property.getLeafPropertyValue(name).get(0);
 		}
 		
-		if (value != null) {
+		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("null")) {
 			return value;
 		} else {
 			return "";
@@ -738,13 +738,13 @@ public class SdncBaseModel {
 	}
 
 	protected String extractBooleanValue (Property property, String name) {
-		String value = null; 
+		String value = ""; 
 		
 		if (!property.getLeafPropertyValue(name).isEmpty()) {
 			value = property.getLeafPropertyValue(name).get(0);
 		}
 		
-		if (value != null) {
+		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("null")) {
 			return value.contains("true") ? "Y" : "N";
 		} else {
 			return "";
@@ -752,13 +752,13 @@ public class SdncBaseModel {
 	}
 
 	protected String extractIntegerValue (Property property, String name) {
-		String value = null; 
+		String value = ""; 
 		
 		if (!property.getLeafPropertyValue(name).isEmpty()) {
 			value = property.getLeafPropertyValue(name).get(0);
 		}
 		
-		if (value != null && !value.isEmpty() && !value.contains("null")) {
+		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("null")) {
 			return value;
 		} else {
 			return "";
@@ -873,7 +873,7 @@ public class SdncBaseModel {
 			}
 		}
 		
-		if (value != null && !value.isEmpty()) {
+		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("null")) {
 			return value.contains("true") ? "Y" : "N";
 		} else {
 			return "";
@@ -889,7 +889,7 @@ public class SdncBaseModel {
 			}
 		}
 		
-		if (value != null && !value.isEmpty()) {
+		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("null")) {
 			return value.contains("true") ? "Y" : "N";
 		} else {
 			return "";

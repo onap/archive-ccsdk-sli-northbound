@@ -127,11 +127,18 @@ public class SdncVFModel extends SdncBaseModel {
 
 	private void insertVFModuleData () throws IOException {
 		
+		// Pre-Step: Get all CVFC with VFC inside use this list to filter before insert into VF_MODULE_TO_VFC_MAPPING
+		// Get all VFC in all CFVC in entire model (getEntity VFC, CVFC, true) and then check resulting entity has parent that matches member
+		// if parent of VFC has customizationUUID that matches customizationUUID of group member, then insert into VF_MODULE_TO_VFC_MAPPING
+		// then get count property
+		EntityQuery vfcEntityQuery = EntityQuery.newBuilder(SdcTypes.VFC).build();
+		TopologyTemplateQuery cvfcTopologyTemplateQuery = TopologyTemplateQuery.newBuilder(SdcTypes.CVFC).build();
+		List<IEntityDetails> allVfcsInsideAllCvfcs = sdcCsarHelper.getEntity(vfcEntityQuery, cvfcTopologyTemplateQuery, true);
+		
 		// Step 1: Get all the VF Module groups (entities) in this Service		
 		EntityQuery entityQuery = EntityQuery.newBuilder("org.openecomp.groups.VfModule").build();
 		String vfCustomizationUuid = getCustomizationUUIDNoQuotes();
-		TopologyTemplateQuery topologyTemplateQuery = TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE)
-		        .build();
+		TopologyTemplateQuery topologyTemplateQuery = TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE).build();
 		List<IEntityDetails> vfModules = sdcCsarHelper.getEntity(entityQuery, topologyTemplateQuery, false);
 		if (vfModules == null) {
 			return;
@@ -172,23 +179,27 @@ public class SdncVFModel extends SdncBaseModel {
 				continue;
 			}				
 
-			List<IEntityDetails> vfModuleMembers = vfModulesNonCatalog.get(0).getMemberNodes();
-
+			List<IEntityDetails> vfModuleMembers = vfModulesNonCatalog.get(0).getMemberNodes();  // does getMemberNodes give nested CFVCs?
+			
 			// Find all members for each VF Module that are of type CVFC and insert it and any nested CFVCs into VF_MODULE_TO_VFC_MAPPING
 			for (IEntityDetails vfModuleMember: vfModuleMembers) {
-			    if (vfModuleMember.getMetadata().getValue("type").equals(SdcTypes.CVFC.getValue())) {
-			    				    	
-			    	// Insert this CVFC data into VF_MODULE_TO_VFC_MAPPING
+			    if (vfModuleMember.getMetadata().getValue("type").equals(SdcTypes.CVFC.getValue())) {		
+			    	
 			    	String cvfcCustomizationUuid = extractValue(vfModuleMember.getMetadata(), SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
-			    	String vfcVmType = extractValue (vfModuleMember, SdcPropertyNames.PROPERTY_NAME_VMTYPETAG);  // extracted as vm_type_tag
-			    	String vfcVmCount = "";
+
+			    	// Additional check to see if this CVFC has a VFC in it?  We only are to map CVFCs with VFC in it.
+			    	if (cvfcContainsVfc(allVfcsInsideAllCvfcs, vfModuleMember) == true) {
+			    		
+				    	// Insert this CVFC data into VF_MODULE_TO_VFC_MAPPING
+				    	String vfcVmType = extractValue (vfModuleMember, SdcPropertyNames.PROPERTY_NAME_VMTYPETAG);  // extracted as vm_type_tag
+				    	String vfcVmCount = "";
 					if (vfModuleMember.getProperties().containsKey("service_template_filter")) {
 						vfcVmCount = extractIntegerValue (vfModuleMember.getProperties().get("service_template_filter"), "count");
 					}
 					if (vfcVmCount.isEmpty()) {
 						vfcVmCount = "0"; // vm_count can not be null
 					}
-			    	
+				    	
 					try {
 						LOG.info("Call insertToscaData for VF_MODULE_TO_VFC_MAPPING where vf_module_customization_uuid = " + vfModuleModel.getCustomizationUUID());
 						insertToscaData("insert into VF_MODULE_TO_VFC_MAPPING (vf_module_customization_uuid, vfc_customization_uuid, vm_type, vm_count) values (" +
@@ -196,47 +207,67 @@ public class SdncVFModel extends SdncBaseModel {
 					} catch (IOException e) {
 						LOG.error("Could not insert Tosca CSAR data into the VF_MODULE_TO_VFC_MAPPING table");
 						throw new IOException (e);
-					}			    	
+					}	
+			    	}			    				 
 			    	
 			    	// Step 3: Get any nested CVFCs under this CVFC
-					EntityQuery entityQuery3 = EntityQuery.newBuilder(SdcTypes.CVFC)
-							.build();
-					TopologyTemplateQuery topologyTemplateQuery3 = TopologyTemplateQuery.newBuilder(SdcTypes.CVFC)
-							.customizationUUID(cvfcCustomizationUuid)                 // customization UUID of the CVFC if exists
-							.build();
-					List<IEntityDetails> nestedCvfcs  = sdcCsarHelper.getEntity(entityQuery3, topologyTemplateQuery3, true);  // true allows for nested search
-					if (nestedCvfcs == null || nestedCvfcs.isEmpty()) {
-						LOG.info("insertVFModuleData: Could not find the nested CVFCs for: " + cvfcCustomizationUuid);
-						continue;
-					}				
+				EntityQuery entityQuery3 = EntityQuery.newBuilder(SdcTypes.CVFC).build();
+				TopologyTemplateQuery topologyTemplateQuery3 = TopologyTemplateQuery.newBuilder(SdcTypes.CVFC)
+						.customizationUUID(cvfcCustomizationUuid)                 // customization UUID of the CVFC if exists
+						.build();
+				List<IEntityDetails> nestedCvfcs  = sdcCsarHelper.getEntity(entityQuery3, topologyTemplateQuery3, true);  // true allows for nested search
+				if (nestedCvfcs == null || nestedCvfcs.isEmpty()) {
+					LOG.info("insertVFModuleData: Could not find the nested CVFCs for: " + cvfcCustomizationUuid);
+					continue;
+				}				
 			    	
-					for (IEntityDetails nestedCvfc: nestedCvfcs) {
+				for (IEntityDetails nestedCvfc: nestedCvfcs) {
+						
+				    	// Additional check to see if this CVFC has a VFC in it?  We only are to map CVFCs with VFC in it.
+				    	if (cvfcContainsVfc(allVfcsInsideAllCvfcs, nestedCvfc) == false) {
+				    		continue; // continue to next CVFC
+				    	}
 					
 				    	// Insert this CVFC data into VF_MODULE_TO_VFC_MAPPING
-						String nestedCvfcCustomizationUuid = extractValue(nestedCvfc.getMetadata(), SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
+					String nestedCvfcCustomizationUuid = extractValue(nestedCvfc.getMetadata(), SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
 				    	String nestedVfcVmType = extractValue (nestedCvfc, SdcPropertyNames.PROPERTY_NAME_VMTYPETAG);  // extracted as vm_type_tag
 				    	String nestedVfcVmCount = "";
-						if (nestedCvfc.getProperties().containsKey("service_template_filter")) {
-							nestedVfcVmCount = extractIntegerValue (nestedCvfc.getProperties().get("service_template_filter"), "count");
-						}
-						if (nestedVfcVmCount.isEmpty()) {
-							nestedVfcVmCount = "0"; // vm_count can not be null
-						}
+					if (nestedCvfc.getProperties().containsKey("service_template_filter")) {
+						nestedVfcVmCount = extractIntegerValue (nestedCvfc.getProperties().get("service_template_filter"), "count");
+					}
+					if (nestedVfcVmCount.isEmpty()) {
+						nestedVfcVmCount = "0"; // vm_count can not be null
+					}
 				    	
-						try {
-							LOG.info("Call insertToscaData for VF_MODULE_TO_VFC_MAPPING where vf_module_customization_uuid = " + vfModuleModel.getCustomizationUUID());
-							insertToscaData("insert into VF_MODULE_TO_VFC_MAPPING (vf_module_customization_uuid, vfc_customization_uuid, vm_type, vm_count) values (" +
-									vfModuleModel.getCustomizationUUID() + ", \"" + nestedCvfcCustomizationUuid + "\", \"" + nestedVfcVmType + "\", \"" + nestedVfcVmCount + "\")", null);
-						} catch (IOException e) {
-							LOG.error("Could not insert Tosca CSAR data into the VF_MODULE_TO_VFC_MAPPING table");
-							throw new IOException (e);
-						}	
+					try {
+						LOG.info("Call insertToscaData for VF_MODULE_TO_VFC_MAPPING where vf_module_customization_uuid = " + vfModuleModel.getCustomizationUUID());
+						insertToscaData("insert into VF_MODULE_TO_VFC_MAPPING (vf_module_customization_uuid, vfc_customization_uuid, vm_type, vm_count) values (" +
+								vfModuleModel.getCustomizationUUID() + ", \"" + nestedCvfcCustomizationUuid + "\", \"" + nestedVfcVmType + "\", \"" + nestedVfcVmCount + "\")", null);
+					} catch (IOException e) {
+						LOG.error("Could not insert Tosca CSAR data into the VF_MODULE_TO_VFC_MAPPING table");
+						throw new IOException (e);
 					}	
+				}
 			    }   
 			}	// For each VF Module member
 		}   // For each VF Module
 	}
 	
+	private boolean cvfcContainsVfc (List<IEntityDetails> allVfcsInsideAllCvfcs, IEntityDetails cvfcEntity) {
+		boolean containsVfc = false;
+		
+		for (IEntityDetails vfcEntity: allVfcsInsideAllCvfcs) {
+			IEntityDetails vfcParentEntity = vfcEntity.getParent();
+			String parentCustomizationUuid = extractValue (vfcParentEntity.getMetadata(), SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
+			String cvfcEntityCustomizationUuid = extractValue (cvfcEntity.getMetadata(), SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
+			if (parentCustomizationUuid == cvfcEntityCustomizationUuid) {
+				return true;
+			}
+		}
+	
+		return containsVfc;
+	}
+		
 	private void insertVFtoNetworkRoleMappingData () throws IOException {
 		
 		// Cleanup existing VF_TO_NETWORK_ROLE_MAPPING for this VF
