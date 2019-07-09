@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.onap.ccsdk.sli.core.dblib.DBResourceManager;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
  
@@ -17,13 +18,14 @@ import org.onap.sdc.toscaparser.api.elements.Metadata;
 	@Before
  	public void setUp() throws Exception {
 		ISdcCsarHelper mockCsarHelper = mock(ISdcCsarHelper.class);
+		DBResourceManager mockDBResourceManager = mock(DBResourceManager.class);
 		Metadata mockMetadata = mock(Metadata.class);
 		
 		when(mockCsarHelper.getMetadataPropertyValue(mockMetadata, "UUID")).thenReturn("aaaa-bbbb-cccc-dddd");
 		when(mockCsarHelper.getMetadataPropertyValue(mockMetadata, "invariantUUID")).thenReturn("bbbb-cccc-dddd-eeee");
 		when(mockCsarHelper.getMetadataPropertyValue(mockMetadata, "namingPolicy")).thenReturn("test-naming-policy");
 		
-		testSdncServiceModel = new SdncServiceModel(mockCsarHelper,mockMetadata);
+		testSdncServiceModel = new SdncServiceModel(mockCsarHelper,mockMetadata,mockDBResourceManager);
 
  		assertNotNull(testSdncServiceModel);
  	}

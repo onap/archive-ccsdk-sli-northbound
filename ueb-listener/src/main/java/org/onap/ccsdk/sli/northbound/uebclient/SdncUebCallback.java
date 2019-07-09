@@ -689,7 +689,7 @@ public class SdncUebCallback implements INotificationCallback {
 
 		// Ingest Service Data - 1707
 		Metadata serviceMetadata = sdcCsarHelper.getServiceMetadata();
-		SdncServiceModel serviceModel = new SdncServiceModel(sdcCsarHelper, serviceMetadata);
+		SdncServiceModel serviceModel = new SdncServiceModel(sdcCsarHelper, serviceMetadata, jdbcDataSource);
 		serviceModel.setFilename(spoolFile.toString().substring(spoolFile.toString().lastIndexOf("/")+1));  // will be csar file name
 		serviceModel.setServiceInstanceNamePrefix(SdncBaseModel.extractSubstitutionMappingTypeName(sdcCsarHelper).substring(SdncBaseModel.extractSubstitutionMappingTypeName(sdcCsarHelper).lastIndexOf(".")+1));
 

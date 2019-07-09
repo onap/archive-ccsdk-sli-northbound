@@ -21,6 +21,7 @@
 
 package org.onap.ccsdk.sli.northbound.uebclient;
 
+import org.onap.ccsdk.sli.core.dblib.DBResourceManager;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
@@ -35,9 +36,9 @@ public class SdncServiceModel extends SdncBaseModel {
 	private String serviceInstanceNamePrefix = null;
 	private String filename = null;
 	
-	public SdncServiceModel(ISdcCsarHelper sdcCsarHelper, Metadata metadata) {
+	public SdncServiceModel(ISdcCsarHelper sdcCsarHelper, Metadata metadata, DBResourceManager jdbcDataSource) {
 		
-		super(sdcCsarHelper, metadata);
+		super(sdcCsarHelper, metadata, jdbcDataSource);
 	
 		UUID = extractValue(metadata, SdcPropertyNames.PROPERTY_NAME_UUID);
 		

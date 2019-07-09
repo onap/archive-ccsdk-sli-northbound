@@ -385,7 +385,9 @@ public class SdncVFModel extends SdncBaseModel {
 			List<NodeTemplate> targetNodeList = group.getMemberNodes();
 			for (NodeTemplate targetNode : targetNodeList) {
 				
-				String targetNodeUuid = targetNode.getMetaData().getValue("UUID");
+				String targetNodeUuid = extractValue(targetNode.getMetaData(), SdcPropertyNames.PROPERTY_NAME_UUID);
+				String targetNodeCustomizationUuid = extractValue(targetNode.getMetaData(), SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
+				String targetNodeType = extractValue(targetNode.getMetaData(), SdcPropertyNames.PROPERTY_NAME_TYPE);
 				
 				// insert RESOURCE_GROUP_TO_TARGET_NODE_MAPPING
 				try {
@@ -398,10 +400,9 @@ public class SdncVFModel extends SdncBaseModel {
 					Map<String, String> mappingParams = new HashMap<String, String>();
 					addParameter("parent_uuid", getUUID(), mappingParams);
 					addParameter("target_node_uuid", targetNodeUuid, mappingParams);
-					String targetType = extractValue(targetNode.getMetaData(), "type");
-					addParameter("target_type", targetType, mappingParams);
+					addParameter("target_type", targetNodeType, mappingParams);
 					String tableName = "";
-					switch (targetType) {
+					switch (targetNodeType) {
 					case "CVFC":
 						tableName = "VFC_MODEL";
 						break;
@@ -417,8 +418,9 @@ public class SdncVFModel extends SdncBaseModel {
 					throw new IOException (e);
 				}			
 				
-				// For each target node, get External policies 				
-				insertPolicyData(nodeTemplate, targetNode, "org.openecomp.policies.External");
+				// For each target node, get External policies
+				SdcTypes queryType = SdcTypes.valueOf(extractValue(nodeTemplate.getMetaData(), SdcPropertyNames.PROPERTY_NAME_TYPE));
+				insertEntityPolicyData(getCustomizationUUIDNoQuotes(), getUUID().replace("\"", ""), queryType, targetNodeCustomizationUuid, targetNodeUuid, targetNodeType, "org.openecomp.policies.External");  // AFTER getEntity
 			}							
 		}
 	}
@@ -426,7 +428,7 @@ public class SdncVFModel extends SdncBaseModel {
 	private void insertVFPolicyData() throws IOException {
 		
 		// For each VF node, ingest External Policy data
-		insertPolicyData (nodeTemplate, jdbcDataSource, serviceUUID, "org.openecomp.policies.External");
+		insertEntityPolicyData (getCustomizationUUIDNoQuotes(), getUUID(), serviceUUID.replace("\"", ""), "org.openecomp.policies.External", SdcTypes.VF);
 	}	
 
 	public String getVendor() {
