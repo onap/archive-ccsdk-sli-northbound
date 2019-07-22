@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 import java.io.IOException;
 
 import org.junit.Test;
+import org.onap.sdc.tosca.parser.api.IEntityDetails;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.toscaparser.api.NodeTemplate;
 import org.onap.sdc.toscaparser.api.Group;
@@ -17,7 +18,7 @@ import org.onap.ccsdk.sli.core.dblib.DBResourceManager;
  	public void testSdncGroupModelConstructor() {
  		ISdcCsarHelper mockCsarHelper = mock(ISdcCsarHelper.class);
  		NodeTemplate nodeTemplate = mock(NodeTemplate.class);
- 		Group group = mock(Group.class);
+ 		IEntityDetails group = mock(IEntityDetails.class);
 		DBResourceManager mockDBResourceManager = mock(DBResourceManager.class);
 		SdncUebConfiguration mockSdncUebConfiguration = mock(SdncUebConfiguration.class);
  		SdncGroupModel testSdncGroupModel = null;

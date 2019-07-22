@@ -370,24 +370,32 @@ public class SdncVFModel extends SdncBaseModel {
 		// Insert Group data in RESOURCE_GROUP
 		// Store group capabilities and capability properties in NODE_CAPABILITY and NODE_CAPABILITY_PROPERTY table
 		
-		// For each VF, insert CFVC data - 1806
-		List<Group> vfcInstanceGroupListForVf = sdcCsarHelper.getGroupsOfOriginOfNodeTemplateByToscaGroupType(nodeTemplate, "org.openecomp.groups.VfcInstanceGroup");
-		for (Group group : vfcInstanceGroupListForVf){
+		// For each VF, insert VFC Instance Group data (convert to use getEntity in 19.08)
+		EntityQuery entityQuery = EntityQuery.newBuilder("org.openecomp.groups.VfcInstanceGroup").build();
+		String vfCustomizationUuid = getCustomizationUUIDNoQuotes();
+		TopologyTemplateQuery topologyTemplateQuery = TopologyTemplateQuery.newBuilder(SdcTypes.VF)
+				.customizationUUID(vfCustomizationUuid).build();
+		List<IEntityDetails> vfcInstanceGroupListForVf = sdcCsarHelper.getEntity(entityQuery, topologyTemplateQuery, false);
+		if (vfcInstanceGroupListForVf == null) {
+			return;
+		}
+
+		for (IEntityDetails group : vfcInstanceGroupListForVf){
 
 			SdncGroupModel groupModel = new SdncGroupModel (sdcCsarHelper, group, nodeTemplate, config, jdbcDataSource);	
 			groupModel.insertGroupData(nodeTemplate);
 		
 			// For each group, populate NODE_CAPABILITY/NODE_CAPABILITY_PROPERTY
-			insertNodeCapabilitiesData(group.getCapabilities());
+			insertNodeCapabilitiesEntityData(group.getCapabilities());
 			
 			// Store relationship between VfcInstanceGroup and node-type=VFC in RESOURCE_GROUP_TO_TARGET_NODE_MAPPING table
 			// target is each VFC in targets section of group
-			List<NodeTemplate> targetNodeList = group.getMemberNodes();
-			for (NodeTemplate targetNode : targetNodeList) {
+			List<IEntityDetails> targetNodeList = group.getMemberNodes();
+			for (IEntityDetails targetNode : targetNodeList) {
 				
-				String targetNodeUuid = extractValue(targetNode.getMetaData(), SdcPropertyNames.PROPERTY_NAME_UUID);
-				String targetNodeCustomizationUuid = extractValue(targetNode.getMetaData(), SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
-				String targetNodeType = extractValue(targetNode.getMetaData(), SdcPropertyNames.PROPERTY_NAME_TYPE);
+				String targetNodeUuid = extractValue(targetNode.getMetadata(), SdcPropertyNames.PROPERTY_NAME_UUID);
+				String targetNodeCustomizationUuid = extractValue(targetNode.getMetadata(), SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
+				String targetNodeType = extractValue(targetNode.getMetadata(), SdcPropertyNames.PROPERTY_NAME_TYPE);
 				
 				// insert RESOURCE_GROUP_TO_TARGET_NODE_MAPPING
 				try {

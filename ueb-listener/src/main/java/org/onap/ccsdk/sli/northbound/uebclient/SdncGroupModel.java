@@ -25,6 +25,7 @@ package org.onap.ccsdk.sli.northbound.uebclient;
 import java.io.IOException;
 
 import org.onap.ccsdk.sli.core.dblib.DBResourceManager;
+import org.onap.sdc.tosca.parser.api.IEntityDetails;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.toscaparser.api.Group;
 import org.onap.sdc.toscaparser.api.NodeTemplate;
@@ -39,28 +40,33 @@ public class SdncGroupModel extends SdncBaseModel {
 
 	private static final String groupType = "group_type";
 	
-	public SdncGroupModel(ISdcCsarHelper sdcCsarHelper, Group group, NodeTemplate nodeTemplate, SdncUebConfiguration config, DBResourceManager jdbcDataSource) throws IOException {
+	public SdncGroupModel(ISdcCsarHelper sdcCsarHelper, IEntityDetails group, NodeTemplate nodeTemplate, SdncUebConfiguration config, DBResourceManager jdbcDataSource) throws IOException {
 
 		super(sdcCsarHelper, group);
 		
 		// Metadata for Resource group is not extracted in base class due to inconsistency in TOSCA model Group object
 		Metadata metadata = group.getMetadata();
+		params.remove("invariant_uuid"); // remove invariant_uuid which is added by base class, it does not apply for groups
 		invariantUUID = extractValue (metadata, "invariantUUID");
 		addParameter("group_invariant_uuid", invariantUUID);	
+		params.remove("uuid"); // remove uuid which is added by base class, it does not apply for groups
 		UUID = extractValue (metadata, "UUID");
 		addParameter("group_uuid", UUID);	
 		addParameter("group_name", extractValue (metadata, "name"));
-		addParameter(groupType, group.getType());
+		addParameter(groupType, group.getToscaType());
 		addParameter("version", extractValue (metadata, "version"));
 		
 		// extract properties
 		addParameter("vfc_parent_port_role", extractValue(group, "vfc_parent_port_role"), attributeValueParams);
 		addParameter("subinterface_role", extractValue(group, "subinterface_role"), attributeValueParams);
 		
-		// relevant complex group properties are extracted and inserted into ATTRIBUTE_VALUE_PAIR 
-		addParameter(extractGetInputName (group, groupType), extractGetInputValue(group, nodeTemplate, groupType), attributeValueParams);
-		addParameter(extractGetInputName (group, "group_role"), extractGetInputValue(group, nodeTemplate, "group_role"), attributeValueParams);
-		addParameter(extractGetInputName (group, "group_function"), extractGetInputValue(group, nodeTemplate, "group_function"), attributeValueParams);
+		// relevant complex group properties are extracted and inserted into ATTRIBUTE_VALUE_PAIR
+		String extractedGroupType = extractValue (group, groupType);
+		String extractedGroupRole = extractValue (group, "group_role");
+		String extractedGroupFunction = extractValue (group, "group_function");
+		addParameter(groupType, extractedGroupType, attributeValueParams);
+		addParameter("group_role", extractedGroupRole, attributeValueParams);
+		addParameter("group_function", extractedGroupFunction, attributeValueParams);
 	}
 	
 	public void insertGroupData(NodeTemplate resourceNodeTemplate) throws IOException {

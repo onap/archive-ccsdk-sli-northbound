@@ -250,12 +250,18 @@ public class SdncBaseModel {
 	
 	protected void insertGroupData (NodeTemplate nodeTemplate, NodeTemplate targetNode, String groupType) throws IOException {
 		
-		// Get the NetworkCollection groups of the node
-		Map<String, String> groupParams = new HashMap<String, String>();
-		List<Group> groupList = sdcCsarHelper.getGroupsOfOriginOfNodeTemplateByToscaGroupType(nodeTemplate, groupType);
-		//List<Group> groupList2 = sdcCsarHelper.getGroupsOfTopologyTemplateByToscaGroupType(groupType); // returns nothing
+		// Get the Groups on a node - Convert to use getEntity in 19.08
+		EntityQuery entityQuery = EntityQuery.newBuilder(groupType).build();
+		String customizationUuid = getCustomizationUUIDNoQuotes();
+		SdcTypes nodeTemplateSdcType = SdcTypes.valueOf(extractValue(nodeTemplate.getMetaData(), SdcPropertyNames.PROPERTY_NAME_TYPE));
+		TopologyTemplateQuery topologyTemplateQuery = TopologyTemplateQuery.newBuilder(nodeTemplateSdcType)
+				.customizationUUID(customizationUuid).build();
+		List<IEntityDetails> groupList = sdcCsarHelper.getEntity(entityQuery, topologyTemplateQuery, false);
+		if (groupList == null) {
+			return;
+		}
 
-		for (Group group : groupList) {
+		for (IEntityDetails group : groupList){
 			
 			// Insert into RESOURCE_GROUP/ATTRIBUTE_VALUE_PAIR and RESOURCE_GROUP_TO_TARGET_NODE_MAPPING
 			// RESOURCE_GROUP (group metadata): resource_uuid (CR node UUID), uuid, customization_uuid, invariant_uuid, name, version
@@ -269,13 +275,13 @@ public class SdncBaseModel {
 			try {
 				Map<String, String> mappingCleanupParams = new HashMap<String, String>();
 				addParameter("group_uuid", groupModel.getUUID(), mappingCleanupParams); 
-				addParameter("parent_uuid", extractValue(nodeTemplate.getMetaData(), "UUID"), mappingCleanupParams);
-				addParameter("target_node_uuid", extractValue(targetNode.getMetaData(), "UUID"), mappingCleanupParams);
+				addParameter("parent_uuid", extractValue(nodeTemplate.getMetaData(), SdcPropertyNames.PROPERTY_NAME_UUID), mappingCleanupParams);
+				addParameter("target_node_uuid", extractValue(targetNode.getMetaData(), SdcPropertyNames.PROPERTY_NAME_UUID), mappingCleanupParams);
 				cleanupExistingToscaData("RESOURCE_GROUP_TO_TARGET_NODE_MAPPING", mappingCleanupParams);
 				
 				Map<String, String> mappingParams = new HashMap<String, String>();
-				addParameter("parent_uuid", extractValue(nodeTemplate.getMetaData(), "UUID"), mappingParams);
-				addParameter("target_node_uuid", extractValue(targetNode.getMetaData(), "UUID"), mappingParams);
+				addParameter("parent_uuid", extractValue(nodeTemplate.getMetaData(), SdcPropertyNames.PROPERTY_NAME_UUID), mappingParams);
+				addParameter("target_node_uuid", extractValue(targetNode.getMetaData(), SdcPropertyNames.PROPERTY_NAME_UUID), mappingParams);
 				String targetType = extractValue(targetNode.getMetaData(), PARAM_TYPE_KEY);
 				addParameter("target_type", targetType, mappingParams);
 				String tableName = "";
@@ -438,6 +444,68 @@ public class SdncBaseModel {
 		List<CapabilityAssignment> capabilityList = capabilities.getAll();
 		
 		for (CapabilityAssignment capability : capabilities.getAll()) {
+							
+			// Insert into NODE_CAPABILITY: 
+			// capability_id (generated) 
+			// capability_provider_uuid - UUID of this node 
+			// capability_provider_customization_uuid - customization UUID of this node
+			// capability_name - capability.getName()
+			// capability_type - ?
+
+			// Check capability name against relevant capabilities
+			boolean capabilityIsRelevant = false;
+			/*List<String> relevantCapabilities = config.getRelevantCapabilityNames();
+			for (String relevantCapabilityName : relevantCapabilities ) {
+				
+				if (capability.getName().toLowerCase().contains(relevantCapabilityName.toLowerCase())) {
+					capabilityIsRelevant = true;
+				}
+			}*/
+			
+			if (capabilityIsRelevant == false){
+				continue;
+			}
+			
+			String capabilityProviderUuid = getUUID(); 
+
+			Map<String, String> cleanupParams = new HashMap<String, String>();
+			addParameter("capability_provider_uuid", capabilityProviderUuid, cleanupParams);  // node customization UUID
+			addParameter("capability_provider_customization_uuid", getCustomizationUUIDNoQuotes(), cleanupParams);  // node customization UUID
+			addParameter("capability_name", capability.getName(), cleanupParams);
+
+			Map<String, String> nodeCapabilityParams = new HashMap<String, String>();
+			addParameter("capability_provider_customization_uuid", getCustomizationUUIDNoQuotes(), nodeCapabilityParams);  // node customization UUID
+			addParameter("capability_name", capability.getName(), nodeCapabilityParams);
+			addParameter("capability_type", extractValue(capability, PARAM_TYPE_KEY), nodeCapabilityParams);
+			
+			// Insert NODE_CAPABILITY data for each capability
+			String capabilityId = "";
+			try {
+
+				cleanupExistingToscaData("NODE_CAPABILITY", cleanupParams); // will also delete NODE_CAPABILITY_PROPERTY with same capability_id
+				LOG.info("Call insertToscaData for NODE_CAPABILITY where capability_provider_uuid = " + capabilityProviderUuid + " and capability_name = " + capability.getName());
+				insertToscaData(buildSql("NODE_CAPABILITY", "capability_provider_uuid", capabilityProviderUuid, model_yaml, nodeCapabilityParams), null);
+				
+				// Get capabilityId for capability just inserted
+				CachedRowSet rowData = getToscaData("NODE_CAPABILITY", nodeCapabilityParams);
+				rowData.first();
+				int capabilityIdint = rowData.getInt("capability_id");
+				capabilityId = capabilityId.valueOf(capabilityIdint);
+				
+			} catch (IOException | SQLException e) {
+				LOG.error("Could not insert Tosca CSAR data into the NODE_CAPABILITY table");
+				throw new IOException (e);
+			}
+
+			insertNodeCapabilityPropertyData (capability, capabilityId);
+		}
+	}
+	
+	protected void insertNodeCapabilitiesEntityData (Map<String, CapabilityAssignment> capabilities) throws IOException {		
+		
+		// Process the capabilities		
+		for (Map.Entry<String, CapabilityAssignment> entry : capabilities.entrySet()) {
+		    CapabilityAssignment capability = entry.getValue();		
 							
 			// Insert into NODE_CAPABILITY: 
 			// capability_id (generated) 
