@@ -57,17 +57,17 @@ public class OofPciPocDmaapConsumers extends SdncDmaapConsumerImpl {
 	private static final String MODIFY_CONFIG = "ModifyConfig";
 	private static final String DATA = "data";
 	private static final String FAP_SERVICE = "FAPService";
-	
+
 	private static final String PAYLOAD = "Payload";
 	private static final String PCI_CHANGES_MAP_FILE_NAME = "pci-changes-from-policy-to-sdnr";
 	private static final String SLI_PARAMETERS = "sli_parameters";
 	private static final String RPC_NAME = "rpc-name";
 	private static final String BODY = "body";
 	private static final String INPUT = "input";
-	
+
 	private static final String EMPTY = "";
 	private static final String ESCAPE_SEQUENCE_QUOTES = "\"";
-	
+
     private static final String GENERIC_NEIGHBOR_CONFIGURATION_INPUT = "generic-neighbor-configuration-input.";
     private static final String GENERIC_NEIGHBOR_CONFIGURATION_INPUT_NEIGHBOR_LIST_IN_USE = GENERIC_NEIGHBOR_CONFIGURATION_INPUT.concat("neighbor-list-in-use");
 	private static final String MODIFY_CONFIG_ANR = "ModifyConfigANR";
@@ -137,31 +137,31 @@ public class OofPciPocDmaapConsumers extends SdncDmaapConsumerImpl {
 
         return writer.toString();
     }
-    
+
     private String publishANRChangesFromPolicyToSDNR(String templatePath, JsonNode dataNode) throws IOException, InvalidMessageException
     {
     	VelocityContext context = new VelocityContext();
-    	
+
     	String RPC_NAME_KEY_IN_VT = "rpc_name";
     	String RPC_NAME_VALUE_IN_VT = "generic-neighbor-configuration";
-    	
+
     	String CELL_CONFIG = "CellConfig";
     	String ALIAS_LABEL = "alias";
     	String LTE = "LTE";
     	String RAN = "RAN";
     	String LTE_CELL = "LTECell";
     	String NEIGHBOR_LIST_IN_USE = "NeighborListInUse";
-    	
+
         JSONObject numberOfEntries = new JSONObject();
         JSONObject alias = new JSONObject();
         JSONArray sliParametersArray = new JSONArray();
-        
+
         String aliasValue =  dataNode.get(DATA).get(FAP_SERVICE).get(ALIAS_LABEL).textValue();
-        
+
         JsonNode nbrListInUse = dataNode.get(DATA).get(FAP_SERVICE).get(CELL_CONFIG).get(LTE).get(RAN).get(NEIGHBOR_LIST_IN_USE).get(LTE_CELL);
-        
+
         int entryCount = 0;
-        
+
         if(nbrListInUse.isArray()) {
         	for(JsonNode lteCell:nbrListInUse) {
         		sliParametersArray.put(new JSONObject().put(PARAMETER_NAME, GENERIC_NEIGHBOR_CONFIGURATION_INPUT_NEIGHBOR_LIST_IN_USE+"["+entryCount+"]."+"plmnid")
@@ -174,21 +174,21 @@ public class OofPciPocDmaapConsumers extends SdncDmaapConsumerImpl {
             			.put(STRING_VALUE, lteCell.get("PNFName").toString().replace(ESCAPE_SEQUENCE_QUOTES, EMPTY)));
         		sliParametersArray.put(new JSONObject().put(PARAMETER_NAME, GENERIC_NEIGHBOR_CONFIGURATION_INPUT_NEIGHBOR_LIST_IN_USE+"["+entryCount+"]."+"blacklisted")
             			.put(STRING_VALUE, lteCell.get("Blacklisted").toString().replace(ESCAPE_SEQUENCE_QUOTES, EMPTY)));
-        		
+
         		entryCount++;
         	}
-        	
+
         	alias.put(PARAMETER_NAME, GENERIC_NEIGHBOR_CONFIGURATION_INPUT+ALIAS_LABEL);
             alias.put(STRING_VALUE, aliasValue);
-            
-            numberOfEntries.put(PARAMETER_NAME, GENERIC_NEIGHBOR_CONFIGURATION_INPUT+"number-of-neighbor-cell-entries");
+
+            numberOfEntries.put(PARAMETER_NAME, GENERIC_NEIGHBOR_CONFIGURATION_INPUT+"lte-cell-number-of-entries");
             numberOfEntries.put(STRING_VALUE, entryCount);
-            
+
             sliParametersArray.put(alias);
             sliParametersArray.put(numberOfEntries);
-            
+
             context.put(SLI_PARAMETERS, sliParametersArray);
-            
+
             context.put(RPC_NAME_KEY_IN_VT, RPC_NAME_VALUE_IN_VT);
 
             Writer writer = new StringWriter();
@@ -196,29 +196,29 @@ public class OofPciPocDmaapConsumers extends SdncDmaapConsumerImpl {
             writer.flush();
 
             return writer.toString();
-        	
+
         }else {
         	throw new InvalidMessageException("nbrListInUse is not of Type Array. Could not read neighbor list elements");
         }
-        
+
     }
-    
+
     private String publishPciChangesFromPolicyToSDNR(String templatePath, JsonNode configurationsJsonNode) throws IOException, InvalidMessageException
     {
     	String RPC_NAME_KEY_IN_VT = "rpc_name";
     	String RPC_NAME_VALUE_IN_VT = "configuration-phy-cell-id";
     	String ALIAS = "alias";
     	String X0005b9Lte = "X0005b9Lte";
-    	
+
         VelocityContext context = new VelocityContext();
-        
+
         JSONObject numberOfEntries = new JSONObject();
         JSONArray sliParametersArray = new JSONArray();
-        
+
         JsonNode configurations = configurationsJsonNode.get(CONFIGURATIONS);
-        
+
         int entryCount = 0;
-        
+
         if(configurations.isArray()) {
         	for(JsonNode dataNode:configurations) {
         		sliParametersArray.put(new JSONObject().put(PARAMETER_NAME, PHYSICAL_CELL_ID_INPUT_FAP_SERVICE+"["+entryCount+"]."+ALIAS)
@@ -231,14 +231,14 @@ public class OofPciPocDmaapConsumers extends SdncDmaapConsumerImpl {
             			.put(STRING_VALUE, dataNode.get(DATA).get(FAP_SERVICE).get(X0005b9Lte).get("pnfName").toString().replace(ESCAPE_SEQUENCE_QUOTES, EMPTY)));
         		entryCount++;
         	}
-            
+
             numberOfEntries.put(PARAMETER_NAME, PHYSICAL_CELL_ID_INPUT_FAP_SERVICE+"-number-of-entries");
             numberOfEntries.put(STRING_VALUE, entryCount);
-            
+
             sliParametersArray.put(numberOfEntries);
-            
+
             context.put(SLI_PARAMETERS, sliParametersArray);
-            
+
             context.put(RPC_NAME_KEY_IN_VT, RPC_NAME_VALUE_IN_VT);
 
             Writer writer = new StringWriter();
@@ -246,11 +246,11 @@ public class OofPciPocDmaapConsumers extends SdncDmaapConsumerImpl {
             writer.flush();
 
             return writer.toString();
-        	
+
         }else {
         	throw new InvalidMessageException("Configurations is not of Type Array. Could not read configuration changes");
         }
-        
+
     }
 
     @Override
@@ -267,31 +267,31 @@ public class OofPciPocDmaapConsumers extends SdncDmaapConsumerImpl {
         } catch (Exception e) {
             throw new InvalidMessageException("Cannot parse json object", e);
         }
-        
+
 
     	JsonNode rpcnameNode = dmaapMessageRootNode.get(RPC_NAME);
         if(rpcnameNode == null) {
         	 LOG.info("Unable to identify the respective consumer to invoke. Please verify the dmaap message..");
         	 return;
         }
-        
+
         String rpcname = rpcnameNode.textValue();
-        
+
         if(!MODIFY_CONFIG.toLowerCase().equals(rpcname) && !MODIFY_CONFIG_ANR.toLowerCase().equals(rpcname)) {
             LOG.info("Unknown rpc name {}", rpcname);
             return;
         }
-        
+
         if(MODIFY_CONFIG.toLowerCase().equals(rpcname)) {
         	invokePCIChangesConsumer(dmaapMessageRootNode, oMapper, msg);
             return;
         }
-        
+
         if(MODIFY_CONFIG_ANR.toLowerCase().equals(rpcname)) {
         	invokeANRChangesConsumer(dmaapMessageRootNode, oMapper, msg);
             return;
         }
-    
+
     }
 
     private void invokeANRChangesConsumer(JsonNode dmaapMessageRootNode, ObjectMapper oMapper,
@@ -301,24 +301,24 @@ public class OofPciPocDmaapConsumers extends SdncDmaapConsumerImpl {
         	 LOG.info("Missing body node.");
         	 return;
         }
-        
+
         JsonNode input = body.get(INPUT);
         if(input == null) {
         	 LOG.info("Missing input node.");
         	 return;
         }
-        
+
         JsonNode action = input.get(ACTION);
         if(action == null) {
         	 LOG.info("Missing action node.");
         	 return;
         }
-        
+
         if(!MODIFY_CONFIG_ANR.equals(action.textValue())) {
             LOG.info("Unknown Action {}", action);
             return;
         }
-        
+
         JsonNode payload = input.get(PAYLOAD);
         if(payload == null) {
             LOG.info("Missing payload node.");
@@ -326,12 +326,12 @@ public class OofPciPocDmaapConsumers extends SdncDmaapConsumerImpl {
         }
 
         String payloadText = payload.asText();
-        
+
         if(!payloadText.contains(CONFIGURATIONS)) {
        	 LOG.info("Missing configurations node.");
        	 return;
        }
-        
+
        JsonNode configurationsJsonNode;
 	    try {
 	    	configurationsJsonNode = oMapper.readTree(payloadText);
@@ -354,9 +354,9 @@ public class OofPciPocDmaapConsumers extends SdncDmaapConsumerImpl {
             throw new InvalidMessageException("No SDNC template known for message ");
         }
         String templateName = fieldMap.get(TEMPLATE);
-        
+
         JsonNode configurations = configurationsJsonNode.get(CONFIGURATIONS);
-        
+
         if(configurations.isArray()) {
         	for(JsonNode dataNode:configurations) {
     	        if(dataNode.get(DATA).get(FAP_SERVICE) == null) {
@@ -377,24 +377,24 @@ public class OofPciPocDmaapConsumers extends SdncDmaapConsumerImpl {
         	 LOG.info("Missing body node.");
         	 return;
         }
-        
+
         JsonNode input = body.get(INPUT);
         if(input == null) {
         	 LOG.info("Missing input node.");
         	 return;
         }
-        
+
         JsonNode action = input.get(ACTION);
         if(action == null) {
         	 LOG.info("Missing action node.");
         	 return;
         }
-        
+
         if(!MODIFY_CONFIG.equals(action.textValue())) {
             LOG.info("Unknown Action {}", action);
             return;
         }
-        
+
         JsonNode payload = input.get(PAYLOAD);
         if(payload == null) {
             LOG.info("Missing payload node.");
@@ -402,12 +402,12 @@ public class OofPciPocDmaapConsumers extends SdncDmaapConsumerImpl {
         }
 
         String configurations = payload.asText();
-        
+
         if(!configurations.contains(CONFIGURATIONS)) {
        	 LOG.info("Missing configurations node.");
        	 return;
        }
-        
+
        JsonNode configurationsJsonNode;
 	    try {
 	    	configurationsJsonNode = oMapper.readTree(configurations);
@@ -430,7 +430,7 @@ public class OofPciPocDmaapConsumers extends SdncDmaapConsumerImpl {
             throw new InvalidMessageException("No SDNC template known for message ");
         }
         String templateName = fieldMap.get(TEMPLATE);
-        
+
         buildAndInvokePCIChangesRPC(sdncEndpoint, templateName, msg, configurationsJsonNode);
 	}
 
@@ -452,7 +452,7 @@ public class OofPciPocDmaapConsumers extends SdncDmaapConsumerImpl {
             LOG.error("Unable to process message", e);
         }
 	}
-	
+
 	private void buildAndInvokeANRChangesRPC(String sdncEndpoint, String templateName, String msg, JsonNode configurationsOrDataNode) {
 		try {
             String rpcMsgbody = publish(templateName, msg, configurationsOrDataNode, false, true);
