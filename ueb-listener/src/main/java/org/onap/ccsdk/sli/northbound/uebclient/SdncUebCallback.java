@@ -703,18 +703,22 @@ public class SdncUebCallback implements INotificationCallback {
 			
 		}
 		
-		// Ingest Network (VL) Data - 1707
-		List<NodeTemplate> vlNodeTemplatesList = sdcCsarHelper.getServiceVlList();
+		// Ingest Network (VL) Data - 1707 / migrate to getEntity - 1908
+		EntityQuery vlEntityQuery = EntityQuery.newBuilder(SdcTypes.VL).build();
+		TopologyTemplateQuery vlTopologyTemplateQuery = TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE).build();
+		List<IEntityDetails> vlEntities = sdcCsarHelper.getEntity(vlEntityQuery, vlTopologyTemplateQuery, false);  // false to not recurse
+		if (vlEntities != null && !vlEntities.isEmpty()) {
+			for (IEntityDetails vlEntity : vlEntities){
 
-		for (NodeTemplate nodeTemplate :  vlNodeTemplatesList) {
-			SdncNodeModel nodeModel = new SdncNodeModel (sdcCsarHelper, nodeTemplate, jdbcDataSource);
-			nodeModel.setServiceUUID(serviceModel.getServiceUUID());
+				try {
+					SdncNodeModel nodeModel = new SdncNodeModel (sdcCsarHelper, vlEntity, jdbcDataSource, config);
+					nodeModel.setServiceUUID(serviceModel.getServiceUUID());
 
-			try {
-				nodeModel.insertNetworkModelData();
-				nodeModel.insertRelatedNetworkRoleData();
-			} catch (IOException e) {
-				deployStatus = DistributionStatusEnum.DEPLOY_ERROR;
+					nodeModel.insertNetworkModelData();
+					nodeModel.insertRelatedNetworkRoleData();
+				} catch (IOException e) {
+					deployStatus = DistributionStatusEnum.DEPLOY_ERROR;
+				}
 			}
 		}
 		
