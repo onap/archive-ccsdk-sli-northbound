@@ -27,8 +27,6 @@ import java.io.IOException;
 import org.onap.ccsdk.sli.core.dblib.DBResourceManager;
 import org.onap.sdc.tosca.parser.api.IEntityDetails;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
-import org.onap.sdc.toscaparser.api.Group;
-import org.onap.sdc.toscaparser.api.NodeTemplate;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +38,7 @@ public class SdncGroupModel extends SdncBaseModel {
 
 	private static final String groupType = "group_type";
 	
-	public SdncGroupModel(ISdcCsarHelper sdcCsarHelper, IEntityDetails group, NodeTemplate nodeTemplate, SdncUebConfiguration config, DBResourceManager jdbcDataSource) throws IOException {
+	public SdncGroupModel(ISdcCsarHelper sdcCsarHelper, IEntityDetails group, IEntityDetails entityDetails, SdncUebConfiguration config, DBResourceManager jdbcDataSource) throws IOException {
 
 		super(sdcCsarHelper, group);
 		
@@ -60,24 +58,20 @@ public class SdncGroupModel extends SdncBaseModel {
 		addParameter("vfc_parent_port_role", extractValue(group, "vfc_parent_port_role"), attributeValueParams);
 		addParameter("subinterface_role", extractValue(group, "subinterface_role"), attributeValueParams);
 		
-		// relevant complex group properties are extracted and inserted into ATTRIBUTE_VALUE_PAIR
-		String extractedGroupType = extractValue (group, groupType);
-		String extractedGroupRole = extractValue (group, "group_role");
-		String extractedGroupFunction = extractValue (group, "group_function");
-		addParameter(groupType, extractedGroupType, attributeValueParams);
-		addParameter("group_role", extractedGroupRole, attributeValueParams);
-		addParameter("group_function", extractedGroupFunction, attributeValueParams);
+		// relevant complex group properties are extracted and inserted into ATTRIBUTE_VALUE_PAIR 
+		addParameter(extractGetInputName (group, groupType), extractGetInputValue(group, entityDetails, groupType), attributeValueParams);
+		addParameter(extractGetInputName (group, "group_role"), extractGetInputValue(group, entityDetails, "group_role"), attributeValueParams);
+		addParameter(extractGetInputName (group, "group_function"), extractGetInputValue(group, entityDetails, "group_function"), attributeValueParams);
 	}
 	
-	public void insertGroupData(NodeTemplate resourceNodeTemplate) throws IOException {
+	public void insertGroupData(String resourceUuid) throws IOException {
 	
 		try {
 			
 			// insert into RESOURCE_GROUP/ATTRIBUTE_VALUE_PAIR
-			String resourceNodeUuid = "\"" + extractValue (resourceNodeTemplate.getMetaData(), "UUID") + "\"";
-			cleanUpExistingToscaData("RESOURCE_GROUP", "resource_uuid", resourceNodeUuid, "group_uuid", getUUID()) ;
-			LOG.info("Call insertToscaData for RESOURCE_GROUP where group_uuid = " + getUUID() + " and resource_uuid = " + resourceNodeUuid);
-			insertToscaData(buildSql("RESOURCE_GROUP", "resource_uuid", resourceNodeUuid, model_yaml, params), null);
+			cleanUpExistingToscaData("RESOURCE_GROUP", "resource_uuid", resourceUuid, "group_uuid", getUUID()) ;
+			LOG.info("Call insertToscaData for RESOURCE_GROUP where group_uuid = " + getUUID() + " and resource_uuid = " + resourceUuid);
+			insertToscaData(buildSql("RESOURCE_GROUP", "resource_uuid", resourceUuid, model_yaml, params), null);
 			insertRelevantAttributeData("group");	
 
 		} catch (IOException e) {

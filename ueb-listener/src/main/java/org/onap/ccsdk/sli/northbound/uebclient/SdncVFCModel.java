@@ -94,7 +94,7 @@ public class SdncVFCModel extends SdncBaseModel {
 	    TopologyTemplateQuery topologyTemplateQueryVFC = TopologyTemplateQuery.newBuilder(SdcTypes.CVFC).customizationUUID(vfcCustomizationUuid).build();
 	    List<IEntityDetails> cpEntities = sdcCsarHelper.getEntity(entityQueryCP, topologyTemplateQueryVFC, true);
 		if (cpEntities == null || cpEntities.isEmpty()) {
-			LOG.info("insertVFCtoNetworkRoleMappingData: Could not find the nested CVFCs for: " + vfcCustomizationUuid);
+			LOG.debug("insertVFCtoNetworkRoleMappingData: Could not find the nested CVFCs for: " + vfcCustomizationUuid);
 			return;
 		}
 		
@@ -282,7 +282,7 @@ public class SdncVFCModel extends SdncBaseModel {
 	    TopologyTemplateQuery topologyTemplateQueryVFC = TopologyTemplateQuery.newBuilder(SdcTypes.CVFC).customizationUUID(vfcCustomizationUuid).build();
 	    List<IEntityDetails> cpEntities = sdcCsarHelper.getEntity(entityQueryCP, topologyTemplateQueryVFC, true);
 		if (cpEntities == null || cpEntities.isEmpty()) {
-			LOG.info("insertVFCRelatedNetworkRoleData: Could not find the nested CVFCs for: " + vfcCustomizationUuid);
+			LOG.debug("insertVFCRelatedNetworkRoleData: Could not find the nested CVFCs for: " + vfcCustomizationUuid);
 			return;
 		}
 		
