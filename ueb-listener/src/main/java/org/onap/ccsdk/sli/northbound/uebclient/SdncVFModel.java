@@ -155,7 +155,7 @@ public class SdncVFModel extends SdncBaseModel {
 		for (IEntityDetails vfModule : vfModules){
 			
 			// If this vfModule name is prefixed with the VF name of the VF being processed, insert this VF Module in VF_MODULE_MODEL
-			String normailizedVfName = nodeTemplate.getName().toLowerCase().replace(" ", "").replace("-", "");  // need full set of normalization rules from ASDC
+			String normailizedVfName = nodeTemplate.getName().toLowerCase().replace(" ", "").replace("-", "").replace(".", "");  // need full set of normalization rules from ASDC
 			if (!vfModule.getName().startsWith(normailizedVfName)) {
 				continue;
 			}

@@ -65,7 +65,7 @@ public class SdncNodeModel extends SdncBaseModel {
 		addParameter("trunk_network_indicator", trunkNetworkIndicator);
 
 		// extract properties - network_assignments - ipv4_subnet_default_assignment
-		String useIpv4 = extractBooleanValue(nodeEntity, "network_assignments", "use_ipv4");
+		String useIpv4 = extractBooleanValue(nodeEntity, "network_assignments", "ipv4_subnet_default_assignment", "use_ipv4");
 		addParameter("use_ipv4", useIpv4);
 		addParameter("ipv4_dhcp_enabled", extractBooleanValue(nodeEntity, "network_assignments", "ipv4_subnet_default_assignment", "dhcp_enabled"));
 		addParameter("ipv4_ip_version", extractValue(nodeEntity, "network_assignments", "ipv4_subnet_default_assignment", "ip_version"));
@@ -73,7 +73,7 @@ public class SdncNodeModel extends SdncBaseModel {
 		addParameter("eipam_v4_address_plan", extractValue(nodeEntity, "network_assignments", "ipv4_subnet_default_assignment", "ip_network_address_plan"));
 		
 		// extract properties - network_assignments - ipv6_subnet_default_assignment
-		String useIpv6 = extractBooleanValue(nodeEntity, "network_assignments", "use_ipv6");
+		String useIpv6 = extractBooleanValue(nodeEntity, "network_assignments", "ipv6_subnet_default_assignment", "use_ipv6");
 		addParameter("use_ipv6", useIpv6);
 		addParameter("ipv6_dhcp_enabled", extractBooleanValue(nodeEntity, "network_assignments", "ipv6_subnet_default_assignment", "dhcp_enabled"));
 		addParameter("ipv6_ip_version", extractValue(nodeEntity, "network_assignments", "ipv6_subnet_default_assignment", "ip_version"));
