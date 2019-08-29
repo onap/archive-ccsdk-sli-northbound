@@ -24,7 +24,7 @@
         <build.number>${maven.build.timestamp}</build.number>
         <SWM_VERSION>${project.version}-${build.number}</SWM_VERSION>
 
-        <ccsdk.sli.core.version>0.6.0-SNAPSHOT</ccsdk.sli.core.version>
+        <ccsdk.sli.core.version>0.6.1-SNAPSHOT</ccsdk.sli.core.version>
         <ccsdk.sli.northbound.version>${project.version}</ccsdk.sli.northbound.version>
     </properties>
 
