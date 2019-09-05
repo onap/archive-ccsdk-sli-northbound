@@ -1,6 +1,7 @@
 package org.onap.ccsdk.sli.northbound;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -9,41 +10,17 @@ import java.io.InputStream;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.ccsdk.sli.core.sli.SvcLogicLoader;
-import org.onap.ccsdk.sli.core.sli.SvcLogicParser;
 import org.onap.ccsdk.sli.core.sli.SvcLogicStore;
 import org.onap.ccsdk.sli.core.sli.SvcLogicStoreFactory;
 import org.onap.ccsdk.sli.core.sli.provider.SvcLogicClassResolver;
-import org.onap.ccsdk.sli.core.sli.provider.base.BlockNodeExecutor;
-import org.onap.ccsdk.sli.core.sli.provider.base.CallNodeExecutor;
-import org.onap.ccsdk.sli.core.sli.provider.base.ConfigureNodeExecutor;
-import org.onap.ccsdk.sli.core.sli.provider.base.DeleteNodeExecutor;
-import org.onap.ccsdk.sli.core.sli.provider.base.ExecuteNodeExecutor;
-import org.onap.ccsdk.sli.core.sli.provider.base.ExistsNodeExecutor;
-import org.onap.ccsdk.sli.core.sli.provider.base.ForNodeExecutor;
-import org.onap.ccsdk.sli.core.sli.provider.base.GetResourceNodeExecutor;
-import org.onap.ccsdk.sli.core.sli.provider.base.IsAvailableNodeExecutor;
-import org.onap.ccsdk.sli.core.sli.provider.base.NotifyNodeExecutor;
-import org.onap.ccsdk.sli.core.sli.provider.base.RecordNodeExecutor;
-import org.onap.ccsdk.sli.core.sli.provider.base.ReleaseNodeExecutor;
-import org.onap.ccsdk.sli.core.sli.provider.base.ReserveNodeExecutor;
-import org.onap.ccsdk.sli.core.sli.provider.base.ReturnNodeExecutor;
-import org.onap.ccsdk.sli.core.sli.provider.base.SaveNodeExecutor;
-import org.onap.ccsdk.sli.core.sli.provider.base.SetNodeExecutor;
 import org.onap.ccsdk.sli.core.sli.provider.SvcLogicPropertiesProviderImpl;
 import org.onap.ccsdk.sli.core.sli.provider.SvcLogicServiceImpl;
-import org.onap.ccsdk.sli.core.sli.provider.base.SwitchNodeExecutor;
-import org.onap.ccsdk.sli.core.sli.provider.base.UpdateNodeExecutor;
-import org.onap.ccsdk.sli.core.sli.provider.base.WhileNodeExecutor;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
@@ -132,7 +109,6 @@ import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.lcm.rev180329.
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.lcm.rev180329.ZULU;
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.lcm.rev180329.action.identifiers.ActionIdentifiersBuilder;
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.lcm.rev180329.common.header.CommonHeaderBuilder;
-import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -172,7 +148,8 @@ public class TestLcmProvider {
         loader.loadAndActivate();
 
         // Create a ServiceLogicService
-        SvcLogicServiceImpl svc = new SvcLogicServiceImpl(new SvcLogicPropertiesProviderImpl(), new SvcLogicClassResolver());
+        SvcLogicServiceImpl svc = new SvcLogicServiceImpl(new SvcLogicPropertiesProviderImpl(),
+				new SvcLogicClassResolver());
 
         // Finally ready to create sliapiProvider
         LcmSliClient client = new LcmSliClient(svc);
