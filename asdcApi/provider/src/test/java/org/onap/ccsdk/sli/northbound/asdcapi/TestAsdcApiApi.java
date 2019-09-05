@@ -25,17 +25,22 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.controller.md.sal.binding.test.AbstractConcurrentDataBrokerTest;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
+import org.opendaylight.yang.gen.v1.http.xmlns.onap.org.asdc.license.model._1._0.rev160427.vf.license.model.grouping.VfLicenseModelBuilder;
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.rev170201.VfLicenseModelUpdateInputBuilder;
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.rev170201.VfLicenseModelUpdateOutput;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Properties;
 
 public class TestAsdcApiApi extends AbstractConcurrentDataBrokerTest {
 
@@ -49,6 +54,13 @@ public class TestAsdcApiApi extends AbstractConcurrentDataBrokerTest {
             NotificationPublishService mockNotification = mock(NotificationPublishService.class);
             RpcProviderRegistry mockRpcRegistry = mock(RpcProviderRegistry.class);
             AsdcApiSliClient mockSliClient = mock(AsdcApiSliClient.class);
+            Properties respProps = new Properties();
+            respProps.setProperty("error-code", "200");
+            respProps.setProperty("error-message", "Success");
+
+            when(mockSliClient.hasGraph("ASDC-API", "vf-license-model-update" , null, "sync")).thenReturn(true);
+            when(mockSliClient.execute("ASDC-API", "vf-license-model-update", null, "sync", respProps)).thenReturn(respProps);
+
             asdcApiProvider = new AsdcApiProvider(dataBroker, mockNotification, mockRpcRegistry, mockSliClient);
         }
     }
@@ -72,7 +84,7 @@ public class TestAsdcApiApi extends AbstractConcurrentDataBrokerTest {
             fail("Error : " + e);
         }
         LOG.info("result: {}", rpcResult);
-        assertEquals("503", rpcResult.getResult().getAsdcApiResponseCode());
+        assertEquals("200", rpcResult.getResult().getAsdcApiResponseCode());
     }
 
     //Input parameter validation
@@ -89,10 +101,19 @@ public class TestAsdcApiApi extends AbstractConcurrentDataBrokerTest {
         assertNull(future);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testVfLicenseModelUpdateValidation1() {
 
         VfLicenseModelUpdateInputBuilder inputBuilder = new VfLicenseModelUpdateInputBuilder();
+
+        inputBuilder.setArtifactName("license1");
+        inputBuilder.setArtifactVersion("version1");
+
+        VfLicenseModelBuilder vfLicenseModelBuilder = new VfLicenseModelBuilder();
+        vfLicenseModelBuilder.setVfId("123");
+        vfLicenseModelBuilder.setVendorName("acme");
+        inputBuilder.setVfLicenseModel(vfLicenseModelBuilder.build());
+
 
         java.util.concurrent.Future<RpcResult<VfLicenseModelUpdateOutput>> future = asdcApiProvider
                 .vfLicenseModelUpdate(inputBuilder.build());
@@ -102,5 +123,14 @@ public class TestAsdcApiApi extends AbstractConcurrentDataBrokerTest {
         } catch (Exception e) {
             fail("Error : " + e);
         }
+    }
+
+
+
+
+    @Test
+    public void testAddArtifactVersion() {
+        asdcApiProvider.addArtifactVersion("artifact1",
+                "version1");
     }
 }
