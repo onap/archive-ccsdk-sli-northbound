@@ -103,4 +103,10 @@ public class TestAsdcApiApi extends AbstractConcurrentDataBrokerTest {
             fail("Error : " + e);
         }
     }
+
+    @Test
+    public void testAddArtifactVersion() {
+        asdcApiProvider.addArtifactVersion("artifact1",
+                "version1");
+    }
 }
