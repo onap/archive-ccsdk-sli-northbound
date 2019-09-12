@@ -5,12 +5,12 @@
     <parent>
         <groupId>org.onap.ccsdk.parent</groupId>
         <artifactId>standalone-parent</artifactId>
-        <version>1.4.2-SNAPSHOT</version>
+        <version>1.4.2</version>
     </parent>
 
     <groupId>org.onap.ccsdk.sli.northbound</groupId>
     <artifactId>dmaap-listener</artifactId>
-    <version>0.6.2-SNAPSHOT</version>
+    <version>0.6.2</version>
     <packaging>jar</packaging>
 
     <name>ccsdk-sli-northbound :: dmaap-listener</name>
@@ -24,7 +24,7 @@
         <build.number>${maven.build.timestamp}</build.number>
         <SWM_VERSION>${project.version}-${build.number}</SWM_VERSION>
 
-        <ccsdk.sli.core.version>0.6.1-SNAPSHOT</ccsdk.sli.core.version>
+        <ccsdk.sli.core.version>0.6.1</ccsdk.sli.core.version>
         <ccsdk.sli.northbound.version>${project.version}</ccsdk.sli.northbound.version>
     </properties>
 
