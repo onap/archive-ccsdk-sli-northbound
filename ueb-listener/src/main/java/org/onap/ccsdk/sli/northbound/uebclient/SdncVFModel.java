@@ -32,8 +32,6 @@ import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
 import org.onap.sdc.tosca.parser.api.IEntityDetails;
 import org.onap.sdc.tosca.parser.elements.queries.EntityQuery;
 import org.onap.sdc.tosca.parser.elements.queries.TopologyTemplateQuery;
-import org.onap.sdc.toscaparser.api.Group;
-import org.onap.sdc.toscaparser.api.NodeTemplate;
 import org.onap.sdc.toscaparser.api.Property;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.onap.ccsdk.sli.core.dblib.DBResourceManager;
@@ -51,19 +49,12 @@ public class SdncVFModel extends SdncBaseModel {
 	private String serviceUUID = null;
 	private String serviceInvariantUUID = null;
 
-	public SdncVFModel(ISdcCsarHelper sdcCsarHelper, NodeTemplate nodeTemplate, DBResourceManager jdbcDataSource, SdncUebConfiguration config) throws IOException {
+	public SdncVFModel(ISdcCsarHelper sdcCsarHelper, IEntityDetails entityDetails, DBResourceManager jdbcDataSource, SdncUebConfiguration config) throws IOException {
 
-		super(sdcCsarHelper, nodeTemplate, jdbcDataSource, config);
+		super(sdcCsarHelper, entityDetails, jdbcDataSource, config);
 		
-		// Since SdncVFModel is not yet converted for getEntity, find the entity for this nodeTemplate
-		EntityQuery vfEntityQuery = EntityQuery.newBuilder(SdcTypes.VF).customizationUUID(getCustomizationUUIDNoQuotes()).build();
-		TopologyTemplateQuery vfTopologyTemplateQuery = TopologyTemplateQuery.newBuilder(SdcTypes.SERVICE).build();
-		List<IEntityDetails> vfEntities = sdcCsarHelper.getEntity(vfEntityQuery, vfTopologyTemplateQuery, true);
-		if (vfEntities != null && !vfEntities.isEmpty()) {
-			entityDetails = vfEntities.get(0);
-		}		
 		// extract metadata
-		Metadata metadata = nodeTemplate.getMetaData();
+		Metadata metadata = entityDetails.getMetadata();
 		addParameter("name", extractValue(metadata, SdcPropertyNames.PROPERTY_NAME_NAME));
 		vendor = extractValue (metadata, SdcPropertyNames.PROPERTY_NAME_RESOURCEVENDOR);
 		addParameter("vendor", vendor); 
@@ -71,30 +62,36 @@ public class SdncVFModel extends SdncBaseModel {
 		addParameter("vendor_version", extractValue (metadata, SdcPropertyNames.PROPERTY_NAME_RESOURCEVENDORRELEASE)); 
 		
 		// extract properties
-		addParameter("ecomp_generated_naming", extractBooleanValue(nodeTemplate, "nf_naming#ecomp_generated_naming"));
-		addParameter("naming_policy", extractValue(nodeTemplate, "nf_naming#naming_policy"));
-		addParameter("nf_type", extractValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFTYPE));
-		addParameter("nf_role", extractValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFROLE));
-		nfNamingCode = extractValue(nodeTemplate, "nf_naming_code");
+		addParameter("ecomp_generated_naming", extractBooleanValue(entityDetails, "nf_naming", "ecomp_generated_naming"));
+		addParameter("naming_policy", extractValue(entityDetails, "nf_naming", "naming_policy"));
+		addParameter("nf_type", extractValue(entityDetails, SdcPropertyNames.PROPERTY_NAME_NFTYPE));
+		addParameter("nf_role", extractValue(entityDetails, SdcPropertyNames.PROPERTY_NAME_NFROLE));
+		nfNamingCode = extractValue(entityDetails, "nf_naming_code");
 		addParameter("nf_code", nfNamingCode);
-		addParameter("nf_function", extractValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFFUNCTION));
-		addIntParameter("avail_zone_max_count", extractValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_AVAILABILITYZONEMAXCOUNT));
-		addParameter("sdnc_model_name", extractValue(nodeTemplate, "sdnc_model_name"));
-		addParameter("sdnc_model_version", extractValue(nodeTemplate, "sdnc_model_version"));
-		addParameter("sdnc_artifact_name", extractValue(nodeTemplate, "sdnc_artifact_name"));
+		addParameter("nf_function", extractValue(entityDetails, SdcPropertyNames.PROPERTY_NAME_NFFUNCTION));
+		addIntParameter("avail_zone_max_count", extractValue(entityDetails, SdcPropertyNames.PROPERTY_NAME_AVAILABILITYZONEMAXCOUNT));
+		addParameter("sdnc_model_name", extractValue(entityDetails, "sdnc_model_name"));
+		addParameter("sdnc_model_version", extractValue(entityDetails, "sdnc_model_version"));
+		addParameter("sdnc_artifact_name", extractValue(entityDetails, "sdnc_artifact_name"));
 		
 		// store additional properties in ATTRIBUTE_VALUE_PAIR
 		// additional complex properties are extracted via VfcInstanceGroup
-		
-		List<Group> vfcInstanceGroupListForVf = sdcCsarHelper.getGroupsOfOriginOfNodeTemplateByToscaGroupType(nodeTemplate, "org.openecomp.groups.VfcInstanceGroup");
-		for (Group group : vfcInstanceGroupListForVf){
-
-			String vfcInstanceGroupFunction = extractGetInputValue(group, nodeTemplate, "vfc_instance_group_function");
-			addParameter("vfc_instance_group_function", vfcInstanceGroupFunction, attributeValueParams);
-			String networkCollectionFunction = extractGetInputValue(group, nodeTemplate, "network_collection_function");
-			addParameter("network_collection_function", networkCollectionFunction, attributeValueParams);
-			String initSubinterfaceQuantity = extractGetInputValue(group, nodeTemplate, "init_subinterface_quantity");
-			addParameter("init_subinterface_quantity", initSubinterfaceQuantity, attributeValueParams);
+		EntityQuery entityQuery = EntityQuery.newBuilder("org.openecomp.groups.VfcInstanceGroup").build();
+		String vfCustomizationUuid = getCustomizationUUIDNoQuotes();
+		TopologyTemplateQuery topologyTemplateQuery = TopologyTemplateQuery.newBuilder(SdcTypes.VF)
+				.customizationUUID(vfCustomizationUuid).build();
+		List<IEntityDetails> vfcInstanceGroupListForVf = sdcCsarHelper.getEntity(entityQuery, topologyTemplateQuery, false);
+		if (vfcInstanceGroupListForVf != null) {
+			
+			for (IEntityDetails group : vfcInstanceGroupListForVf){
+			
+				String vfcInstanceGroupFunction = extractGetInputValue(group, entityDetails, "vfc_instance_group_function");
+				addParameter("vfc_instance_group_function", vfcInstanceGroupFunction, attributeValueParams);
+				String networkCollectionFunction = extractGetInputValue(group, entityDetails, "network_collection_function");
+				addParameter("network_collection_function", networkCollectionFunction, attributeValueParams);
+				String initSubinterfaceQuantity = extractGetInputValue(group, entityDetails, "init_subinterface_quantity");
+				addParameter("init_subinterface_quantity", initSubinterfaceQuantity, attributeValueParams);
+			}
 		}
 	}
 	
@@ -155,7 +152,7 @@ public class SdncVFModel extends SdncBaseModel {
 		for (IEntityDetails vfModule : vfModules){
 			
 			// If this vfModule name is prefixed with the VF name of the VF being processed, insert this VF Module in VF_MODULE_MODEL
-			String normailizedVfName = nodeTemplate.getName().toLowerCase().replace(" ", "").replace("-", "").replace(".", "");  // need full set of normalization rules from ASDC
+			String normailizedVfName = entityDetails.getName().toLowerCase().replace(" ", "").replace("-", "").replace(".", "");  // need full set of normalization rules from ASDC
 			if (!vfModule.getName().startsWith(normailizedVfName)) {
 				continue;
 			}
@@ -434,7 +431,7 @@ public class SdncVFModel extends SdncBaseModel {
 				}			
 				
 				// For each target node, get External policies
-				SdcTypes queryType = SdcTypes.valueOf(extractValue(nodeTemplate.getMetaData(), SdcPropertyNames.PROPERTY_NAME_TYPE));
+				SdcTypes queryType = SdcTypes.valueOf(extractValue(entityDetails.getMetadata(), SdcPropertyNames.PROPERTY_NAME_TYPE));
 				insertEntityPolicyData(getCustomizationUUIDNoQuotes(), getUUID().replace("\"", ""), queryType, targetNodeCustomizationUuid, targetNodeUuid, targetNodeType, "org.openecomp.policies.External");  // AFTER getEntity
 			}							
 		}

@@ -77,7 +77,6 @@ import org.onap.sdc.tosca.parser.elements.queries.TopologyTemplateQuery;
 import org.onap.sdc.tosca.parser.enums.SdcTypes;
 import org.onap.sdc.tosca.parser.exceptions.SdcToscaParserException;
 import org.onap.sdc.tosca.parser.impl.SdcToscaParserFactory;
-import org.onap.sdc.toscaparser.api.NodeTemplate;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.onap.sdc.utils.ArtifactTypeEnum;
 import org.onap.sdc.utils.DistributionActionResultEnum;
@@ -745,29 +744,30 @@ public class SdncUebCallback implements INotificationCallback {
 			}
 		}
 
-		// Ingest Network (VF) Data - 1707
-		List<NodeTemplate> vfNodeTemplatesList = sdcCsarHelper.getServiceVfList();
-
-		for (NodeTemplate nodeTemplate :  vfNodeTemplatesList) {
+		// Ingest Network (VF) Data - 1707 / migrate to getEntity - 1911
+		// Use getEntity to get all VFs in the service 	
+		if (vfEntities != null) {
+			for (IEntityDetails vfEntity : vfEntities){
 			
-			SdncVFModel vfNodeModel = null;
-			try {
-				vfNodeModel = new SdncVFModel (sdcCsarHelper, nodeTemplate, jdbcDataSource, config);
-				vfNodeModel.setServiceUUID(serviceModel.getServiceUUID());
-				vfNodeModel.setServiceInvariantUUID(serviceModel.getServiceInvariantUUID());
-				vfNodeModel.insertData();
-
-			} catch (IOException e) {
-				deployStatus = DistributionStatusEnum.DEPLOY_ERROR;
-			}			
-			
-			// For each VF, insert VNF Configuration data
-			DistributionStatusEnum vnfConfigDeployStatus = customProcessVnfConfig(sdcCsarHelper, vfNodeModel, jdbcDataSource);
-			if (vnfConfigDeployStatus == DistributionStatusEnum.DEPLOY_ERROR) {
-				deployStatus = DistributionStatusEnum.DEPLOY_ERROR;
-			}
-
-		} // VF loop
+				SdncVFModel vfNodeModel = null;
+				try {
+					vfNodeModel = new SdncVFModel (sdcCsarHelper, vfEntity, jdbcDataSource, config);
+					vfNodeModel.setServiceUUID(serviceModel.getServiceUUID());
+					vfNodeModel.setServiceInvariantUUID(serviceModel.getServiceInvariantUUID());
+					vfNodeModel.insertData();
+	
+				} catch (IOException e) {
+					deployStatus = DistributionStatusEnum.DEPLOY_ERROR;
+				}			
+				
+				// For each VF, insert VNF Configuration data
+				DistributionStatusEnum vnfConfigDeployStatus = customProcessVnfConfig(sdcCsarHelper, vfNodeModel, jdbcDataSource);
+				if (vnfConfigDeployStatus == DistributionStatusEnum.DEPLOY_ERROR) {
+					deployStatus = DistributionStatusEnum.DEPLOY_ERROR;
+				}
+	
+			} // VF loop
+		}
 		
 
 		// Ingest Network (PNF) Data - Dublin/1906

@@ -4,11 +4,15 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.onap.sdc.tosca.parser.api.IEntityDetails;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
-import org.onap.sdc.toscaparser.api.NodeTemplate;
+import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
+import org.onap.sdc.toscaparser.api.Property;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.onap.ccsdk.sli.core.dblib.DBResourceManager;
  
@@ -19,17 +23,22 @@ import org.onap.ccsdk.sli.core.dblib.DBResourceManager;
 	@Before 
  	public void setUp() throws Exception {
  		ISdcCsarHelper mockCsarHelper = mock(ISdcCsarHelper.class);
- 		NodeTemplate nodeTemplate = mock(NodeTemplate.class);
+		IEntityDetails mockEntityDetails = mock(IEntityDetails.class); 
  		Metadata mockMetadata = mock(Metadata.class);
-		DBResourceManager mockDBResourceManager = mock(DBResourceManager.class);
+ 		DBResourceManager mockDBResourceManager = mock(DBResourceManager.class);
 		SdncUebConfiguration mockSdncUebConfiguration = mock(SdncUebConfiguration.class);
 		
-		when(nodeTemplate.getMetaData()).thenReturn(mockMetadata);
-		when(mockCsarHelper.getMetadataPropertyValue(mockMetadata, "customizationUUID")).thenReturn("aaaa-bbbb-cccc-dddd");
-		when(mockCsarHelper.getNodeTemplatePropertyLeafValue(nodeTemplate, "nf_naming_code")).thenReturn("test-nf-naming-code");
+ 		Property mockProperty = mock(Property.class);
+ 		Map<String, Property> mockProperties = new HashMap<String, Property>();
 		
+		when(mockEntityDetails.getMetadata()).thenReturn(mockMetadata);
+		when(mockEntityDetails.getProperties()).thenReturn(mockProperties);
+		when(mockCsarHelper.getMetadataPropertyValue(mockMetadata, "customizationUUID")).thenReturn("aaaa-bbbb-cccc-dddd");
+		when(mockCsarHelper.getMetadataPropertyValue(mockMetadata, SdcPropertyNames.PROPERTY_NAME_TYPE)).thenReturn("VF");
+		mockProperty.setValue("test-nf-naming-code");
+		when(mockProperties.get("nf_naming_code")).thenReturn(mockProperty);		
 		try {
-			testSdncVFModel = new SdncVFModel(mockCsarHelper,nodeTemplate,mockDBResourceManager,mockSdncUebConfiguration);
+			testSdncVFModel = new SdncVFModel(mockCsarHelper,mockEntityDetails,mockDBResourceManager,mockSdncUebConfiguration);
 			testSdncVFModel.setServiceUUID("bbbb-cccc-dddd-eeee"); 
 			testSdncVFModel.setServiceInvariantUUID("cccc-dddd-eeee-ffff"); 
 			testSdncVFModel.setVendor("Cisco"); 
