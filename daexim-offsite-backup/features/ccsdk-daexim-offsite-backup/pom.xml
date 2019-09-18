@@ -5,13 +5,13 @@
     <parent>
         <groupId>org.onap.ccsdk.parent</groupId>
         <artifactId>single-feature-parent</artifactId>
-        <version>1.4.3-SNAPSHOT</version>
+        <version>1.4.3</version>
         <relativePath/>
     </parent>
 
     <groupId>org.onap.ccsdk.sli.northbound</groupId>
     <artifactId>ccsdk-daexim-offsite-backup</artifactId>
-    <version>0.6.3-SNAPSHOT</version>
+    <version>0.6.3</version>
     <packaging>feature</packaging>
 
     <name>ccsdk-sli-northbound :: daexim-offsite-backup :: ${project.artifactId}</name>
