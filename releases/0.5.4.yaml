@@ -1,0 +1,5 @@
+---
+distribution_type: 'maven'
+version: '0.5.4'
+project: 'ccsdk-sli-northbound'
+log_dir: 'ccsdk-sli-northbound-maven-stage-elalto-fluorine/30/'
