@@ -794,6 +794,23 @@ public class SdncBaseModel {
 		}
 	}
 
+	protected String extractValue (CapabilityAssignment  capability, String path, String name) {
+		String value = ""; 
+		
+		if (capability.getProperties().containsKey(path)) {
+			Property property = capability.getProperties().get(path);
+			if (property != null && !property.getLeafPropertyValue(name).isEmpty()) {
+				value = property.getLeafPropertyValue(name).get(0);
+			}
+		}			
+
+		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("null")) {
+			return value;
+		} else {
+			return "";
+		}
+	}
+	
 	protected String extractBooleanValue (NodeTemplate nodeTemplate, String name) {
 		String value = sdcCsarHelper.getNodeTemplatePropertyLeafValue(nodeTemplate, name);
 		if (value != null && !value.isEmpty()) {
