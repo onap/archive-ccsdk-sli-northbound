@@ -477,12 +477,11 @@ public class SdncBaseModel {
 		}
 	}
 	
-	protected void insertNodeCapabilitiesEntityData (Map<String, CapabilityAssignment> capabilities) throws IOException {		
+	protected void insertNodeCapabilitiesEntityData (List<CapabilityAssignment> capabilities) throws IOException {		
 		
 		// Process the capabilities		
-		for (Map.Entry<String, CapabilityAssignment> entry : capabilities.entrySet()) {
-		    CapabilityAssignment capability = entry.getValue();		
-							
+		for (CapabilityAssignment capability :  capabilities) {
+			
 			// Insert into NODE_CAPABILITY: 
 			// capability_id (generated) 
 			// capability_provider_uuid - UUID of this node 
@@ -794,6 +793,23 @@ public class SdncBaseModel {
 		}
 	}
 
+	protected String extractValue (CapabilityAssignment  capability, String path, String name) {
+		String value = ""; 
+		
+		if (capability.getProperties().containsKey(path)) {
+			Property property = capability.getProperties().get(path);
+			if (property != null && !property.getLeafPropertyValue(name).isEmpty()) {
+				value = property.getLeafPropertyValue(name).get(0);
+			}
+		}			
+
+		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("null")) {
+			return value;
+		} else {
+			return "";
+		}
+	}
+	
 	protected String extractBooleanValue (NodeTemplate nodeTemplate, String name) {
 		String value = sdcCsarHelper.getNodeTemplatePropertyLeafValue(nodeTemplate, name);
 		if (value != null && !value.isEmpty()) {
