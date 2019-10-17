@@ -477,12 +477,11 @@ public class SdncBaseModel {
 		}
 	}
 	
-	protected void insertNodeCapabilitiesEntityData (Map<String, CapabilityAssignment> capabilities) throws IOException {		
+	protected void insertNodeCapabilitiesEntityData (List<CapabilityAssignment> capabilities) throws IOException {		
 		
 		// Process the capabilities		
-		for (Map.Entry<String, CapabilityAssignment> entry : capabilities.entrySet()) {
-		    CapabilityAssignment capability = entry.getValue();		
-							
+		for (CapabilityAssignment capability :  capabilities) {
+			
 			// Insert into NODE_CAPABILITY: 
 			// capability_id (generated) 
 			// capability_provider_uuid - UUID of this node 
