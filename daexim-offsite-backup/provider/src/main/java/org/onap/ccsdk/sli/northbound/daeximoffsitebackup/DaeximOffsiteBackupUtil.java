@@ -32,7 +32,7 @@ import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.daeximoffsiteb
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.daeximoffsitebackup.rev180926.RetrieveDataInputBuilder;
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.daeximoffsitebackup.rev180926.RetrieveDataOutputBuilder;
 
-import org.onap.ccsdk.sli.core.sli.provider.MdsalHelper;
+import org.onap.ccsdk.sli.core.odlsli.MdsalHelper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

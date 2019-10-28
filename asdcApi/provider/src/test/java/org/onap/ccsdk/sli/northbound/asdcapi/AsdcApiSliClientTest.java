@@ -7,8 +7,8 @@ import java.util.Properties;
  
 import org.junit.Before; 
 import org.junit.Test; 
-import org.onap.ccsdk.sli.core.sli.SvcLogicException; 
-import org.onap.ccsdk.sli.core.sli.provider.SvcLogicService; 
+import org.onap.ccsdk.sli.core.api.exceptions.SvcLogicException; 
+import org.onap.ccsdk.sli.core.api.SvcLogicService; 
  
 public class AsdcApiSliClientTest { 
 	Properties mockProp; 

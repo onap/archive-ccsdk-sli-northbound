@@ -21,7 +21,7 @@
 
 package org.onap.ccsdk.sli.northbound.asdcapi;
 
-import org.onap.ccsdk.sli.core.sli.provider.MdsalHelper;
+import org.onap.ccsdk.sli.core.odlsli.MdsalHelper;
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.rev170201.ArtifactsBuilder;
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.rev170201.VfLicenseModelUpdateInput;
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.rev170201.VfLicenseModelUpdateInputBuilder;

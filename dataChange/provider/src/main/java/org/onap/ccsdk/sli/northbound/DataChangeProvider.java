@@ -26,7 +26,7 @@ import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.onap.ccsdk.sli.core.sli.provider.MdsalHelper;
+import org.onap.ccsdk.sli.core.odlsli.MdsalHelper;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker;
