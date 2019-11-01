@@ -33,8 +33,8 @@ import org.onap.ccsdk.sli.core.dblib.DBResourceManager;
 		
 		when(mockEntityDetails.getMetadata()).thenReturn(mockMetadata);
 		when(mockEntityDetails.getProperties()).thenReturn(mockProperties);
-		when(mockCsarHelper.getMetadataPropertyValue(mockMetadata, "customizationUUID")).thenReturn("aaaa-bbbb-cccc-dddd");
-		when(mockCsarHelper.getMetadataPropertyValue(mockMetadata, SdcPropertyNames.PROPERTY_NAME_TYPE)).thenReturn("VF");
+		when(mockMetadata.getValue("customizationUUID")).thenReturn("aaaa-bbbb-cccc-dddd");
+		when(mockMetadata.getValue(SdcPropertyNames.PROPERTY_NAME_TYPE)).thenReturn("VF");
 		mockProperty.setValue("test-nf-naming-code");
 		when(mockProperties.get("nf_naming_code")).thenReturn(mockProperty);		
 		try {

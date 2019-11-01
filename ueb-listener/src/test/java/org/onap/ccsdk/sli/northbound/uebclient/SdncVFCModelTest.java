@@ -7,36 +7,29 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.ArrayList;
 
 import org.junit.Before; 
 import org.junit.Test;
 import org.onap.sdc.tosca.parser.api.IEntityDetails;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper; 
-import org.onap.sdc.toscaparser.api.NodeTemplate;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.onap.ccsdk.sli.core.dblib.DBResourceManager;
  
 public class SdncVFCModelTest { 
  
 	SdncVFCModel testSdncVFCModel; 
-	NodeTemplate mockVFCNodeTemplate = null;
 	IEntityDetails mockEntityDetails = null;
  
 	@Before 
 	public void setup() { 
 		ISdcCsarHelper mockCsarHelper = mock(ISdcCsarHelper.class); 
-		NodeTemplate mockNodeTemplate = mock(NodeTemplate.class); 
 		mockEntityDetails = mock(IEntityDetails.class); 
-		mockVFCNodeTemplate = mock(NodeTemplate.class); 
  		Metadata mockMetadata = mock(Metadata.class);
 		DBResourceManager mockDBResourceManager = mock(DBResourceManager.class); 
 		SdncUebConfiguration mockSdncUebConfiguration = mock(SdncUebConfiguration.class);
 		
-		when(mockNodeTemplate.getMetaData()).thenReturn(mockMetadata);
 		when(mockEntityDetails.getMetadata()).thenReturn(mockMetadata);
-		when(mockCsarHelper.getMetadataPropertyValue(mockMetadata, "customizationUUID")).thenReturn("aaaa-bbbb-cccc-dddd");
-		when(mockCsarHelper.getNodeTemplatePropertyLeafValue(mockNodeTemplate, "nfc_naming_code")).thenReturn("test-nfc-naming-code");
+		when(mockMetadata.getValue("customizationUUID")).thenReturn("aaaa-bbbb-cccc-dddd");
 		
 		Map<String,Map<String,Object>> cpPropertiesMap = new HashMap<String,Map<String,Object>>();
 		Map<String,Object> propertiesMap = new HashMap<String,Object>();
@@ -53,7 +46,6 @@ public class SdncVFCModelTest {
 
 		propertiesMap.put("ip_requirements", ipRequirementsList);
 		cpPropertiesMap.put("cp-node-1", propertiesMap);
-		when(mockCsarHelper.getCpPropertiesFromVfcAsObject(mockVFCNodeTemplate)).thenReturn(cpPropertiesMap);
 		
 		try {
 			testSdncVFCModel = new SdncVFCModel(mockCsarHelper, mockEntityDetails, mockDBResourceManager, mockSdncUebConfiguration);

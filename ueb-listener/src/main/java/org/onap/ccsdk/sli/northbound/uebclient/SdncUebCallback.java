@@ -195,7 +195,7 @@ public class SdncUebCallback implements INotificationCallback {
     }
 
     private final IDistributionClient client;
-    private final SdncUebConfiguration config;
+    protected final SdncUebConfiguration config;
 
     private LinkedList<DeployableArtifact> deployList[];
 

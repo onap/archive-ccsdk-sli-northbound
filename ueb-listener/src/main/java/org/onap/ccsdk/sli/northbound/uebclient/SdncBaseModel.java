@@ -39,9 +39,6 @@ import org.onap.sdc.tosca.parser.enums.SdcTypes;
 import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
 import org.onap.sdc.toscaparser.api.CapabilityAssignment;
 import org.onap.sdc.toscaparser.api.CapabilityAssignments;
-import org.onap.sdc.toscaparser.api.Group;
-import org.onap.sdc.toscaparser.api.NodeTemplate;
-import org.onap.sdc.toscaparser.api.Policy;
 import org.onap.sdc.toscaparser.api.Property;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.onap.ccsdk.sli.core.dblib.DBResourceManager;
@@ -74,37 +71,22 @@ public class SdncBaseModel {
 	protected ISdcCsarHelper sdcCsarHelper = null;
 	protected static DBResourceManager jdbcDataSource = null;
 	protected static SdncUebConfiguration config = null;
-	protected NodeTemplate nodeTemplate = null;
 	protected IEntityDetails entityDetails = null;
-	
-	public SdncBaseModel(ISdcCsarHelper sdcCsarHelper, NodeTemplate nodeTemplate, DBResourceManager jdbcDataSource) {
-		this (sdcCsarHelper, nodeTemplate);
-		this.sdcCsarHelper = sdcCsarHelper;
-		this.nodeTemplate = nodeTemplate;
-		this.jdbcDataSource = jdbcDataSource;		
-	}
 
-	public SdncBaseModel(ISdcCsarHelper sdcCsarHelper, NodeTemplate nodeTemplate, DBResourceManager jdbcDataSource, SdncUebConfiguration config) throws IOException {
-		this (sdcCsarHelper, nodeTemplate);
-		this.sdcCsarHelper = sdcCsarHelper;
-		this.nodeTemplate = nodeTemplate;
-		this.jdbcDataSource = jdbcDataSource;		
-		this.config = config;
-	}
 	
 	public SdncBaseModel(ISdcCsarHelper sdcCsarHelper, IEntityDetails entityDetails, DBResourceManager jdbcDataSource, SdncUebConfiguration config) throws IOException {
 		this (sdcCsarHelper, entityDetails);
 		this.sdcCsarHelper = sdcCsarHelper;
 		this.entityDetails = entityDetails;
-		this.jdbcDataSource = jdbcDataSource;		
-		this.config = config;
+		SdncBaseModel.jdbcDataSource = jdbcDataSource;		
+		SdncBaseModel.config = config;
 	}
 
 	public SdncBaseModel(ISdcCsarHelper sdcCsarHelper, Metadata metadata, DBResourceManager jdbcDataSource) {
 
 		params = new HashMap<String, String>();
 		this.sdcCsarHelper = sdcCsarHelper;
-		this.jdbcDataSource = jdbcDataSource;
+		SdncBaseModel.jdbcDataSource = jdbcDataSource;
 
 		// extract service metadata
 		invariantUUID = extractValue(metadata, SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID);
@@ -115,28 +97,6 @@ public class SdncBaseModel {
 		addParameter(PARAM_DESCRIPTION_KEY,extractValue(metadata, SdcPropertyNames.PROPERTY_NAME_DESCRIPTION));
 		addParameter(PARAM_TYPE_KEY,extractValue(metadata, SdcPropertyNames.PROPERTY_NAME_TYPE));
 		addParameter(PARAM_CATEGORY_KEY,extractValue(metadata, SdcPropertyNames.PROPERTY_NAME_CATEGORY));
-	}
-
-	public SdncBaseModel(ISdcCsarHelper sdcCsarHelper, NodeTemplate nodeTemplate) {
-
-		params = new HashMap<String, String>();
-		attributeValueParams = new HashMap<String, String>();
-		this.sdcCsarHelper = sdcCsarHelper;
-		this.nodeTemplate = nodeTemplate;
-
-		// extract common nodeTemplate metadata
-		Metadata metadata = nodeTemplate.getMetaData();
-		customizationUUID = extractValue (metadata, SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
-		invariantUUID = extractValue (metadata, SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID);
-		addParameter(PARAM_INVARIANT_UUID_KEY, invariantUUID);
-		UUID = extractValue (metadata, SdcPropertyNames.PROPERTY_NAME_UUID);
-		addParameter(PARAM_UUID_KEY, UUID);
-		addParameter(PARAM_VERSION_KEY, extractValue (metadata, SdcPropertyNames.PROPERTY_NAME_VERSION));
-		
-		// extract common nodeTemplate properties
-		//addParameter("ecomp_generated_naming", extractValue (nodeTemplate, "naming#ecompnaming")); // should be extractBooleanValue?
-		//addParameter("naming_policy", extractValue (nodeTemplate, "naming#namingpolicy"));
-		
 	}
 	
 	public SdncBaseModel(ISdcCsarHelper sdcCsarHelper, IEntityDetails entityDetails) {
@@ -192,8 +152,8 @@ public class SdncBaseModel {
 		String metadataType = "";
 		if (!type.isEmpty()) metadataType = type;
 		else {
-			Metadata metadata = nodeTemplate.getMetaData();
-			metadataType = sdcCsarHelper.getMetadataPropertyValue(metadata, PARAM_TYPE_KEY);
+			Metadata metadata = entityDetails.getMetadata();
+			metadataType = extractValue (metadata, PARAM_TYPE_KEY);
 		}
 		
 		// Clean up all attributes for this resource
@@ -466,7 +426,7 @@ public class SdncBaseModel {
 				CachedRowSet rowData = getToscaData("NODE_CAPABILITY", nodeCapabilityParams);
 				rowData.first();
 				int capabilityIdint = rowData.getInt("capability_id");
-				capabilityId = capabilityId.valueOf(capabilityIdint);
+				capabilityId = String.valueOf(capabilityIdint);
 				
 			} catch (IOException | SQLException e) {
 				LOG.error("Could not insert Tosca CSAR data into the NODE_CAPABILITY table");
@@ -477,12 +437,11 @@ public class SdncBaseModel {
 		}
 	}
 	
-	protected void insertNodeCapabilitiesEntityData (Map<String, CapabilityAssignment> capabilities) throws IOException {		
+	protected void insertNodeCapabilitiesEntityData (List<CapabilityAssignment> capabilities) throws IOException {		
 		
 		// Process the capabilities		
-		for (Map.Entry<String, CapabilityAssignment> entry : capabilities.entrySet()) {
-		    CapabilityAssignment capability = entry.getValue();		
-							
+		for (CapabilityAssignment capability :  capabilities) {
+			
 			// Insert into NODE_CAPABILITY: 
 			// capability_id (generated) 
 			// capability_provider_uuid - UUID of this node 
@@ -528,7 +487,7 @@ public class SdncBaseModel {
 				CachedRowSet rowData = getToscaData("NODE_CAPABILITY", nodeCapabilityParams);
 				rowData.first();
 				int capabilityIdint = rowData.getInt("capability_id");
-				capabilityId = capabilityId.valueOf(capabilityIdint);
+				capabilityId = String.valueOf(capabilityIdint);
 				
 			} catch (IOException | SQLException e) {
 				LOG.error("Could not insert Tosca CSAR data into the NODE_CAPABILITY table");
@@ -596,7 +555,7 @@ public class SdncBaseModel {
 	}
 
 	protected String extractValue (Metadata metadata, String name) {
-		String value = sdcCsarHelper.getMetadataPropertyValue(metadata, name);
+		String value = metadata.getValue(name);
 		if (value != null) {
 			return value;
 		} else {
@@ -605,7 +564,7 @@ public class SdncBaseModel {
 	}
 
 	protected String extractBooleanValue (Metadata metadata, String name) {
-		String value = sdcCsarHelper.getMetadataPropertyValue(metadata, name);
+		String value = metadata.getValue(name);
 		if (value != null && !value.isEmpty()) {
 			return value.contains("true") ? "Y" : "N";
 		} else {
@@ -614,16 +573,7 @@ public class SdncBaseModel {
 	}
 
 	public static String extractValue (ISdcCsarHelper sdcCsarHelper, Metadata metadata, String name) {
-		String value = sdcCsarHelper.getMetadataPropertyValue(metadata, name);
-		if (value != null) {
-			return value;
-		} else {
-			return "";
-		}
-	}
-
-	protected String extractValue (NodeTemplate nodeTemplate, String name) {
-		String value = sdcCsarHelper.getNodeTemplatePropertyLeafValue(nodeTemplate, name);
+		String value = metadata.getValue(name);
 		if (value != null) {
 			return value;
 		} else {
@@ -676,6 +626,18 @@ public class SdncBaseModel {
 		}
 	}
 	
+	protected String extractValue (IEntityDetails  entityDetails, String path1, String path2, String path3, String name) {
+		String value = ""; 
+		
+		value = extractNestedValue (entityDetails, path1, path2, path3, name);		
+
+		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("null")) {
+			return value;
+		} else {
+			return "";
+		}
+	}
+	
 	protected String extractBooleanValue (IEntityDetails  entityDetails, String path1, String path2, String name) {
 		String value = ""; 
 		
@@ -699,6 +661,28 @@ public class SdncBaseModel {
 					Map<String, Object> path2PropertyValue = (Map<String, Object>) path1PropertyValue.get(path2);
 					if (path2PropertyValue != null && path2PropertyValue.containsKey(name)) {
 						value = path2PropertyValue.get(name).toString();
+					}
+				}
+			}
+		}			
+
+		return value;
+	}
+
+	protected String extractNestedValue (IEntityDetails  entityDetails, String path1, String path2, String path3, String name) {
+		String value = ""; 
+		
+		if (entityDetails.getProperties().containsKey(path1)) {
+			Property path1Property = entityDetails.getProperties().get(path1);
+			if (path1Property != null) {
+				Map<String, Object> path1PropertyValue = (Map<String, Object>) path1Property.getValue();
+				if (path1PropertyValue.containsKey(path2)) {
+					Map<String, Object> path2PropertyValue = (Map<String, Object>) path1PropertyValue.get(path2);
+					if (path2PropertyValue != null && path2PropertyValue.containsKey(path3)) {
+						Map<String, Object> path3PropertyValue = (Map<String, Object>) path2PropertyValue.get(path3);
+						if (path3PropertyValue != null && path3PropertyValue.containsKey(name)) {
+							value = path3PropertyValue.get(name).toString();
+						}
 					}
 				}
 			}
@@ -758,36 +742,15 @@ public class SdncBaseModel {
 
 	}
 
-	// Remove this after migrate SdncVFModel to getEntity
-	protected String extractGetInputValue (Group group, NodeTemplate nodeTemplate, String name) {
-
-		String value = sdcCsarHelper.getNodeTemplatePropertyLeafValue(nodeTemplate, extractGetInputName (group, name));
-		if (value != null) {
-			return value;
-		} else {
-			return "";
-		}
-	}
-
-	// Remove this after migrate SdncVFModel to getEntity
-	protected String extractGetInputName (Group group, String name) {
-		
-		String getInputName = name;
-		String groupProperty = sdcCsarHelper.getGroupPropertyLeafValue(group, name);
-		if (groupProperty != null) {
-		int getInputIndex = groupProperty.indexOf("{get_input=");
-			if (getInputIndex > -1) {
-				getInputName = groupProperty.substring(getInputIndex+11, groupProperty.length()-1);
-			}
-		}
-		
-		return getInputName;
-
-	}
-	
 	protected String extractValue (CapabilityAssignment capability, String name) {
-		String value = sdcCsarHelper.getCapabilityPropertyLeafValue(capability, name);
-		if (value != null) {
+		String value = "";
+		
+		if (capability.getProperties().containsKey(name)) {
+			Property property = capability.getProperties().get(name);
+			value = property.getLeafPropertyValue(name).get(0);
+		}			
+		
+		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("null")) {
 			return value;
 		} else {
 			return "";
@@ -806,15 +769,6 @@ public class SdncBaseModel {
 
 		if (value != null && !value.isEmpty() && !value.equalsIgnoreCase("null")) {
 			return value;
-		} else {
-			return "";
-		}
-	}
-	
-	protected String extractBooleanValue (NodeTemplate nodeTemplate, String name) {
-		String value = sdcCsarHelper.getNodeTemplatePropertyLeafValue(nodeTemplate, name);
-		if (value != null && !value.isEmpty()) {
-			return value.contains("true") ? "Y" : "N";
 		} else {
 			return "";
 		}
@@ -854,8 +808,15 @@ public class SdncBaseModel {
 		}
 	}
 
-	protected Object extractObjectValue (NodeTemplate nodeTemplate, String name) {
-		Object value = sdcCsarHelper.getNodeTemplatePropertyValueAsObject(nodeTemplate, name);
+	protected Object extractObjectValue (IEntityDetails entityDetails, String name) {
+		Object value = ""; 
+		if (entityDetails.getProperties().containsKey(name)) {
+			Property property = entityDetails.getProperties().get(name);
+			if (property != null && property.getValue() != null) {
+				value = property.getValue();
+			}
+		}
+		
 		if (value != null) {
 			return value;
 		} else {
@@ -1030,7 +991,7 @@ public class SdncBaseModel {
 	
 	protected boolean cleanupExistingToscaData(String tableName, Map<String, String> keyParams) throws IOException
     {
-			return SdncBaseModel.cleanupExistingToscaData(this.jdbcDataSource, tableName, keyParams);
+			return SdncBaseModel.cleanupExistingToscaData(SdncBaseModel.jdbcDataSource, tableName, keyParams);
     }
 	
 	public static boolean cleanupExistingToscaData(DBResourceManager jdbcDataSource, String tableName, Map<String, String> keyParams) throws IOException

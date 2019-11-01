@@ -26,7 +26,7 @@ public class SdncNodeModelTest {
 		DBResourceManager mockDBResourceManager = mock(DBResourceManager.class); 
 		
 		when(entityDetails.getMetadata()).thenReturn(mockMetadata);
-		when(isdcCsarHelper.getMetadataPropertyValue(mockMetadata, "customizationUUID")).thenReturn("aaaa-bbbb-cccc-dddd");
+		when(mockMetadata.getValue("customizationUUID")).thenReturn("aaaa-bbbb-cccc-dddd");
 		
 		sdncNodeModel = new SdncNodeModel(isdcCsarHelper, entityDetails, mockDBResourceManager, config); 
 		sdncNodeModel.setServiceUUID("0e8d757f-1c80-40af-85de-31d64f1f5af8"); 

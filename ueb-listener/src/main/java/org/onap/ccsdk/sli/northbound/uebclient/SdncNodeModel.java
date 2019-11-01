@@ -137,44 +137,47 @@ public class SdncNodeModel extends SdncBaseModel {
 	
 	public void insertRelatedNetworkRoleData () throws IOException {
 		
-		if (entityDetails.getProperties().containsKey("related_networks")) {
+		if (entityDetails.getProperties().containsKey("network_assignments")) {
 			
-			Property relatedNetworksProperty = entityDetails.getProperties().get("related_networks");
-			List<String> relatedNetworkRoles = relatedNetworksProperty.getLeafPropertyValue("related_network_role");
+			Map<String, Object> networkAssignmentsPropertyValue = (Map<String, Object>) entityDetails.getProperties().get("network_assignments").getValue();
 			
-			String networkModelCustomizationUUID = getCustomizationUUID();
-		
-    		try {
-    			cleanUpExistingToscaData("RELATED_NETWORK_ROLE", "network_model_customization_uuid", networkModelCustomizationUUID);
-    		} catch (IOException e) {
-    			LOG.error("Could not clean up Tosca CSAR data in the RELATED_NETWORK_ROLE table");
-    			throw new IOException (e);
-    		}
-
-			for (String relatedNetworkRole : relatedNetworkRoles) {
-
-            	LOG.debug("Node Template [" + entityDetails.getName() + "], property [" + "related_network_role" + "] property value: " + relatedNetworkRole);
-                
-				try {
-					// Table cleanup RELATED_NETWORK_ROLE occurs per network
-					// If related_network_role for this service already exist in RELATED_NETWORK_ROLE, don't attempt insertion
-					Map<String, String> relatedNetworkRoleParamsCheck = new HashMap<String, String>();
-					addParameter("related_network_role", relatedNetworkRole, relatedNetworkRoleParamsCheck);
-					addParameter("network_model_customization_uuid", networkModelCustomizationUUID, relatedNetworkRoleParamsCheck);
-					if (checkForExistingToscaData("RELATED_NETWORK_ROLE", relatedNetworkRoleParamsCheck) == false) { 
-						relatedNetworkRoleParamsCheck.remove("related_network_role");
-    					LOG.info("Call insertToscaData for RELATED_NETWORK_ROLE where network_model_customization_uuid = " + networkModelCustomizationUUID);
-    					insertToscaData(buildSql("RELATED_NETWORK_ROLE", "related_network_role", "\"" + relatedNetworkRole + "\"", model_yaml, relatedNetworkRoleParamsCheck), null);
+			if (networkAssignmentsPropertyValue != null && networkAssignmentsPropertyValue.containsKey("related_networks")) {
+				
+				ArrayList<Map<String, String>> relatedNetworkList = (ArrayList) networkAssignmentsPropertyValue.get("related_networks");
+				String networkModelCustomizationUUID = getCustomizationUUID();
+			
+	    		try {
+	    			cleanUpExistingToscaData("RELATED_NETWORK_ROLE", "network_model_customization_uuid", networkModelCustomizationUUID);
+	    		} catch (IOException e) {
+	    			LOG.error("Could not clean up Tosca CSAR data in the RELATED_NETWORK_ROLE table");
+	    			throw new IOException (e);
+	    		}
+	    		
+	    		for (Map<String, String> relatedNetworkValue : relatedNetworkList) {
+	    			String relatedNetworkRoleValue = relatedNetworkValue.get("related_network_role");
+	            	LOG.debug("Node Template [" + entityDetails.getName() + "], property [" + "related_network_role" + "] property value: " + relatedNetworkRoleValue);
+	                
+					try {
+						// Table cleanup RELATED_NETWORK_ROLE occurs per network
+						// If related_network_role for this service already exist in RELATED_NETWORK_ROLE, don't attempt insertion
+						Map<String, String> relatedNetworkRoleParamsCheck = new HashMap<String, String>();
+						addParameter("related_network_role", relatedNetworkRoleValue, relatedNetworkRoleParamsCheck);
+						addParameter("network_model_customization_uuid", networkModelCustomizationUUID, relatedNetworkRoleParamsCheck);
+						if (checkForExistingToscaData("RELATED_NETWORK_ROLE", relatedNetworkRoleParamsCheck) == false) { 
+							relatedNetworkRoleParamsCheck.remove("related_network_role");
+	    					LOG.info("Call insertToscaData for RELATED_NETWORK_ROLE where network_model_customization_uuid = " + networkModelCustomizationUUID);
+	    					insertToscaData(buildSql("RELATED_NETWORK_ROLE", "related_network_role", "\"" + relatedNetworkRoleValue + "\"", model_yaml, relatedNetworkRoleParamsCheck), null);
+						}
+					} catch (IOException e) {
+						LOG.debug("Could not insert Tosca CSAR data into the RELATED_NETWORK_ROLE table");
+						throw new IOException (e);
 					}
-				} catch (IOException e) {
-					LOG.debug("Could not insert Tosca CSAR data into the RELATED_NETWORK_ROLE table");
-					throw new IOException (e);
-				}
-            }
-        }
-        else {
-        	LOG.debug("Node Template [" + entityDetails.getName() + "], property [" + "related_networks" + "] property value: " + null);
-        }
+	            }
+	        }
+	        else {
+	        	LOG.debug("Node Template [" + entityDetails.getName() + "], property [" + "related_networks" + "] property value: " + null);
+	        }
+		}
 		
 	}
 	

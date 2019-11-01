@@ -22,6 +22,7 @@ import org.onap.ccsdk.sli.core.sli.SvcLogicLoader;
 import org.onap.ccsdk.sli.core.sli.SvcLogicParser;
 import org.onap.ccsdk.sli.core.sli.SvcLogicStore;
 import org.onap.ccsdk.sli.core.sli.SvcLogicStoreFactory;
+import org.onap.ccsdk.sli.core.sli.provider.SvcLogicClassResolver;
 import org.onap.ccsdk.sli.core.sli.provider.base.BlockNodeExecutor;
 import org.onap.ccsdk.sli.core.sli.provider.base.CallNodeExecutor;
 import org.onap.ccsdk.sli.core.sli.provider.base.ConfigureNodeExecutor;
@@ -171,7 +172,7 @@ public class TestLcmProvider {
         loader.loadAndActivate();
 
         // Create a ServiceLogicService
-        SvcLogicServiceImpl svc = new SvcLogicServiceImpl(new SvcLogicPropertiesProviderImpl());
+        SvcLogicServiceImpl svc = new SvcLogicServiceImpl(new SvcLogicPropertiesProviderImpl(), new SvcLogicClassResolver());
 
         // Finally ready to create sliapiProvider
         LcmSliClient client = new LcmSliClient(svc);
