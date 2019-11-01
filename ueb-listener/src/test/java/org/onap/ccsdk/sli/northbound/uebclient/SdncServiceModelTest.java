@@ -3,8 +3,6 @@ package org.onap.ccsdk.sli.northbound.uebclient;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import java.io.IOException;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.ccsdk.sli.core.dblib.DBResourceManager;
@@ -21,10 +19,9 @@ import org.onap.sdc.toscaparser.api.elements.Metadata;
 		DBResourceManager mockDBResourceManager = mock(DBResourceManager.class);
 		Metadata mockMetadata = mock(Metadata.class);
 		
-		when(mockCsarHelper.getMetadataPropertyValue(mockMetadata, "UUID")).thenReturn("aaaa-bbbb-cccc-dddd");
-		when(mockCsarHelper.getMetadataPropertyValue(mockMetadata, "invariantUUID")).thenReturn("bbbb-cccc-dddd-eeee");
-		when(mockCsarHelper.getMetadataPropertyValue(mockMetadata, "namingPolicy")).thenReturn("test-naming-policy");
-		
+		when(mockMetadata.getValue("UUID")).thenReturn("aaaa-bbbb-cccc-dddd");
+		when(mockMetadata.getValue("invariantUUID")).thenReturn("bbbb-cccc-dddd-eeee");
+		when(mockMetadata.getValue("namingPolicy")).thenReturn("test-naming-policy");
 		testSdncServiceModel = new SdncServiceModel(mockCsarHelper,mockMetadata,mockDBResourceManager);
 
  		assertNotNull(testSdncServiceModel);

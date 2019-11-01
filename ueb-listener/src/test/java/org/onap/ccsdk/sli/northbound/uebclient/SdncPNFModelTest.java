@@ -31,7 +31,7 @@ import org.onap.ccsdk.sli.core.dblib.DBResourceManager;
 		SdncUebConfiguration mockSdncUebConfiguration = mock(SdncUebConfiguration.class);
 		
 		when(mockEntityDetails.getMetadata()).thenReturn(mockMetadata);
-		when(mockCsarHelper.getMetadataPropertyValue(mockMetadata, "customizationUUID")).thenReturn("aaaa-bbbb-cccc-dddd");
+		when(mockMetadata.getValue("customizationUUID")).thenReturn("aaaa-bbbb-cccc-dddd");
 		mockProperty.setValue("test-nf-naming-code");
 		when(mockProperties.get("nf_naming_code")).thenReturn(mockProperty);
 		

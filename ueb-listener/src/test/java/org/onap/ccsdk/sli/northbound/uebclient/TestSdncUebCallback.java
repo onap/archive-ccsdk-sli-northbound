@@ -416,7 +416,7 @@ public class TestSdncUebCallback {
 
 		IDistributionClient iDistClient = mock(IDistributionClient.class);
 		SdncUebCallback cb = new SdncUebCallback(iDistClient, config);
-		cb.setJdbcDataSource(dblibSvc);
+		SdncUebCallback.setJdbcDataSource(dblibSvc);
 
 		INotificationData iData = mock(INotificationData.class);
 		/*IArtifactInfo iArtifactInfo = mock(IArtifactInfo.class);

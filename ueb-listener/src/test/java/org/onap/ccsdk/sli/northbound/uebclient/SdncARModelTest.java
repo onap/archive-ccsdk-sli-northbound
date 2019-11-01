@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onap.sdc.tosca.parser.api.IEntityDetails;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
-import org.onap.sdc.toscaparser.api.NodeTemplate;
+import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.onap.ccsdk.sli.core.dblib.DBResourceManager;
  
  public class SdncARModelTest {
@@ -19,10 +19,12 @@ import org.onap.ccsdk.sli.core.dblib.DBResourceManager;
 	 @Before
 	 public void setUp() throws Exception {
  		ISdcCsarHelper mockCsarHelper = mock(ISdcCsarHelper.class);
- 		NodeTemplate nodeTemplate = mock(NodeTemplate.class);
+ 		Metadata mockMetadata = mock(Metadata.class);
  		IEntityDetails mockEntityDetails = mock(IEntityDetails.class); 
  		DBResourceManager mockDBResourceManager = mock(DBResourceManager.class);
 		SdncUebConfiguration mockSdncUebConfiguration = mock(SdncUebConfiguration.class);
+		
+		when(mockEntityDetails.getMetadata()).thenReturn(mockMetadata);
 
  		testSdncARModel = new SdncARModel(mockCsarHelper,mockEntityDetails,mockDBResourceManager,mockSdncUebConfiguration);
  		assertNotNull(testSdncARModel);
