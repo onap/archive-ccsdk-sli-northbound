@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import re
 import sys
@@ -18,40 +18,35 @@ val = ""
 li = []
 
 if len(sys.argv) < 3:
-     print 'yang2props.py <input yang> <output properties>'
-     sys.exit(2)
+    print('yang2props.py <input yang> <output properties>')
+    sys.exit(2)
 
-with open(sys.argv[1], "r") as ins:
+with open(sys.argv[1], "r", encoding='UTF-8') as ins:
     for line in ins:
         # if we see a leaf save the name for later
         if "leaf " in line:
-	    match = re.search(r'leaf (\S+)', line)
-	    if match:
-                 leaf = match.group(1)
-      
+            match = re.search(r'leaf (\S+)', line)
+            if match:
+                leaf = match.group(1)
+
         # if we see enum convert the value to enum format and see if it changed
         # if the value is different write a property entry
         if "enum " in line:
-	    match = re.search(r'enum "(\S+)";', line)
-	    if match:
+            match = re.search(r'enum "(\S+)";', line)
+            if match:
                 val = match.group(1)
-            	enum = to_enum(val)
+                enum = to_enum(val)
 
                 # see if converting to enum changed the string
-		if val != enum:
+                if val != enum:
                     property = "yang."+leaf+"."+enum+"="+val
-		    if property not in li:
-		        li.append( property)
+                    if property not in li:
+                        li.append( property)
 
 
-# Open output file
-fo = open(sys.argv[2], "wb")
-fo.write("# yang conversion properties \n")
-fo.write("# used to convert Enum back to the original yang value \n")
-fo.write("\n".join(li))
-fo.write("\n")
+with open(sys.argv[2], "w", encoding='UTF-8') as fo:
+    fo.write("# yang conversion properties \n")
+    fo.write("# used to convert Enum back to the original yang value \n")
+    fo.write("\n".join(li))
+    fo.write("\n")
 
-# Close opend file
-fo.close()
-
-   
