@@ -114,6 +114,8 @@ module LCM {
             enum "DistributeTraffic";
             enum "UpgradePreCheck";
             enum "UpgradeSoftware";
+            enum "DownloadNeSw";
+            enum "ActivateNeSw";
             enum "UpgradePostCheck";
             enum "UpgradeBackup";
             enum "UpgradeBackout";
@@ -311,6 +313,12 @@ module LCM {
                 type string;
                 mandatory false;
             }
+            leaf pnf-id {
+                description "identifies the PNF to which this action is to be applied.";
+                type string;
+                mandatory false;
+            }
+
         }
     }
 
@@ -588,6 +596,60 @@ module LCM {
         output {
             uses common-header;
             uses status;
+        }
+    }
+
+    /**********************************************************************************
+     * Define the downloadNeSw operation
+     **********************************************************************************/
+    rpc download-ne-sw {
+        description "An operation to download NE software";
+        input {
+            uses common-header;
+            leaf action {
+                type action;
+                mandatory true;
+            }
+            uses action-identifiers;
+            leaf payload {
+                type payload;
+                mandatory true;
+           }
+        }
+        output {
+            uses common-header;
+            uses status;
+            leaf payload {
+                type payload;
+                mandatory true;
+            }
+        }
+    }
+
+    /**********************************************************************************
+     * Define the activateNeSw operation
+     **********************************************************************************/
+    rpc activate-ne-sw {
+        description "An operation to activate NE software";
+        input {
+            uses common-header;
+            leaf action {
+                type action;
+                mandatory true;
+            }
+            uses action-identifiers;
+            leaf payload {
+                type payload;
+                mandatory true;
+           }
+        }
+        output {
+            uses common-header;
+            uses status;
+            leaf payload {
+                type payload;
+                mandatory true;
+            }
         }
     }
 

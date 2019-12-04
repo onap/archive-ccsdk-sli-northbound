@@ -106,6 +106,10 @@ import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.lcm.rev180329.
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.lcm.rev180329.UpgradePreCheckOutput;
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.lcm.rev180329.UpgradeSoftwareInputBuilder;
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.lcm.rev180329.UpgradeSoftwareOutput;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.lcm.rev180329.DownloadNeSwInputBuilder;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.lcm.rev180329.DownloadNeSwOutput;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.lcm.rev180329.ActivateNeSwInputBuilder;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.lcm.rev180329.ActivateNeSwOutput;
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.lcm.rev180329.ZULU;
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.lcm.rev180329.action.identifiers.ActionIdentifiersBuilder;
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.lcm.rev180329.common.header.CommonHeaderBuilder;
@@ -1147,6 +1151,74 @@ public class TestLcmProvider {
 		} catch (InterruptedException | ExecutionException e) {
 			LOG.error("Caught exception", e);
 			fail("UpgradeSoftware threw exception");
+		}
+	}
+
+	@Test
+	public void testDownloadNeSw() {
+		DownloadNeSwInputBuilder builder = new DownloadNeSwInputBuilder();
+
+		CommonHeaderBuilder hdrBuilder = new CommonHeaderBuilder();
+		hdrBuilder.setApiVer("1");
+		hdrBuilder.setFlags(null);
+		hdrBuilder.setOriginatorId("jUnit");
+		hdrBuilder.setRequestId("123");
+		hdrBuilder.setTimestamp(new ZULU(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(new Date())));
+		builder.setCommonHeader(hdrBuilder.build());
+
+		ActionIdentifiersBuilder aBuilder = new ActionIdentifiersBuilder();
+		aBuilder.setServiceInstanceId("SVCID-123");
+		aBuilder.setVfModuleId("vf-module-1");
+		aBuilder.setVnfcName("my-vnfc");
+		aBuilder.setVnfId("123");
+		aBuilder.setVserverId("123");
+		builder.setActionIdentifiers(aBuilder.build());
+
+		builder.setAction(Action.DownloadNeSw);
+		builder.setPayload(mock(Payload.class));
+
+
+		try {
+			DownloadNeSwOutput results = provider.downloadNeSw(builder.build()).get().getResult();
+			LOG.info("DownloadNeSw returned status {} : {}", results.getStatus().getCode(), results.getStatus().getMessage());
+			assert(results.getStatus().getCode() == 400);
+		} catch (InterruptedException | ExecutionException e) {
+			LOG.error("Caught exception", e);
+			fail("DownloadNeSw threw exception");
+		}
+	}
+
+	@Test
+	public void testActivateNeSw() {
+		ActivateNeSwInputBuilder builder = new ActivateNeSwInputBuilder();
+
+		CommonHeaderBuilder hdrBuilder = new CommonHeaderBuilder();
+		hdrBuilder.setApiVer("1");
+		hdrBuilder.setFlags(null);
+		hdrBuilder.setOriginatorId("jUnit");
+		hdrBuilder.setRequestId("123");
+		hdrBuilder.setTimestamp(new ZULU(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(new Date())));
+		builder.setCommonHeader(hdrBuilder.build());
+
+		ActionIdentifiersBuilder aBuilder = new ActionIdentifiersBuilder();
+		aBuilder.setServiceInstanceId("SVCID-123");
+		aBuilder.setVfModuleId("vf-module-1");
+		aBuilder.setVnfcName("my-vnfc");
+		aBuilder.setVnfId("123");
+		aBuilder.setVserverId("123");
+		builder.setActionIdentifiers(aBuilder.build());
+
+		builder.setAction(Action.ActivateNeSw);
+		builder.setPayload(mock(Payload.class));
+
+
+		try {
+			ActivateNeSwOutput results = provider.activateNeSw(builder.build()).get().getResult();
+			LOG.info("ActivateNeSw returned status {} : {}", results.getStatus().getCode(), results.getStatus().getMessage());
+			assert(results.getStatus().getCode() == 400);
+		} catch (InterruptedException | ExecutionException e) {
+			LOG.error("Caught exception", e);
+			fail("ActivateNeSw threw exception");
 		}
 	}
 

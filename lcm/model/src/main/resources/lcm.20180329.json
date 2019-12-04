@@ -1252,6 +1252,70 @@
         "description": "An operation to upgrade the target VNF to a new version and expected that the VNF is in a quiesced status .",
         "operationId": "upgrade-software"
       }
+    },
+    "/operations/LCM:download-ne-sw": {
+      "post": {
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/(download-ne-sw)input-TOP"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "No response was specified",
+            "schema": {
+              "$ref": "#/definitions/(download-ne-sw)output-TOP"
+            }
+          }
+        },
+        "description": "An operation to download NE software.",
+        "operationId": "download-ne-sw"
+      }
+    },
+    "/operations/LCM:activate-ne-sw": {
+      "post": {
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/(activate-ne-sw)input-TOP"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "No response was specified",
+            "schema": {
+              "$ref": "#/definitions/(activate-ne-sw)output-TOP"
+            }
+          }
+        },
+        "description": "An operation to activate NE software.",
+        "operationId": "activate-ne-sw"
+      }
     }
   },
   "definitions": {
@@ -4110,6 +4174,158 @@
         "LCM:output": {
           "items": {
             "$ref": "#/definitions/(upgrade-software)output"
+          },
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
+    "(download-ne-sw)input": {
+      "properties": {
+        "LCM:action": {
+          "$ref": "#/definitions/Optional.empty"
+        },
+        "LCM:action-identifiers": {
+          "description": "A block containing the action arguments. These are used to specify\\nthe object upon which APP-C LCM command is to operate",
+          "items": {
+            "$ref": "#/definitions/LCM(config)action-identifiers"
+          },
+          "type": "object"
+        },
+        "LCM:common-header": {
+          "description": "A common header for all APP-C requests",
+          "items": {
+            "$ref": "#/definitions/LCM(config)common-header"
+          },
+          "type": "object"
+        },
+        "LCM:payload": {
+          "$ref": "#/definitions/Optional.empty"
+        }
+      },
+      "required": [
+        "LCM:action",
+        "LCM:payload"
+      ],
+      "type": "object"
+    },
+    "(download-ne-sw)input-TOP": {
+      "properties": {
+        "LCM:input": {
+          "items": {
+            "$ref": "#/definitions/(download-ne-sw)input"
+          },
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
+    "(download-ne-sw)output": {
+      "properties": {
+        "LCM:common-header": {
+          "description": "A common header for all APP-C requests",
+          "items": {
+            "$ref": "#/definitions/LCM(config)common-header"
+          },
+          "type": "object"
+        },
+        "LCM:payload": {
+          "$ref": "#/definitions/Optional.empty"
+        },
+        "LCM:status": {
+          "description": "The specific response codes are to be aligned with SDC reference doc\\n(main table removed to avoid duplication and digression from main table).\\nSee SDC and ECOMP Distribution Consumer Interface Agreement",
+          "items": {
+            "$ref": "#/definitions/LCM(config)status"
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "LCM:payload"
+      ],
+      "type": "object"
+    },
+    "(download-ne-sw)output-TOP": {
+      "properties": {
+        "LCM:output": {
+          "items": {
+            "$ref": "#/definitions/(download-ne-sw)output"
+          },
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
+    "(activate-ne-sw)input": {
+      "properties": {
+        "LCM:action": {
+          "$ref": "#/definitions/Optional.empty"
+        },
+        "LCM:action-identifiers": {
+          "description": "A block containing the action arguments. These are used to specify\\nthe object upon which APP-C LCM command is to operate",
+          "items": {
+            "$ref": "#/definitions/LCM(config)action-identifiers"
+          },
+          "type": "object"
+        },
+        "LCM:common-header": {
+          "description": "A common header for all APP-C requests",
+          "items": {
+            "$ref": "#/definitions/LCM(config)common-header"
+          },
+          "type": "object"
+        },
+        "LCM:payload": {
+          "$ref": "#/definitions/Optional.empty"
+        }
+      },
+      "required": [
+        "LCM:action",
+        "LCM:payload"
+      ],
+      "type": "object"
+    },
+    "(activate-ne-sw)input-TOP": {
+      "properties": {
+        "LCM:input": {
+          "items": {
+            "$ref": "#/definitions/(activate-ne-sw)input"
+          },
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
+    "(activate-ne-sw)output": {
+      "properties": {
+        "LCM:common-header": {
+          "description": "A common header for all APP-C requests",
+          "items": {
+            "$ref": "#/definitions/LCM(config)common-header"
+          },
+          "type": "object"
+        },
+        "LCM:payload": {
+          "$ref": "#/definitions/Optional.empty"
+        },
+        "LCM:status": {
+          "description": "The specific response codes are to be aligned with SDC reference doc\\n(main table removed to avoid duplication and digression from main table).\\nSee SDC and ECOMP Distribution Consumer Interface Agreement",
+          "items": {
+            "$ref": "#/definitions/LCM(config)status"
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "LCM:payload"
+      ],
+      "type": "object"
+    },
+    "(activate-ne-sw)output-TOP": {
+      "properties": {
+        "LCM:output": {
+          "items": {
+            "$ref": "#/definitions/(activate-ne-sw)output"
           },
           "type": "object"
         }
