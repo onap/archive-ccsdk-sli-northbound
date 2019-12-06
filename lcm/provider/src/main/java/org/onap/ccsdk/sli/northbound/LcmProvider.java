@@ -761,6 +761,54 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
+	public ListenableFuture<RpcResult<DownloadNeSwOutput>> downloadNeSw(DownloadNeSwInput input) {
+		DownloadNeSwInputBuilder iBuilder = new DownloadNeSwInputBuilder(input);
+		DownloadNeSwOutputBuilder oBuilder = new DownloadNeSwOutputBuilder();
+
+		try {
+			CommonLcmFields retval = callDG("download-ne-sw", iBuilder.build());
+			oBuilder.setStatus(retval.getStatusBuilder().build());
+			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
+			if (retval.getPayload() != null) {
+				oBuilder.setPayload(retval.getPayload());
+			}
+		} catch (LcmRpcInvocationException e) {
+			LOG.debug(exceptionMessage, e);
+			oBuilder.setCommonHeader(e.getCommonHeader());
+			oBuilder.setStatus(e.getStatus());
+		}
+
+		RpcResult<DownloadNeSwOutput> rpcResult =
+				RpcResultBuilder.<DownloadNeSwOutput> status(true).withResult(oBuilder.build()).build();
+		// return error
+		return Futures.immediateFuture(rpcResult);
+	}
+
+	@Override
+	public ListenableFuture<RpcResult<ActivateNeSwOutput>> activateNeSw(ActivateNeSwInput input) {
+		ActivateNeSwInputBuilder iBuilder = new ActivateNeSwInputBuilder(input);
+		ActivateNeSwOutputBuilder oBuilder = new ActivateNeSwOutputBuilder();
+
+		try {
+			CommonLcmFields retval = callDG("activate-ne-sw", iBuilder.build());
+			oBuilder.setStatus(retval.getStatusBuilder().build());
+			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
+			if (retval.getPayload() != null) {
+				oBuilder.setPayload(retval.getPayload());
+			}
+		} catch (LcmRpcInvocationException e) {
+			LOG.debug(exceptionMessage, e);
+			oBuilder.setCommonHeader(e.getCommonHeader());
+			oBuilder.setStatus(e.getStatus());
+		}
+
+		RpcResult<ActivateNeSwOutput> rpcResult =
+				RpcResultBuilder.<ActivateNeSwOutput> status(true).withResult(oBuilder.build()).build();
+		// return error
+		return Futures.immediateFuture(rpcResult);
+	}
+
+	@Override
 	public ListenableFuture<RpcResult<StopOutput>> stop(StopInput input) {
 		StopInputBuilder iBuilder = new StopInputBuilder(input);
 		StopOutputBuilder oBuilder = new StopOutputBuilder();

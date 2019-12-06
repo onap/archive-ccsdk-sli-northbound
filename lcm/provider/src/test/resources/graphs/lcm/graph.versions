@@ -30,6 +30,8 @@ LCM resume-traffic 1.0.0 sync
 LCM distribute-traffic 1.0.0 sync
 LCM upgrade-pre-check 1.0.0 sync
 LCM upgrade-software 1.0.0 sync
+LCM download-ne-sw 1.0.0 sync
+LCM activate-ne-sw 1.0.0 sync
 LCM upgrade-post-check 1.0.0 sync
 LCM upgrade-backup 1.0.0 sync
 LCM upgrade-backout 1.0.0 sync
