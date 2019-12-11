@@ -40,3 +40,6 @@ yang-gen-sal/
 sdnc-northbound_bdio.jsonld
 blackDuckHubProjectName.txt
 blackDuckHubProjectVersionName.txt
+
+# Generated dependencies list
+direct-dependencies.txt
