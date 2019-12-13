@@ -17,6 +17,10 @@
     <name>ccsdk-sli-northbound :: features</name>
 
     <modules>
+        <module>ccsdk-asdcApi</module>
+        <module>ccsdk-daexim-offsite-backup</module>
+        <module>ccsdk-dataChange</module>
+        <module>ccsdk-lcm</module>
         <module>ccsdk-sli-northbound-all</module>
         <module>features-sli-northbound</module>
         <module>installer</module>

@@ -20,7 +20,6 @@
     <modules>
         <module>model</module>
         <module>provider</module>
-        <module>features</module>
         <module>installer</module>
     </modules>
 
