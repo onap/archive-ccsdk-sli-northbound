@@ -34,6 +34,9 @@ public class A1AdapterPolicyDmaapConsumer extends SdncDmaapConsumerImpl {
 
     private static final String BODY = "body";
     private static final String RPC = "rpc-name";
+    private static final String INPUT = "input";
+    private static final String PAYLOAD = "Payload";
+
 
     @Override
     public void processMsg(String msg) throws InvalidMessageException {
@@ -55,13 +58,26 @@ public class A1AdapterPolicyDmaapConsumer extends SdncDmaapConsumerImpl {
             LOG.warn("Missing body in A1-ADAPTER-DMAAP message");
             return;
         }
+
+        JsonNode input = bodyNode.get(INPUT);
+        if(input == null) {
+        	 LOG.info("Missing input node.");
+        	 return;
+        }
+
+        JsonNode payloadNode = input.get(PAYLOAD);
+        if(payloadNode == null) {
+            LOG.info("Missing payload node.");
+            return;
+        }
+
         String rpcMsgbody;
         try {
             	ObjectMapper mapper = new ObjectMapper();
-                rpcMsgbody = mapper.writeValueAsString(bodyNode);
+                rpcMsgbody = mapper.writeValueAsString(payloadNode);
 
         } catch (Exception e) {
-            LOG.error("Unable to parse body in A1-ADAPTER-DMAAP message", e);
+            LOG.error("Unable to parse payload in A1-ADAPTER-DMAAP message", e);
             return;
         }
 
