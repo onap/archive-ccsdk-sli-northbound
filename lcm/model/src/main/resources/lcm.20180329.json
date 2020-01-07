@@ -1253,7 +1253,7 @@
         "operationId": "upgrade-software"
       }
     },
-    "/operations/LCM:download-ne-sw": {
+    "/operations/LCM:download-n-e-sw": {
       "post": {
         "consumes": [
           "application/json",
@@ -1269,7 +1269,7 @@
             "name": "body",
             "required": false,
             "schema": {
-              "$ref": "#/definitions/(download-ne-sw)input-TOP"
+              "$ref": "#/definitions/(download-n-e-sw)input-TOP"
             }
           }
         ],
@@ -1277,15 +1277,15 @@
           "200": {
             "description": "No response was specified",
             "schema": {
-              "$ref": "#/definitions/(download-ne-sw)output-TOP"
+              "$ref": "#/definitions/(download-n-e-sw)output-TOP"
             }
           }
         },
         "description": "An operation to download NE software.",
-        "operationId": "download-ne-sw"
+        "operationId": "download-n-e-sw"
       }
     },
-    "/operations/LCM:activate-ne-sw": {
+    "/operations/LCM:activate-n-e-sw": {
       "post": {
         "consumes": [
           "application/json",
@@ -1301,7 +1301,7 @@
             "name": "body",
             "required": false,
             "schema": {
-              "$ref": "#/definitions/(activate-ne-sw)input-TOP"
+              "$ref": "#/definitions/(activate-n-e-sw)input-TOP"
             }
           }
         ],
@@ -1309,12 +1309,12 @@
           "200": {
             "description": "No response was specified",
             "schema": {
-              "$ref": "#/definitions/(activate-ne-sw)output-TOP"
+              "$ref": "#/definitions/(activate-n-e-sw)output-TOP"
             }
           }
         },
         "description": "An operation to activate NE software.",
-        "operationId": "activate-ne-sw"
+        "operationId": "activate-n-e-sw"
       }
     }
   },
@@ -1627,6 +1627,10 @@
         "vserver-id": {
           "$ref": "#/definitions/Optional.empty",
           "description": "identifies a specific VM within the given service/vnf to which\\n   this action is to be applied"
+        },
+        "pnf-id": {
+          "$ref": "#/definitions/Optional.empty",
+          "description": "identifies the PNF to which this action is to be applied."
         }
       },
       "type": "object"
@@ -4180,7 +4184,7 @@
       },
       "type": "object"
     },
-    "(download-ne-sw)input": {
+    "(download-n-e-sw)input": {
       "properties": {
         "LCM:action": {
           "$ref": "#/definitions/Optional.empty"
@@ -4209,18 +4213,18 @@
       ],
       "type": "object"
     },
-    "(download-ne-sw)input-TOP": {
+    "(download-n-e-sw)input-TOP": {
       "properties": {
         "LCM:input": {
           "items": {
-            "$ref": "#/definitions/(download-ne-sw)input"
+            "$ref": "#/definitions/(download-n-e-sw)input"
           },
           "type": "object"
         }
       },
       "type": "object"
     },
-    "(download-ne-sw)output": {
+    "(download-n-e-sw)output": {
       "properties": {
         "LCM:common-header": {
           "description": "A common header for all APP-C requests",
@@ -4245,18 +4249,18 @@
       ],
       "type": "object"
     },
-    "(download-ne-sw)output-TOP": {
+    "(download-n-e-sw)output-TOP": {
       "properties": {
         "LCM:output": {
           "items": {
-            "$ref": "#/definitions/(download-ne-sw)output"
+            "$ref": "#/definitions/(download-n-e-sw)output"
           },
           "type": "object"
         }
       },
       "type": "object"
     },
-    "(activate-ne-sw)input": {
+    "(activate-n-e-sw)input": {
       "properties": {
         "LCM:action": {
           "$ref": "#/definitions/Optional.empty"
@@ -4285,18 +4289,18 @@
       ],
       "type": "object"
     },
-    "(activate-ne-sw)input-TOP": {
+    "(activate-n-e-sw)input-TOP": {
       "properties": {
         "LCM:input": {
           "items": {
-            "$ref": "#/definitions/(activate-ne-sw)input"
+            "$ref": "#/definitions/(activate-n-e-sw)input"
           },
           "type": "object"
         }
       },
       "type": "object"
     },
-    "(activate-ne-sw)output": {
+    "(activate-n-e-sw)output": {
       "properties": {
         "LCM:common-header": {
           "description": "A common header for all APP-C requests",
@@ -4321,11 +4325,11 @@
       ],
       "type": "object"
     },
-    "(activate-ne-sw)output-TOP": {
+    "(activate-n-e-sw)output-TOP": {
       "properties": {
         "LCM:output": {
           "items": {
-            "$ref": "#/definitions/(activate-ne-sw)output"
+            "$ref": "#/definitions/(activate-n-e-sw)output"
           },
           "type": "object"
         }
@@ -4353,6 +4357,10 @@
         "LCM:vserver-id": {
           "$ref": "#/definitions/Optional.empty",
           "description": "identifies a specific VM within the given service/vnf to which\\n   this action is to be applied"
+        },
+        "LCM:pnf-id": {
+          "$ref": "#/definitions/Optional.empty",
+          "description": "identifies the PNF to which this action is to be applied."
         }
       },
       "type": "object"

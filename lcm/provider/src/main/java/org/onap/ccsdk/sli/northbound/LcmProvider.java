@@ -761,12 +761,12 @@ public class LcmProvider implements AutoCloseable, LCMService {
 	}
 
 	@Override
-	public ListenableFuture<RpcResult<DownloadNeSwOutput>> downloadNeSw(DownloadNeSwInput input) {
-		DownloadNeSwInputBuilder iBuilder = new DownloadNeSwInputBuilder(input);
-		DownloadNeSwOutputBuilder oBuilder = new DownloadNeSwOutputBuilder();
+	public ListenableFuture<RpcResult<DownloadNESwOutput>> downloadNESw(DownloadNESwInput input) {
+		DownloadNESwInputBuilder iBuilder = new DownloadNESwInputBuilder(input);
+		DownloadNESwOutputBuilder oBuilder = new DownloadNESwOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("download-ne-sw", iBuilder.build());
+			CommonLcmFields retval = callDG("download-n-e-sw", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 			if (retval.getPayload() != null) {
@@ -778,19 +778,19 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(e.getStatus());
 		}
 
-		RpcResult<DownloadNeSwOutput> rpcResult =
-				RpcResultBuilder.<DownloadNeSwOutput> status(true).withResult(oBuilder.build()).build();
+		RpcResult<DownloadNESwOutput> rpcResult =
+				RpcResultBuilder.<DownloadNESwOutput> status(true).withResult(oBuilder.build()).build();
 		// return error
 		return Futures.immediateFuture(rpcResult);
 	}
 
 	@Override
-	public ListenableFuture<RpcResult<ActivateNeSwOutput>> activateNeSw(ActivateNeSwInput input) {
-		ActivateNeSwInputBuilder iBuilder = new ActivateNeSwInputBuilder(input);
-		ActivateNeSwOutputBuilder oBuilder = new ActivateNeSwOutputBuilder();
+	public ListenableFuture<RpcResult<ActivateNESwOutput>> activateNESw(ActivateNESwInput input) {
+		ActivateNESwInputBuilder iBuilder = new ActivateNESwInputBuilder(input);
+		ActivateNESwOutputBuilder oBuilder = new ActivateNESwOutputBuilder();
 
 		try {
-			CommonLcmFields retval = callDG("activate-ne-sw", iBuilder.build());
+			CommonLcmFields retval = callDG("activate-n-e-sw", iBuilder.build());
 			oBuilder.setStatus(retval.getStatusBuilder().build());
 			oBuilder.setCommonHeader(retval.getCommonHeaderBuilder().build());
 			if (retval.getPayload() != null) {
@@ -802,8 +802,8 @@ public class LcmProvider implements AutoCloseable, LCMService {
 			oBuilder.setStatus(e.getStatus());
 		}
 
-		RpcResult<ActivateNeSwOutput> rpcResult =
-				RpcResultBuilder.<ActivateNeSwOutput> status(true).withResult(oBuilder.build()).build();
+		RpcResult<ActivateNESwOutput> rpcResult =
+				RpcResultBuilder.<ActivateNESwOutput> status(true).withResult(oBuilder.build()).build();
 		// return error
 		return Futures.immediateFuture(rpcResult);
 	}

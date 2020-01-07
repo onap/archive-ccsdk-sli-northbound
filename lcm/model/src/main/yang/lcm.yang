@@ -114,8 +114,8 @@ module LCM {
             enum "DistributeTraffic";
             enum "UpgradePreCheck";
             enum "UpgradeSoftware";
-            enum "DownloadNeSw";
-            enum "ActivateNeSw";
+            enum "DownloadNESw";
+            enum "ActivateNESw";
             enum "UpgradePostCheck";
             enum "UpgradeBackup";
             enum "UpgradeBackout";
@@ -600,9 +600,9 @@ module LCM {
     }
 
     /**********************************************************************************
-     * Define the downloadNeSw operation
+     * Define the downloadNESw operation
      **********************************************************************************/
-    rpc download-ne-sw {
+    rpc download-n-e-sw {
         description "An operation to download NE software";
         input {
             uses common-header;
@@ -627,9 +627,9 @@ module LCM {
     }
 
     /**********************************************************************************
-     * Define the activateNeSw operation
+     * Define the activateNESw operation
      **********************************************************************************/
-    rpc activate-ne-sw {
+    rpc activate-n-e-sw {
         description "An operation to activate NE software";
         input {
             uses common-header;
