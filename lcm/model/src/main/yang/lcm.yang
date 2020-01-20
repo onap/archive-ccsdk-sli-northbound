@@ -313,12 +313,11 @@ module LCM {
                 type string;
                 mandatory false;
             }
-            leaf pnf-id {
+            leaf pnf-name {
                 description "identifies the PNF to which this action is to be applied.";
                 type string;
                 mandatory false;
             }
-
         }
     }
 

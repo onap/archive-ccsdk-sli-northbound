@@ -1171,7 +1171,7 @@ public class TestLcmProvider {
 		aBuilder.setVfModuleId("vf-module-1");
 		aBuilder.setVnfcName("my-vnfc");
 		aBuilder.setVnfId("123");
-		aBuilder.setPnfId("456");
+		aBuilder.setPnfName("my-pnf");
 		aBuilder.setVserverId("123");
 		builder.setActionIdentifiers(aBuilder.build());
 
@@ -1206,7 +1206,7 @@ public class TestLcmProvider {
 		aBuilder.setVfModuleId("vf-module-1");
 		aBuilder.setVnfcName("my-vnfc");
 		aBuilder.setVnfId("123");
-		aBuilder.setPnfId("456");
+		aBuilder.setPnfName("my-pnf");
 		aBuilder.setVserverId("123");
 		builder.setActionIdentifiers(aBuilder.build());
 

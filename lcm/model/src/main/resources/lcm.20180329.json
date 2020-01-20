@@ -1628,7 +1628,7 @@
           "$ref": "#/definitions/Optional.empty",
           "description": "identifies a specific VM within the given service/vnf to which\\n   this action is to be applied"
         },
-        "pnf-id": {
+        "pnf-name": {
           "$ref": "#/definitions/Optional.empty",
           "description": "identifies the PNF to which this action is to be applied."
         }
@@ -4358,7 +4358,7 @@
           "$ref": "#/definitions/Optional.empty",
           "description": "identifies a specific VM within the given service/vnf to which\\n   this action is to be applied"
         },
-        "LCM:pnf-id": {
+        "LCM:pnf-name": {
           "$ref": "#/definitions/Optional.empty",
           "description": "identifies the PNF to which this action is to be applied."
         }
