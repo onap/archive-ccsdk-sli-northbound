@@ -4,7 +4,7 @@
 
     <groupId>org.onap.ccsdk.sli.northbound</groupId>
     <artifactId>sli-northbound-artifacts</artifactId>
-    <version>0.7.0-SNAPSHOT</version>
+    <version>0.7.1.-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>ccsdk-sli-northbound :: sli-northbound-artifacts</name>
@@ -17,7 +17,7 @@
     <parent>
         <groupId>org.onap.ccsdk.parent</groupId>
         <artifactId>parent</artifactId>
-        <version>1.5.1</version>    
+        <version>1.5.2-SNAPSHOT</version>    
     </parent>
 
     <properties>
