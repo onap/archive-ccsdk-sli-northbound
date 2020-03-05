@@ -1,27 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.onap.ccsdk.parent</groupId>
         <artifactId>odlparent-lite</artifactId>
-        <version>1.5.2</version>
+        <version>2.0.0-SNAPSHOT</version>
     </parent>
 
-    <modelVersion>4.0.0</modelVersion>
-    <packaging>pom</packaging>
     <groupId>org.onap.ccsdk.sli.northbound</groupId>
     <artifactId>ccsdk-sli-northbound</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
     <name>ccsdk-sli-northbound</name>
-    <url>https://wiki.onap.org</url>
     <description>The SDN-C Northbound APIs repo contains code for northbound API adaptors, typically MD-SAL applications</description>
+    <url>https://wiki.onap.org</url>
+    <organization>
+        <name>ONAP</name>
+    </organization>
 
-
-    <issueManagement>
-        <system>JIRA</system>
-        <url>https://jira.onap.org/</url>
-    </issueManagement>
-
+    <modules>
+        <module>asdcApi</module>
+        <module>dataChange</module>
+        <module>lcm</module>
+        <module>dmaap-listener</module>
+        <module>ueb-listener</module>
+        <module>daexim-offsite-backup</module>
+        <module>features</module>
+        <module>artifacts</module>
+    </modules>
 
     <scm>
         <connection>scm:git:ssh://git@${onap.git.host}/sdnc-northbound.git</connection>
@@ -29,18 +37,33 @@
         <developerConnection>scm:git:ssh://${onap.git.host}:${onap.git.port}/${onap.git.project}/sdnc-northbound.git</developerConnection>
         <url>${onap.git.protocol}://${onap.git.host}/projects/${onap.git.project}/repos/sdnc-northbound/browse</url>
     </scm>
-
+    <issueManagement>
+        <system>JIRA</system>
+        <url>https://jira.onap.org/</url>
+    </issueManagement>
     <ciManagement>
         <system>Jenkins</system>
         <url>https://jenkins.onap.org/</url>
     </ciManagement>
-
     <distributionManagement>
         <site>
             <id>sdnc-javadoc</id>
             <url>dav:https://${onap.nexus.host}:${onap.nexus.port}/repository/sdn-c-javadoc/${project.artifactId}/${project.version}</url>
         </site>
     </distributionManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skipTests>false</skipTests>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
     <profiles>
         <profile>
             <id>blackduck</id>
@@ -120,33 +143,4 @@
             </build>
         </profile>
     </profiles>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <skipTests>false</skipTests>
-                </configuration>
-            </plugin>
-        </plugins>
-
-    </build>
-    <modules>
-        <module>asdcApi</module>
-        <module>dataChange</module>
-        <module>lcm</module>
-        <module>dmaap-listener</module>
-        <module>ueb-listener</module>
-        <module>daexim-offsite-backup</module>
-        <module>features</module>
-        <module>artifacts</module>
-    </modules>
-    <organization>
-        <name>ONAP</name>
-    </organization>
-    <version>0.7.1-SNAPSHOT</version>
-
-
 </project>
