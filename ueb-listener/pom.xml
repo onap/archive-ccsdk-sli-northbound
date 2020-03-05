@@ -10,7 +10,7 @@
 
     <groupId>org.onap.ccsdk.sli.northbound</groupId>
     <artifactId>ueb-listener</artifactId>
-    <version>0.7.1-SNAPSHOT</version>
+    <version>0.7.1</version>
     <packaging>jar</packaging>
 
     <name>ccsdk-sli-northbound :: ueb-listener</name>
@@ -24,7 +24,7 @@
         <SWM_VERSION>${project.version}-${build.number}</SWM_VERSION>
         <ccsdk.sli.core.version>${project.version}</ccsdk.sli.core.version>
         <ccsdk.sli.northbound.version>${project.version}</ccsdk.sli.northbound.version>
-        <sdc.client.version>1.4.1-SNAPSHOT</sdc.client.version>
+        <sdc.client.version>1.4.1</sdc.client.version>
 	<sdc.tosca.version>1.6.5</sdc.tosca.version>
     </properties>
     
