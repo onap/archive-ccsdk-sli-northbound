@@ -11,7 +11,7 @@
     <name>ccsdk-sli-northbound :: daexim-offsite-backup :: ${project.artifactId}</name>
     <groupId>org.onap.ccsdk.sli.northbound</groupId>
     <artifactId>daexim-offsite-backup-model</artifactId>
-    <version>0.7.3-SNAPSHOT</version>
+    <version>0.7.4-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <dependencies>
