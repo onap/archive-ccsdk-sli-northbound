@@ -71,14 +71,10 @@ public class CMNotifyDmaapConsumer extends SdncDmaapConsumerImpl {
             return;
         }
 
-        JSONObject rpcMsgBodyNode = new JSONObject();
-
-        rpcMsgBodyNode.put(INPUT,payloadNode);
-
         String rpcMsgbody;
         try {
             	ObjectMapper mapper = new ObjectMapper();
-                rpcMsgbody = mapper.writeValueAsString(rpcMsgBodyNode);
+                rpcMsgbody = "{\"input\":" + mapper.writeValueAsString(payloadNode) + "}";
 
         } catch (Exception e) {
             LOG.error("Unable to parse payload in CMNotify-DMAAP message", e);
