@@ -68,7 +68,7 @@ public class SdncAaiDmaapConsumer extends SdncDmaapConsumerImpl {
         rootDir = System.getenv(DMAAPLISTENERROOT);
 
         if ((rootDir == null) || (rootDir.length() == 0)) {
-            rootDir = "/opt/app/dmaap-listener/lib/";
+            rootDir = "/opt/onap/sdnc/dmaap-listener/lib/";
         }
         else {
             rootDir = rootDir + "/lib/";
