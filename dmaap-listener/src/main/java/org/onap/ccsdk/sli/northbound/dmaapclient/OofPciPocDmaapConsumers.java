@@ -64,6 +64,16 @@ public class OofPciPocDmaapConsumers extends SdncDmaapConsumerImpl {
 	private static final String RPC_NAME = "rpc-name";
 	private static final String BODY = "body";
 	private static final String INPUT = "input";
+  private static final String COMMON_HEADER = "CommonHeader";
+  private static final String TIME_STAMP = "TimeStamp";
+  private static final String REQUEST_ID = "RequestID";
+  private static final String SUB_REQUEST_ID = "SubRequestID";
+
+  private static final String TIME_STAMP_FOR_SLI = "timeStamp";
+  private static final String REQUEST_ID_FOR_SLI = "requestID";
+  private static final String SUB_REQUEST_ID_FOR_SLI = "subRequestID";
+
+  private static final String CONFIGURATION_PHY_CELL_ID_INPUT = "configuration-phy-cell-id-input.";
 
 	private static final String EMPTY = "";
 	private static final String ESCAPE_SEQUENCE_QUOTES = "\"";
@@ -104,9 +114,9 @@ public class OofPciPocDmaapConsumers extends SdncDmaapConsumerImpl {
     protected String publish(String templatePath, String jsonString, JsonNode configurationsOrDataNode, boolean invokePciChangesPublish, boolean invokeAnrChangesPublish) throws IOException, InvalidMessageException
     {
     	if (invokePciChangesPublish){
-            return publishPciChangesFromPolicyToSDNR(templatePath, configurationsOrDataNode);
+            return publishPciChangesFromPolicyToSDNR(templatePath, configurationsOrDataNode, jsonString);
         } else if (invokeAnrChangesPublish){
-            return publishANRChangesFromPolicyToSDNR(templatePath, configurationsOrDataNode);
+            return publishANRChangesFromPolicyToSDNR(templatePath, configurationsOrDataNode, jsonString);
         } else {
             return publishFullMessage(templatePath, jsonString);
         }
@@ -138,7 +148,7 @@ public class OofPciPocDmaapConsumers extends SdncDmaapConsumerImpl {
         return writer.toString();
     }
 
-    private String publishANRChangesFromPolicyToSDNR(String templatePath, JsonNode dataNode) throws IOException, InvalidMessageException
+    private String publishANRChangesFromPolicyToSDNR(String templatePath, JsonNode dataNode, String msg) throws IOException, InvalidMessageException
     {
     	VelocityContext context = new VelocityContext();
 
@@ -155,6 +165,29 @@ public class OofPciPocDmaapConsumers extends SdncDmaapConsumerImpl {
         JSONObject numberOfEntries = new JSONObject();
         JSONObject alias = new JSONObject();
         JSONArray sliParametersArray = new JSONArray();
+
+        ObjectMapper oMapper = new ObjectMapper();
+
+        JsonNode dmaapMessageRootNode;
+        try {
+        	dmaapMessageRootNode = oMapper.readTree(msg);
+        } catch (Exception e) {
+            throw new InvalidMessageException("Cannot parse json object", e);
+        }
+
+        JsonNode commonHeader = dmaapMessageRootNode.get(BODY).get(INPUT).get(COMMON_HEADER);
+
+        JsonNode timeStamp = commonHeader.get(TIME_STAMP);
+
+        JsonNode requestID = commonHeader.get(REQUEST_ID);
+
+        JsonNode subRequestID = commonHeader.get(SUB_REQUEST_ID);
+
+        sliParametersArray.put(new JSONObject().put(PARAMETER_NAME, GENERIC_NEIGHBOR_CONFIGURATION_INPUT+TIME_STAMP_FOR_SLI).put(STRING_VALUE,timeStamp));
+
+        sliParametersArray.put(new JSONObject().put(PARAMETER_NAME, GENERIC_NEIGHBOR_CONFIGURATION_INPUT+REQUEST_ID_FOR_SLI).put(STRING_VALUE,requestID));
+
+        sliParametersArray.put(new JSONObject().put(PARAMETER_NAME, GENERIC_NEIGHBOR_CONFIGURATION_INPUT+SUB_REQUEST_ID_FOR_SLI).put(STRING_VALUE,subRequestID));
 
         String aliasValue =  dataNode.get(DATA).get(FAP_SERVICE).get(ALIAS_LABEL).textValue();
 
@@ -203,7 +236,7 @@ public class OofPciPocDmaapConsumers extends SdncDmaapConsumerImpl {
 
     }
 
-    private String publishPciChangesFromPolicyToSDNR(String templatePath, JsonNode configurationsJsonNode) throws IOException, InvalidMessageException
+    private String publishPciChangesFromPolicyToSDNR(String templatePath, JsonNode configurationsJsonNode, String msg) throws IOException, InvalidMessageException
     {
     	String RPC_NAME_KEY_IN_VT = "rpc_name";
     	String RPC_NAME_VALUE_IN_VT = "configuration-phy-cell-id";
@@ -216,6 +249,29 @@ public class OofPciPocDmaapConsumers extends SdncDmaapConsumerImpl {
         JSONArray sliParametersArray = new JSONArray();
 
         JsonNode configurations = configurationsJsonNode.get(CONFIGURATIONS);
+
+        ObjectMapper oMapper = new ObjectMapper();
+
+        JsonNode dmaapMessageRootNode;
+        try {
+        	dmaapMessageRootNode = oMapper.readTree(msg);
+        } catch (Exception e) {
+            throw new InvalidMessageException("Cannot parse json object", e);
+        }
+
+        JsonNode commonHeader = dmaapMessageRootNode.get(BODY).get(INPUT).get(COMMON_HEADER);
+
+        JsonNode timeStamp = commonHeader.get(TIME_STAMP);
+
+        JsonNode requestID = commonHeader.get(REQUEST_ID);
+
+        JsonNode subRequestID = commonHeader.get(SUB_REQUEST_ID);
+
+        sliParametersArray.put(new JSONObject().put(PARAMETER_NAME, CONFIGURATION_PHY_CELL_ID_INPUT+TIME_STAMP_FOR_SLI).put(STRING_VALUE,timeStamp));
+
+        sliParametersArray.put(new JSONObject().put(PARAMETER_NAME, CONFIGURATION_PHY_CELL_ID_INPUT+REQUEST_ID_FOR_SLI).put(STRING_VALUE,requestID));
+
+        sliParametersArray.put(new JSONObject().put(PARAMETER_NAME, CONFIGURATION_PHY_CELL_ID_INPUT+SUB_REQUEST_ID_FOR_SLI).put(STRING_VALUE,subRequestID));
 
         int entryCount = 0;
 
@@ -389,6 +445,7 @@ public class OofPciPocDmaapConsumers extends SdncDmaapConsumerImpl {
         	 LOG.info("Missing action node.");
         	 return;
         }
+
 
         if(!MODIFY_CONFIG.equals(action.textValue())) {
             LOG.info("Unknown Action {}", action);
