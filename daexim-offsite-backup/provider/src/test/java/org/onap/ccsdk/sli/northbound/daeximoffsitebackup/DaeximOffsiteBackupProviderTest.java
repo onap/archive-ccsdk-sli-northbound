@@ -21,23 +21,12 @@
 
 package org.onap.ccsdk.sli.northbound.daeximoffsitebackup;
 
-import org.eclipse.jdt.annotation.Nullable;
-import org.junit.Before;
-import org.junit.Test;
-
-import org.opendaylight.controller.md.sal.binding.api.*;
-import org.opendaylight.controller.md.sal.common.api.data.TransactionCommitFailedException;
-import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
-
-import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.daeximoffsitebackup.rev180926.DaeximOffsiteBackupService;
-
-import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.daeximoffsitebackup.rev180926.RetrieveDataInput;
-
-import org.opendaylight.yangtools.yang.binding.Augmentation;
-import org.opendaylight.yangtools.yang.binding.DataContainer;
-
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import com.google.common.util.concurrent.CheckedFuture;
-
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -46,9 +35,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
-
-import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
+import org.eclipse.jdt.annotation.Nullable;
+import org.junit.Before;
+import org.junit.Test;
+import org.opendaylight.controller.md.sal.binding.api.DataBroker;
+import org.opendaylight.controller.md.sal.binding.api.ReadWriteTransaction;
+import org.opendaylight.controller.md.sal.common.api.data.TransactionCommitFailedException;
+import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.daeximoffsitebackup.rev180926.DaeximOffsiteBackupService;
+import org.opendaylight.yang.gen.v1.org.onap.ccsdk.sli.northbound.daeximoffsitebackup.rev180926.RetrieveDataInput;
+import org.opendaylight.yangtools.yang.binding.Augmentation;
 
 public class DaeximOffsiteBackupProviderTest {
     public DataBroker dataBroker;
@@ -153,10 +149,7 @@ public class DaeximOffsiteBackupProviderTest {
                 return "Some Timestamp";
             }
 
-            @Override
-            public Class<? extends DataContainer> getImplementedInterface() {
-                return null;
-            }
+
         };
         try {
             assertNotNull(provider.retrieveData(input));
