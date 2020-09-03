@@ -43,7 +43,6 @@ import java.util.concurrent.Executors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
-import javax.annotation.Nonnull;
 
 import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.Futures;
@@ -68,6 +67,8 @@ import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 public class DaeximOffsiteBackupProvider implements AutoCloseable, DaeximOffsiteBackupService, DataTreeChangeListener {
     private static final Logger LOG = LoggerFactory.getLogger(DaeximOffsiteBackupProvider.class);
 
@@ -89,8 +90,7 @@ public class DaeximOffsiteBackupProvider implements AutoCloseable, DaeximOffsite
     private RpcProviderRegistry rpcRegistry;
     private BindingAwareBroker.RpcRegistration<DaeximOffsiteBackupService> rpcRegistration;
 
-    public DaeximOffsiteBackupProvider(DataBroker dataBroker,
-                                       RpcProviderRegistry rpcProviderRegistry) {
+    public DaeximOffsiteBackupProvider(DataBroker dataBroker, RpcProviderRegistry rpcProviderRegistry) {
         LOG.info("Creating provider for " + appName);
         this.executor = Executors.newFixedThreadPool(1);
         this.dataBroker = dataBroker;
@@ -113,10 +113,10 @@ public class DaeximOffsiteBackupProvider implements AutoCloseable, DaeximOffsite
 
     private void loadProperties() {
         LOG.info("Loading properties from " + PROPERTIES_FILE);
-        if(properties == null)
+        if (properties == null)
             properties = new Properties();
         File propertiesFile = new File(PROPERTIES_FILE);
-        if(!propertiesFile.exists()) {
+        if (!propertiesFile.exists()) {
             LOG.warn("Properties file (" + PROPERTIES_FILE + ") not found. Using default properties.");
             properties.put("daeximDirectory", "/opt/opendaylight/current/daexim/");
             properties.put("credentials", "admin:enc:YWRtaW4xMjM=");
@@ -139,30 +139,29 @@ public class DaeximOffsiteBackupProvider implements AutoCloseable, DaeximOffsite
             LOG.info("file.operational: " + properties.getProperty("file.operational"));
             LOG.info("file.models: " + properties.getProperty("file.models"));
             LOG.info("file.config: " + properties.getProperty("file.config"));
-        } catch(IOException e) {
+        } catch (IOException e) {
             LOG.error("Error loading properties.", e);
         }
     }
 
     private void applyProperties() {
         LOG.info("Applying properties...");
-        if(POD_NAME == null || POD_NAME.isEmpty()) {
+        if (POD_NAME == null || POD_NAME.isEmpty()) {
             LOG.warn("MY_POD_NAME environment variable not set. Using value from properties.");
             POD_NAME = properties.getProperty("podName");
         }
-        DAEXIM_DIR =  properties.getProperty("daeximDirectory");
+        DAEXIM_DIR = properties.getProperty("daeximDirectory");
         NEXUS_URL = properties.getProperty("nexusUrl");
 
         OPERATIONAL_JSON = properties.getProperty("file.operational");
         MODELS_JSON = properties.getProperty("file.models");
         CONFIG_JSON = properties.getProperty("file.config");
 
-        if(!properties.getProperty("credentials").contains(":")) { //Entire thing is encoded
+        if (!properties.getProperty("credentials").contains(":")) { // Entire thing is encoded
             CREDENTIALS = new String(Base64.getDecoder().decode(properties.getProperty("credentials")));
-        }
-        else {
+        } else {
             String[] credentials = properties.getProperty("credentials").split(":", 2);
-            if(credentials[1].startsWith("enc:")) { // Password is encoded
+            if (credentials[1].startsWith("enc:")) { // Password is encoded
                 credentials[1] = new String(Base64.getDecoder().decode(credentials[1].split(":")[1]));
             }
             CREDENTIALS = credentials[0] + ":" + credentials[1];
@@ -195,7 +194,7 @@ public class DaeximOffsiteBackupProvider implements AutoCloseable, DaeximOffsite
     }
 
     @Override
-    public void onDataTreeChanged(@Nonnull Collection changes) {
+    public void onDataTreeChanged(@NonNull Collection changes) {
 
     }
 
