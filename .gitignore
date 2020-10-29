@@ -10,6 +10,7 @@ org.eclipse.core.resources.prefs
 .checkstyle
 maven-eclipse.xml
 workspace
+.factorypath
 
 ## Compilation Files ##
 *.class
